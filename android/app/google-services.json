@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "1000405684461",
+    "firebase_url": "https://simplybudget-1.firebaseio.com",
+    "project_id": "simplybudget-1",
+    "storage_bucket": "simplybudget-1.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1000405684461:android:c0a8c772e91e7a63637ce4",
+        "android_client_info": {
+          "package_name": "com.yasiru.simplybudget"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1000405684461-rb1oilfavk0fnneeugee6ek0u8lm3lpa.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDCfWAt_A13RzSQWZmE3jDpiJMUJwgJRHM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1000405684461-rb1oilfavk0fnneeugee6ek0u8lm3lpa.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

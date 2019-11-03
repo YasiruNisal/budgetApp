@@ -8,6 +8,7 @@ class MainCard extends StatelessWidget {
   final Function onCardPress;
   final String mainText;
   final String mainValue;
+  final Color mainValueColor;
   final bool isButtonVisible;
   final IconData buttonIcon;
   final String buttonText;
@@ -22,6 +23,7 @@ class MainCard extends StatelessWidget {
       this.onCardPress,
       this.mainText,
       this.mainValue,
+        this.mainValueColor,
       this.isButtonVisible,
       this.buttonIcon,
       this.buttonText,
@@ -32,6 +34,9 @@ class MainCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+
+    String takeSecondValue = secondValue == null ? '' : secondValue;
+    String takeButtonText = buttonText == null ? '' : buttonText;
     return GestureDetector(
       onTap: onCardPress,
       child: Card(
@@ -65,8 +70,9 @@ class MainCard extends StatelessWidget {
                 width: 5,
               ),
               Expanded(
+                flex: 1,
                 child: Padding(
-                  padding: const EdgeInsets.all(5.0),
+                  padding: const EdgeInsets.only(left:5.0, top: 5.0, bottom: 5.0),
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -93,7 +99,7 @@ class MainCard extends StatelessWidget {
                             mainValue,
                             style: TextStyle(
                                 fontSize: 22.0,
-                                color: MyColors.NumberMainColor,
+                                color: mainValueColor,
                                 letterSpacing: 1.5),
                           ),
                         ),
@@ -103,42 +109,46 @@ class MainCard extends StatelessWidget {
                 ),
               ),
               Expanded(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  crossAxisAlignment: CrossAxisAlignment.end,
-                  children: <Widget>[
-                    Visibility(
-                      visible: isButtonVisible,
-                      child: FlatButton.icon(
-                        shape: new RoundedRectangleBorder(
-                          borderRadius: new BorderRadius.circular(18.0),
-                        ),
-                        onPressed: onButtonPress,
-                        icon:
-                            Icon(buttonIcon, size: 15.0, color: MyColors.WHITE),
-                        label: Text(
-                          buttonText,
-                          style: TextStyle(
-                            fontSize: 13.0,
-                            color: MyColors.WHITE,
+                child: Padding(
+                  padding: const EdgeInsets.only(top: 30, right: 5),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    crossAxisAlignment: CrossAxisAlignment.end,
+                    children: <Widget>[
+                      Visibility(
+                        visible: isButtonVisible,
+                        child: FlatButton.icon(
+                          shape: new RoundedRectangleBorder(
+                            borderRadius: new BorderRadius.circular(18.0),
+                          ),
+                          onPressed: onButtonPress,
+                          icon:
+                              Icon(buttonIcon, size: 15.0,),
+                          label: Text(
+                            takeButtonText,
+                            style: TextStyle(
+                              fontSize: 13.0,
+                            ),
                           ),
                         ),
-                        color: MyColors.MainFade2,
                       ),
-                    ),
-                    Container(
-                      child: Align(
-                        alignment: Alignment.bottomRight,
-                        child: Text(
-                          secondValue,
-                          style: TextStyle(
-                              fontSize: 22.0,
-                              color: secondValueColor,
-                              letterSpacing: 1.5),
+                      Visibility(
+                        visible: isSecondValueVisible,
+                        child: Container(
+                          child: Align(
+                            alignment: Alignment.bottomRight,
+                            child: Text(
+                              takeSecondValue,
+                              style: TextStyle(
+                                  fontSize: 22.0,
+                                  color: secondValueColor,
+                                  letterSpacing: 1.5),
+                            ),
+                          ),
                         ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
               ),
             ],

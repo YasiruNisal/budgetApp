@@ -7,6 +7,7 @@ class MyColors
   static const MainFade3 = Color(0xffB3AEEE);
   static const BackgroundColor = Color(0xffE5E5E5);
   static const TextMainColor = Color(0xff646464);
+  static const TextSecondColor = Color(0xff757678);
   static const NumberMainColor = Color(0xff3D3D3D);
   static const AccountOneColor = Color(0xff5ED0BE);
   static const AccountTwoColor = Color(0xffEDBF81);

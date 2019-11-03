@@ -34,13 +34,16 @@ class BudgetEditCard extends StatelessWidget {
                   child: Align(
                       alignment: Alignment.topLeft,
                       child: Text(
-                        "For Bills",
+                        'For ' + budgetName,
                         style: TextStyle(
                           color: MyColors.TextMainColor,
                           fontSize: 20.0,
                           letterSpacing: 1.5,
                         ),
                       ))),
+              SizedBox(
+                width: 5,
+              ),
               Expanded(
                   child: Align(
                       alignment: Alignment.center,
