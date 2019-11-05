@@ -4,6 +4,7 @@ import 'package:simplybudget/Components/budgetcard.dart';
 import 'package:simplybudget/Components/budgeteditcard.dart';
 import 'package:simplybudget/Services/auth.dart';
 import 'package:simplybudget/config/colors.dart';
+import 'package:provider/provider.dart';
 
 
 class Budgeting extends StatefulWidget {
@@ -12,6 +13,18 @@ class Budgeting extends StatefulWidget {
 }
 
 class _BudgetingState extends State<Budgeting> {
+  final AuthService _auth = AuthService();
+
+  @override
+  initState() {
+    super.initState();
+    // Add listeners to this class
+    print("printing Auth");
+
+    print(_auth.User);
+  }
+
+
   @override
   Widget build(BuildContext context) {
     return SafeArea(

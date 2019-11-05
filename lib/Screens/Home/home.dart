@@ -1,15 +1,27 @@
 import 'package:flutter/material.dart';
 import 'package:simplybudget/Components/maincard.dart';
 import 'package:simplybudget/Components/budgetcard.dart';
-import 'package:simplybudget/Components/budgeteditcard.dart';
 import 'package:simplybudget/Screens/Home/budgeting.dart';
 import 'package:simplybudget/Services/auth.dart';
 import 'package:simplybudget/config/colors.dart';
 
-class Home extends StatelessWidget {
+import 'package:simplybudget/PopupDialogs/selectIncomeExpense.dart';
+
+class Home extends StatefulWidget {
+  @override
+  _HomeState createState() => _HomeState();
+}
+
+class _HomeState extends State<Home> {
   final AuthService _auth = AuthService();
+
+  String incomeOrExpense = '';
+  String category = '';
+
   @override
   Widget build(BuildContext context) {
+
+    print(incomeOrExpense);
     return SafeArea(
       child: Scaffold(
         backgroundColor: MyColors.BackgroundColor,
@@ -63,7 +75,14 @@ class Home extends StatelessWidget {
                         isButtonVisible: true,
                         isSecondValueVisible: false,
                         onButtonPress: () {
-                          cashFlowDialog(context);
+//                          selectIncomeExpense(context);
+
+                          showDialog(
+                              context: context,
+                              builder: (context) {
+                                return SelectIncomeExpense(
+                                    setIncomeExpense: setIncomeExpense);
+                              });
                         }),
                     MainCard(
                       onCardPress: () {
@@ -77,7 +96,12 @@ class Home extends StatelessWidget {
                       buttonText: "Edit",
                       isButtonVisible: true,
                       onButtonPress: () {
-                        cashFlowDialog(context);
+                        showDialog(
+                            context: context,
+                            builder: (context) {
+                              return SelectIncomeExpense(
+                                  setIncomeExpense: setIncomeExpense);
+                            });
                       },
                       isSecondValueVisible: false,
                     ),
@@ -87,6 +111,7 @@ class Home extends StatelessWidget {
                       ),
                       onPressed: () async {
                         await _auth.signOut();
+                        await _auth.signOutGoogle();
                       },
                       icon:
                           Icon(Icons.person, size: 15.0, color: MyColors.WHITE),
@@ -105,8 +130,11 @@ class Home extends StatelessWidget {
               SizedBox(
                 height: 15,
               ),
-              Text('Budgets', style: TextStyle(fontSize: 20.0, color: MyColors.TextSecondColor),),
-
+              Text(
+                'Budgets',
+                style:
+                    TextStyle(fontSize: 20.0, color: MyColors.TextSecondColor),
+              ),
               Container(
                 child: Column(
                   children: <Widget>[
@@ -115,21 +143,101 @@ class Home extends StatelessWidget {
                       budgetSetValue: "\$350",
                       budgetSpentValue: "\$300",
                       budgetSpentValueColor: MyColors.GREEN,
-                      onCardClick: () {budgetEntryDialog(context);},
+                      onCardClick: () {
+                        budgetEntryDialog(context);
+                      },
                     ),
                     BudgetCard(
                       budgetName: "Car",
                       budgetSetValue: "\$120",
                       budgetSpentValue: "\$125",
                       budgetSpentValueColor: MyColors.RED,
-                      onCardClick: () {budgetEntryDialog(context);},
+                      onCardClick: () {
+                        budgetEntryDialog(context);
+                      },
                     ),
-
                   ],
                 ),
-              )
+              ),
             ],
           ),
+        ),
+      ),
+    );
+  }
+
+  void setIncomeExpense(String val) {
+    setState(() {
+      incomeOrExpense = val;
+    });
+  }
+
+  void incomeCategory(context) {
+    showDialog(
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+            shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.all(Radius.circular(20.0))),
+            title: Text(
+              'Category',
+              textAlign: TextAlign.center,
+            ),
+            content: Container(
+              // Specify some width
+              width: MediaQuery.of(context).size.width * .5,
+              child: GridView.count(
+                  crossAxisCount: 2,
+                  childAspectRatio: 0.8,
+                  padding: const EdgeInsets.all(2.0),
+                  mainAxisSpacing: 2.0,
+                  crossAxisSpacing: 2.0,
+                  children: <String>[
+                    'salary',
+                    'wage',
+                    'check',
+                    'giftcard',
+                    'bonus',
+                    'dividends',
+                    'sale',
+                    'rental',
+                    'refund',
+                    'grants',
+                    'awards',
+                    'investments',
+                    'government',
+                    'lottery',
+                  ].map((String url) {
+                    return GridTile(
+                        child: gridIcon('assets/income/${url}.png', url));
+                  }).toList()),
+            ),
+          );
+        });
+  }
+
+  Widget gridIcon(String url, String text) {
+    return GestureDetector(
+      onTap: () {
+        _dismissDialog(context);
+        setState(() {
+          category = text;
+        });
+        cashFlowDialog(context);
+      },
+      child: Container(
+        child: Column(
+          children: <Widget>[
+            CircleAvatar(
+              backgroundImage: AssetImage(url),
+              radius: 20.0,
+              backgroundColor: MyColors.TransparentBack,
+            ),
+            SizedBox(
+              height: 5,
+            ),
+            Text(text[0].toUpperCase() + text.substring(1)),
+          ],
         ),
       ),
     );
@@ -143,12 +251,12 @@ class Home extends StatelessWidget {
             shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.all(Radius.circular(20.0))),
             title: Text(
-              'Cashflow',
+              incomeOrExpense,
               textAlign: TextAlign.center,
             ),
             content: SingleChildScrollView(
               child: Container(
-                height: 250.0,
+                height: 200.0,
                 child: Column(
                   children: <Widget>[
                     Text(
@@ -157,16 +265,6 @@ class Home extends StatelessWidget {
                     ),
                     SizedBox(
                       height: 5.0,
-                    ),
-                    TextField(
-                      cursorColor: MyColors.MainFade2,
-                      decoration: InputDecoration(
-                        labelText: 'Description',
-                        labelStyle: new TextStyle(color: MyColors.MainFade2),
-                        focusedBorder: UnderlineInputBorder(
-                          borderSide: BorderSide(color: MyColors.MainFade2),
-                        ),
-                      ),
                     ),
                     SizedBox(
                       height: 5.0,
@@ -186,20 +284,8 @@ class Home extends StatelessWidget {
                       height: 20.0,
                     ),
                     Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      mainAxisAlignment: MainAxisAlignment.center,
                       children: <Widget>[
-                        FlatButton(
-                            color: MyColors.MainFade2,
-                            shape: new RoundedRectangleBorder(
-                              borderRadius: new BorderRadius.circular(18.0),
-                            ),
-                            onPressed: () {
-                              _dismissDialog(context);
-                            },
-                            child: Text(
-                              'Minus',
-                              style: TextStyle(color: MyColors.WHITE),
-                            )),
                         FlatButton(
                           color: MyColors.MainFade2,
                           shape: new RoundedRectangleBorder(
@@ -209,11 +295,12 @@ class Home extends StatelessWidget {
                             _dismissDialog(context);
                             Navigator.push(
                               context,
-                              MaterialPageRoute(builder: (context) => Budgeting()),
+                              MaterialPageRoute(
+                                  builder: (context) => Budgeting()),
                             );
                           },
                           child: Text(
-                            'Add',
+                            'Start Budgeting the income',
                             style: TextStyle(color: MyColors.WHITE),
                           ),
                         )

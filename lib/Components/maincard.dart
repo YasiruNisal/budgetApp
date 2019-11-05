@@ -123,7 +123,7 @@ class MainCard extends StatelessWidget {
                           ),
                           onPressed: onButtonPress,
                           icon:
-                              Icon(buttonIcon, size: 15.0,),
+                              Icon(buttonIcon, size: 25.0,),
                           label: Text(
                             takeButtonText,
                             style: TextStyle(

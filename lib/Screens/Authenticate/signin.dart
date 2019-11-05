@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:simplybudget/Services/auth.dart';
 
+
 import 'package:simplybudget/config/colors.dart';
 
 class SignIn extends StatefulWidget {
@@ -16,6 +17,12 @@ class SignIn extends StatefulWidget {
 class _SignInState extends State<SignIn> {
   final AuthService _auth = AuthService();
   final _formKey = GlobalKey<FormState>();
+
+  var _email = TextEditingController();
+  var _password = TextEditingController();
+
+  final FocusNode _emailFocus = FocusNode();
+  final FocusNode _passwordFocus = FocusNode();
 
   String email = '';
   String password = '';
@@ -44,6 +51,12 @@ class _SignInState extends State<SignIn> {
                     height: 20.0,
                   ),
                   TextFormField(
+                    controller: _email,
+                    textInputAction: TextInputAction.next,
+                    focusNode: _emailFocus,
+                    onFieldSubmitted: (term){
+                      _fieldFocusChange(context, _emailFocus, _passwordFocus);
+                    },
                     validator: (val) => val.isEmpty ? 'Enter an email' : null,
                     onChanged: (val) {
                       setState(() {
@@ -62,6 +75,20 @@ class _SignInState extends State<SignIn> {
                     height: 20.0,
                   ),
                   TextFormField(
+                    controller: _password,
+                    textInputAction: TextInputAction.done,
+                    focusNode: _passwordFocus,
+                    onFieldSubmitted: (value) async {
+                      _passwordFocus.unfocus();
+                      if(_formKey.currentState.validate()){
+                        dynamic result = await _auth.signInwithEmailAndPassword(email, password);
+                        if(result == null){
+                          setState(() {
+                            error = 'Please supply valid details';
+                          });
+                        }
+                      }
+                    },
                     validator: (val) => val.isEmpty ? 'Enter your password' : null,
                     obscureText: true,
                     onChanged: (val) {
@@ -106,6 +133,10 @@ class _SignInState extends State<SignIn> {
                     ),
                   ),
                   SizedBox(
+                    height: 5.0,
+                  ),
+                  _signInButton(_auth),
+                  SizedBox(
                     height: 20.0,
                   ),
                   GestureDetector(
@@ -120,4 +151,43 @@ class _SignInState extends State<SignIn> {
       ),
     );
   }
+}
+
+_fieldFocusChange(BuildContext context, FocusNode currentFocus,FocusNode nextFocus) {
+  currentFocus.unfocus();
+  FocusScope.of(context).requestFocus(nextFocus);
+}
+
+Widget _signInButton(AuthService auth) {
+  return OutlineButton(
+    splashColor: Colors.grey,
+    onPressed: () async
+    {
+      dynamic result = await auth.signInWithGoogle();
+      print(result);
+    },
+    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(40)),
+    highlightElevation: 0,
+    borderSide: BorderSide(color: Colors.grey),
+    child: Padding(
+      padding: const EdgeInsets.fromLTRB(0, 10, 0, 10),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: <Widget>[
+          Image(image: AssetImage("assets/images/google_logo.png"), height: 35.0),
+          Padding(
+            padding: const EdgeInsets.only(left: 10),
+            child: Text(
+              'Sign in with Google',
+              style: TextStyle(
+                fontSize: 15,
+                color: Colors.grey,
+              ),
+            ),
+          )
+        ],
+      ),
+    ),
+  );
 }
