@@ -42,6 +42,9 @@ class _SignInState extends State<SignIn> {
                   SizedBox(
                     height: 60.0,
                   ),
+                  //--------------------------------------------------------//
+                  // App Icon
+                  //--------------------------------------------------------//
                   Image.asset("assets/images/icon.png",height: 150,),
                   SizedBox(
                     height: 60.0,
@@ -50,6 +53,9 @@ class _SignInState extends State<SignIn> {
                   SizedBox(
                     height: 20.0,
                   ),
+                  //--------------------------------------------------------//
+                  // Email Address text field
+                  //--------------------------------------------------------//
                   TextFormField(
                     controller: _email,
                     textInputAction: TextInputAction.next,
@@ -74,6 +80,9 @@ class _SignInState extends State<SignIn> {
                   SizedBox(
                     height: 20.0,
                   ),
+                  //--------------------------------------------------------//
+                  // Password text field
+                  //--------------------------------------------------------//
                   TextFormField(
                     controller: _password,
                     textInputAction: TextInputAction.done,
@@ -108,6 +117,9 @@ class _SignInState extends State<SignIn> {
                     height: 20.0,
                   ),
                   Text(error, style: TextStyle(color: Colors.red, fontSize: 14.0),),
+                  //--------------------------------------------------------//
+                  // Sign in button
+                  //--------------------------------------------------------//
                   ButtonTheme(
                     minWidth: 150.0,
                     child: FlatButton(
@@ -135,6 +147,9 @@ class _SignInState extends State<SignIn> {
                   SizedBox(
                     height: 5.0,
                   ),
+                  //--------------------------------------------------------//
+                  // Sign in with google
+                  //--------------------------------------------------------//
                   _signInButton(_auth),
                   SizedBox(
                     height: 20.0,
@@ -158,6 +173,9 @@ _fieldFocusChange(BuildContext context, FocusNode currentFocus,FocusNode nextFoc
   FocusScope.of(context).requestFocus(nextFocus);
 }
 
+//--------------------------------------------------------//
+// Google sign in button
+//--------------------------------------------------------//
 Widget _signInButton(AuthService auth) {
   return OutlineButton(
     splashColor: Colors.grey,
