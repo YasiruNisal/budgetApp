@@ -67,20 +67,20 @@ class _BudgetingState extends State<Budgeting> {
                         letterSpacing: 1,
                       ),
                     ),
-                    MainCard(
-                        onCardPress: () {
-                          print("card PRESSEDDDD");
-                        },
-                        icon: 'assets/images/debit_card.svg',
-                        color: MyColors.AccountOneColor,
-                        mainText: 'How do you want to budget for the next budgeting period',
-                        mainValue: '+\$1,350',
-                        mainValueColor: MyColors.GREEN,
-                        isButtonVisible: false,
-                        isSecondValueVisible: true,
-                        secondValue: "\$6,750",
-//                        secondValueColor: MyColors.GREEN,
-                        onButtonPress: () {}),
+//                    MainCard(
+//                        onCardPress: () {
+//                          print("card PRESSEDDDD");
+//                        },
+//                        icon: 'assets/images/debit_card.svg',
+//                        color: MyColors.AccountOneColor,
+//                        mainText: 'How do you want to budget for the next budgeting period',
+//                        mainValue: '+\$1,350',
+//                        mainValueColor: MyColors.GREEN,
+//                        isButtonVisible: false,
+//                        isSecondValueVisible: true,
+//                        secondValue: "\$6,750",
+////                        secondValueColor: MyColors.GREEN,
+//                        onButtonPress: () {}),
 
 
                   ],

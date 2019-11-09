@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:simplybudget/Components/loading.dart';
 import 'package:simplybudget/Services/auth.dart';
 
 
@@ -17,6 +18,7 @@ class SignIn extends StatefulWidget {
 class _SignInState extends State<SignIn> {
   final AuthService _auth = AuthService();
   final _formKey = GlobalKey<FormState>();
+  bool loading  = false;
 
   var _email = TextEditingController();
   var _password = TextEditingController();
@@ -30,7 +32,7 @@ class _SignInState extends State<SignIn> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return loading ? Loading() : Scaffold(
       backgroundColor: MyColors.WHITE,
       body: SingleChildScrollView(
         child: Container(
@@ -90,10 +92,14 @@ class _SignInState extends State<SignIn> {
                     onFieldSubmitted: (value) async {
                       _passwordFocus.unfocus();
                       if(_formKey.currentState.validate()){
+                        setState(() {
+                          loading = true;
+                        });
                         dynamic result = await _auth.signInwithEmailAndPassword(email, password);
                         if(result == null){
                           setState(() {
                             error = 'Please supply valid details';
+                            loading = false;
                           });
                         }
                       }

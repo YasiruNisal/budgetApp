@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:simplybudget/Components/loading.dart';
 import 'package:simplybudget/Services/auth.dart';
 import 'package:simplybudget/config/colors.dart';
 
-class Register extends StatefulWidget {
+import 'package:simplybudget/Services/firestore.dart';
 
+class Register extends StatefulWidget {
   final Function toggleView;
 
   Register({this.toggleView});
@@ -16,6 +18,8 @@ class _RegisterState extends State<Register> {
   final AuthService _auth = AuthService();
   final _formKey = GlobalKey<FormState>();
 
+  bool loading = false;
+
   String email = '';
   String password = '';
   String confirmPassword = '';
@@ -23,7 +27,7 @@ class _RegisterState extends State<Register> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return loading ? Loading() : Scaffold(
       backgroundColor: MyColors.WHITE,
       body: SingleChildScrollView(
         child: Container(
@@ -35,11 +39,17 @@ class _RegisterState extends State<Register> {
                   SizedBox(
                     height: 60.0,
                   ),
-                  Image.asset("assets/images/icon.png",height: 150,),
+                  Image.asset(
+                    "assets/images/icon.png",
+                    height: 150,
+                  ),
                   SizedBox(
                     height: 60.0,
                   ),
-                  Text("Register", style: TextStyle(fontSize: 30.0),),
+                  Text(
+                    "Register",
+                    style: TextStyle(fontSize: 30.0),
+                  ),
                   SizedBox(
                     height: 20.0,
                   ),
@@ -62,7 +72,9 @@ class _RegisterState extends State<Register> {
                     height: 20.0,
                   ),
                   TextFormField(
-                    validator: (val) => val.length < 6 ? 'Enter a password 6+ chars long' : null,
+                    validator: (val) => val.length < 6
+                        ? 'Enter a password 6+ chars long'
+                        : null,
                     obscureText: true,
                     onChanged: (val) {
                       setState(() {
@@ -80,25 +92,32 @@ class _RegisterState extends State<Register> {
                   SizedBox(
                     height: 20.0,
                   ),
-                  Text(error, style: TextStyle(color: Colors.red, fontSize: 14.0),),
+                  Text(
+                    error,
+                    style: TextStyle(color: Colors.red, fontSize: 14.0),
+                  ),
                   ButtonTheme(
                     minWidth: 150.0,
                     child: RaisedButton(
                       color: MyColors.MainFade1,
                       shape: new RoundedRectangleBorder(
                         borderRadius: new BorderRadius.circular(18.0),
-
                       ),
                       child: Text(
                         'Register',
                         style: TextStyle(color: MyColors.WHITE),
                       ),
                       onPressed: () async {
-                        if(_formKey.currentState.validate()){
-                          dynamic result = await _auth.registerWithEmailAndPassword(email, password);
-                          if(result == null){
+                        if (_formKey.currentState.validate()) {
+                          setState(() {
+                            loading = true;
+                          });
+                          dynamic result = await _auth
+                              .registerWithEmailAndPassword(email, password);
+                          if (result == null) {
                             setState(() {
                               error = 'Please supply a valid email';
+                              loading = false;
                             });
                           }
                         }
@@ -109,11 +128,12 @@ class _RegisterState extends State<Register> {
                     height: 20.0,
                   ),
                   GestureDetector(
-                      child: Text("Sign In", style: TextStyle( color: MyColors.MainFade2, fontSize: 15.0)),
+                      child: Text("Sign In",
+                          style: TextStyle(
+                              color: MyColors.MainFade2, fontSize: 15.0)),
                       onTap: () {
                         widget.toggleView();
-                      }
-                  )
+                      })
                 ],
               ),
             )),

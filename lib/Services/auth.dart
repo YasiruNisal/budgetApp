@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:simplybudget/Services/firestore.dart';
 
 class AuthService {
   final FirebaseAuth _auth = FirebaseAuth.instance;
@@ -77,6 +78,7 @@ class AuthService {
     {
       AuthResult result = await _auth.createUserWithEmailAndPassword(email: email, password: password);
       FirebaseUser user = result.user;
+      await FireStoreService(uid: user.uid).setInitialAccountValues("Account Balance", 0.0, "Saving Account Balance", 0.0);
       return user;
     }
     catch(error)

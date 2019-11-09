@@ -13,14 +13,14 @@ class SelectIncomeCategory extends StatelessWidget {
       shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.all(Radius.circular(20.0))),
       title: Text(
-        'Category',
+        'Income Category',
         textAlign: TextAlign.center,
       ),
       content: Container(
         // Specify some width
-        width: MediaQuery.of(context).size.width * .5,
+        width: MediaQuery.of(context).size.width * .9,
         child: GridView.count(
-            crossAxisCount: 2,
+            crossAxisCount: 3,
             childAspectRatio: 0.8,
             padding: const EdgeInsets.all(2.0),
             mainAxisSpacing: 2.0,
@@ -65,7 +65,7 @@ class SelectIncomeCategory extends StatelessWidget {
             SizedBox(
               height: 5,
             ),
-            Text(text[0].toUpperCase() + text.substring(1)),
+            Text(text[0].toUpperCase() + text.substring(1), textAlign: TextAlign.center, style: TextStyle(fontSize: 12),),
           ],
         ),
       ),

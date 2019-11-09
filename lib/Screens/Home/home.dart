@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:simplybudget/Components/maincard.dart';
 import 'package:simplybudget/Components/budgetcard.dart';
+import 'package:simplybudget/PopupDialogs/selectExpenseCategory.dart';
 import 'package:simplybudget/Screens/Home/budgeting.dart';
 import 'package:simplybudget/Services/auth.dart';
 import 'package:simplybudget/config/colors.dart';
@@ -9,8 +10,16 @@ import 'package:simplybudget/PopupDialogs/selectIncomeExpense.dart';
 import 'package:simplybudget/PopupDialogs/selectIncomeCategory.dart';
 import 'package:simplybudget/PopupDialogs/enterBudgetValue.dart';
 import 'package:simplybudget/PopupDialogs/budgetEntryDialog.dart';
+import 'package:simplybudget/PopupDialogs/signout.dart';
+
+import 'package:firebase_auth/firebase_auth.dart';
 
 class Home extends StatefulWidget {
+
+  final FirebaseUser user;
+
+  Home({this.user});
+
   @override
   _HomeState createState() => _HomeState();
 }
@@ -24,7 +33,7 @@ class _HomeState extends State<Home> {
 
   @override
   Widget build(BuildContext context) {
-    print(incomeOrExpense + category + enterValue.toString());
+//    print(widget.user);
     return SafeArea(
       child: Scaffold(
         backgroundColor: MyColors.BackgroundColor,
@@ -60,52 +69,26 @@ class _HomeState extends State<Home> {
                     SizedBox(
                       height: 8,
                     ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: <Widget>[
-                        Expanded(
-                          flex:2,
-                          child: Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Text(
-                              'My Wallet',
-                              textAlign: TextAlign.end,
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 22,
-                                letterSpacing: 1,
-                              ),
-                            ),
+                    GestureDetector(
+                      onTap: () {
+                        showDialog(
+                            context: context,
+                            builder: (context) {
+                              return SignOutDialog(signOut: signOut);
+                            });
+                      },
+                      child: Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Text(
+                          'My Wallet',
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 22,
+                            letterSpacing: 1,
                           ),
                         ),
-                        //--------------------------------------------------------//
-                        // Start of Sign out button
-                        //--------------------------------------------------------//
-                        Expanded(
-                          child: FlatButton.icon(
-                            shape: new RoundedRectangleBorder(
-                              borderRadius: new BorderRadius.circular(18.0),
-                            ),
-                            onPressed: () async {
-                              await _auth.signOut();
-                              await _auth.signOutGoogle();
-                            },
-                            icon:
-                            Icon(Icons.person, size: 15.0, color: MyColors.WHITE),
-                            label: Text(
-                              "Signout",
-                              style: TextStyle(
-                                fontSize: 13.0,
-                                color: MyColors.WHITE,
-                              ),
-                            ),
-//                            color: MyColors.MainFade2,
-                          ),
-                        ),
-                        //--------------------------------------------------------//
-                        // End of Sign out button
-                        //--------------------------------------------------------//
-                      ],
+                      ),
                     ),
                     //--------------------------------------------------------//
                     // Start of the Account balance card
@@ -118,10 +101,8 @@ class _HomeState extends State<Home> {
                         color: MyColors.AccountOneColor,
                         mainText: 'Account Balance',
                         mainValue: '\$6,750',
-                        buttonIcon: Icons.edit,
-                        buttonText: "Edit",
+                        buttonIcon: Icons.add,
                         isButtonVisible: true,
-                        isSecondValueVisible: false,
                         onButtonPress: () {
                           showDialog(
                               context: context,
@@ -129,7 +110,19 @@ class _HomeState extends State<Home> {
                                 return SelectIncomeExpense(
                                     setIncomeExpense: setIncomeExpense);
                               });
-                        }),
+                        },
+                      secondButtonIcon: Icons.arrow_right,
+                      isSecondButtonVisible: true,
+                        onSecondButtonPress:(){
+                          showDialog(
+                              context: context,
+                              builder: (context) {
+                                return SelectIncomeExpense(
+                                    setIncomeExpense: setIncomeExpense);
+                              });
+                        }
+                        ),
+
                     //--------------------------------------------------------//
                     // End of the Account balance card
                     //--------------------------------------------------------//
@@ -144,8 +137,7 @@ class _HomeState extends State<Home> {
                       color: MyColors.AccountTwoColor,
                       mainText: 'Savings Account Balance',
                       mainValue: '\$12,700',
-                      buttonIcon: Icons.edit,
-                      buttonText: "Edit",
+                      buttonIcon: Icons.add,
                       isButtonVisible: true,
                       onButtonPress: () {
                         showDialog(
@@ -155,7 +147,16 @@ class _HomeState extends State<Home> {
                                   setIncomeExpense: setIncomeExpense);
                             });
                       },
-                      isSecondValueVisible: false,
+                      secondButtonIcon: Icons.arrow_right,
+                      isSecondButtonVisible: true,
+                        onSecondButtonPress:(){
+                          showDialog(
+                              context: context,
+                              builder: (context) {
+                                return SelectIncomeExpense(
+                                    setIncomeExpense: setIncomeExpense);
+                              });
+                        }
                     ),
                     //--------------------------------------------------------//
                     // Start of the Account balance card
@@ -223,7 +224,12 @@ class _HomeState extends State<Home> {
     showDialog(
         context: context,
         builder: (context) {
-          return SelectIncomeCategory(setIncomeCategory: setIncomeCategory);
+          if (val == 'expense') {
+            return SelectExpenseCategory(
+                setExpenseCategory: setExpenseCategory);
+          } else {
+            return SelectIncomeCategory(setIncomeCategory: setIncomeCategory);
+          }
         });
   }
 
@@ -239,7 +245,25 @@ class _HomeState extends State<Home> {
         builder: (context) {
           return EnterBudgetValue(
               enterBudgetValue: enterBudgetValue,
-              incomeOrExpense: incomeOrExpense);
+              incomeOrExpense: incomeOrExpense,
+              category: category);
+        });
+  }
+
+  //--------------------------------------------------------//
+  // Select the expense category from the icon popup dialog
+  //--------------------------------------------------------//
+  void setExpenseCategory(String val) {
+    setState(() {
+      category = val;
+    });
+    showDialog(
+        context: context,
+        builder: (context) {
+          return EnterBudgetValue(
+              enterBudgetValue: enterBudgetValue,
+              incomeOrExpense: incomeOrExpense,
+              category:category);
         });
   }
 
@@ -255,5 +279,10 @@ class _HomeState extends State<Home> {
       MaterialPageRoute(builder: (context) => Budgeting()),
     );
     // need to write to the database here
+  }
+
+  void signOut() async {
+    await _auth.signOut();
+    await _auth.signOutGoogle();
   }
 }

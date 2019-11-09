@@ -13,10 +13,9 @@ class MainCard extends StatelessWidget {
   final IconData buttonIcon;
   final String buttonText;
   final Function onButtonPress;
-  final bool isSecondButtonVisible;
-  final IconData secondButtonIcon;
-  final String secondButtonText;
-  final Function onSecondButtonPress;
+  final bool isSecondValueVisible;
+  final String secondValue;
+  final Color secondValueColor;
 
   MainCard(
       {this.color,
@@ -24,18 +23,19 @@ class MainCard extends StatelessWidget {
       this.onCardPress,
       this.mainText,
       this.mainValue,
-      this.mainValueColor,
+        this.mainValueColor,
       this.isButtonVisible,
       this.buttonIcon,
       this.buttonText,
       this.onButtonPress,
-      this.isSecondButtonVisible,
-      this.secondButtonIcon,
-      this.secondButtonText,
-      this.onSecondButtonPress});
+      this.isSecondValueVisible,
+      this.secondValue,
+      this.secondValueColor});
 
   @override
   Widget build(BuildContext context) {
+
+    String takeSecondValue = secondValue == null ? '' : secondValue;
     String takeButtonText = buttonText == null ? '' : buttonText;
     return GestureDetector(
       onTap: onCardPress,
@@ -72,8 +72,7 @@ class MainCard extends StatelessWidget {
               Expanded(
                 flex: 1,
                 child: Padding(
-                  padding:
-                      const EdgeInsets.only(left: 5.0, top: 5.0, bottom: 5.0),
+                  padding: const EdgeInsets.only(left:5.0, top: 5.0, bottom: 5.0),
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -112,29 +111,39 @@ class MainCard extends StatelessWidget {
               Expanded(
                 child: Padding(
                   padding: const EdgeInsets.only(top: 30, right: 5),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.end,
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     crossAxisAlignment: CrossAxisAlignment.end,
                     children: <Widget>[
                       Visibility(
                         visible: isButtonVisible,
-                        child:  GestureDetector(
-                          onTap: onButtonPress,
-                          child: Icon(
-                            buttonIcon,
-                            size: 25.0,
-
+                        child: FlatButton.icon(
+                          shape: new RoundedRectangleBorder(
+                            borderRadius: new BorderRadius.circular(18.0),
+                          ),
+                          onPressed: onButtonPress,
+                          icon:
+                              Icon(buttonIcon, size: 25.0,),
+                          label: Text(
+                            takeButtonText,
+                            style: TextStyle(
+                              fontSize: 13.0,
+                            ),
                           ),
                         ),
                       ),
                       Visibility(
-                        visible: isSecondButtonVisible,
-                        child: GestureDetector(
-                          onTap: onSecondButtonPress,
-                          child: Icon(
-                            secondButtonIcon,
-                            size: 25.0,
-
+                        visible: isSecondValueVisible,
+                        child: Container(
+                          child: Align(
+                            alignment: Alignment.bottomRight,
+                            child: Text(
+                              takeSecondValue,
+                              style: TextStyle(
+                                  fontSize: 22.0,
+                                  color: secondValueColor,
+                                  letterSpacing: 1.5),
+                            ),
                           ),
                         ),
                       ),
