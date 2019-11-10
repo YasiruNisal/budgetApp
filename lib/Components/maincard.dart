@@ -37,40 +37,40 @@ class MainCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     String takeButtonText = buttonText == null ? '' : buttonText;
-    return GestureDetector(
-      onTap: onCardPress,
-      child: Card(
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(8.0),
-        ),
-        margin: EdgeInsets.fromLTRB(10.0, 16.0, 10.0, 0),
-        child: Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: <Widget>[
-              Container(
-                height: 70,
-                width: 70,
-                color: color,
-                margin: EdgeInsets.all(5),
-                child: Padding(
-                  padding: const EdgeInsets.all(10.0),
-                  child: SvgPicture.asset(
-                    icon,
-                    semanticsLabel: 'Card Logo',
-                    height: 40,
-                    width: 40,
-                    color: MyColors.WHITE,
-                  ),
+    return Card(
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(8.0),
+      ),
+      margin: EdgeInsets.fromLTRB(10.0, 16.0, 10.0, 0),
+      child: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
+            Container(
+              height: 70,
+              width: 70,
+              color: color,
+              margin: EdgeInsets.all(5),
+              child: Padding(
+                padding: const EdgeInsets.all(10.0),
+                child: SvgPicture.asset(
+                  icon,
+                  semanticsLabel: 'Card Logo',
+                  height: 40,
+                  width: 40,
+                  color: MyColors.WHITE,
                 ),
               ),
-              SizedBox(
-                width: 5,
-              ),
-              Expanded(
-                flex: 1,
+            ),
+            SizedBox(
+              width: 5,
+            ),
+            Expanded(
+              flex: 1,
+              child: GestureDetector(
+                onTap: onCardPress,
                 child: Padding(
                   padding:
                       const EdgeInsets.only(left: 5.0, top: 5.0, bottom: 5.0),
@@ -109,41 +109,41 @@ class MainCard extends StatelessWidget {
                   ),
                 ),
               ),
-              Expanded(
-                child: Padding(
-                  padding: const EdgeInsets.only(top: 30, right: 5),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    crossAxisAlignment: CrossAxisAlignment.end,
-                    children: <Widget>[
-                      Visibility(
-                        visible: isButtonVisible,
-                        child:  GestureDetector(
-                          onTap: onButtonPress,
-                          child: Icon(
-                            buttonIcon,
-                            size: 25.0,
+            ),
+            Expanded(
+              child: Padding(
+                padding: const EdgeInsets.only(top: 30, right: 5),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: <Widget>[
+                    Visibility(
+                      visible: isButtonVisible,
+                      child:  GestureDetector(
+                        onTap: onButtonPress,
+                        child: Icon(
+                          buttonIcon,
+                          size: 25.0,
 
-                          ),
                         ),
                       ),
-                      Visibility(
-                        visible: isSecondButtonVisible,
-                        child: GestureDetector(
-                          onTap: onSecondButtonPress,
-                          child: Icon(
-                            secondButtonIcon,
-                            size: 25.0,
+                    ),
+                    Visibility(
+                      visible: isSecondButtonVisible,
+                      child: GestureDetector(
+                        onTap: onSecondButtonPress,
+                        child: Icon(
+                          secondButtonIcon,
+                          size: 25.0,
 
-                          ),
                         ),
                       ),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
               ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );

@@ -18,21 +18,33 @@ class FireStoreService {
     });
   }
 
-  Future savingAccount(String name, double value) async
+  Future setInitialNormalAccount() async
   {
-    return await userCollection.document(uid).updateData({
-
+    return await userCollection.document(uid).collection("normalaccount").add({
     });
   }
 
-  Future normalAccountBudget(String name, double value) async
+  Future setInitialSavingAccount() async
   {
-    return await userCollection.document(uid).collection("normalbudget").add({
-      "budgetname" : name,
-      "normalaccountbalance": value,
+    return await userCollection.document(uid).collection("savingaccount").add({
     });
   }
 
+  Future setInitialBudget() async
+  {
+    return await userCollection.document(uid).collection("budgets").add({
+    });
+  }
+
+  Future getAccountData () async
+  {
+    return await userCollection.document(uid).get(source: Source.server);
+  }
+
+
+  Stream<QuerySnapshot> get accountData {
+    return userCollection.snapshots();
+  }
 
 
 }

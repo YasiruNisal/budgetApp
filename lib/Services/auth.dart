@@ -79,6 +79,9 @@ class AuthService {
       AuthResult result = await _auth.createUserWithEmailAndPassword(email: email, password: password);
       FirebaseUser user = result.user;
       await FireStoreService(uid: user.uid).setInitialAccountValues("Account Balance", 0.0, "Saving Account Balance", 0.0);
+//      await FireStoreService(uid: user.uid).setInitialNormalAccount();
+//      await FireStoreService(uid: user.uid).setInitialSavingAccount();
+//      await FireStoreService(uid: user.uid).setInitialBudget();
       return user;
     }
     catch(error)

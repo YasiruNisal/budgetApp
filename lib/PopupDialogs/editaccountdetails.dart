@@ -1,36 +1,44 @@
 import 'package:flutter/material.dart';
 import 'package:simplybudget/config/colors.dart';
 
-class EnterBudgetValue extends StatefulWidget {
+class EditAccountDetails extends StatefulWidget {
 
-  final void Function(double) enterBudgetValue;
-  final String incomeOrExpense;
-  final String category;
+  final void Function(String, double, String) enterAccountDetails;
+  final String accountName;
+  final double accountAmount;
+  final String whichAccount;
 
-  EnterBudgetValue({this.enterBudgetValue, this.incomeOrExpense, this.category});
+  EditAccountDetails({this.enterAccountDetails, this.accountName, this.accountAmount, this.whichAccount});
+
 
   @override
-  _EnterBudgetValueState createState() => _EnterBudgetValueState();
+  _EditAccountDetailsState createState() => _EditAccountDetailsState();
 }
 
-class _EnterBudgetValueState extends State<EnterBudgetValue> {
+class _EditAccountDetailsState extends State<EditAccountDetails> {
 
-  final enterValController = TextEditingController();
+  final enterNameController = TextEditingController();
+  final enterAmountController = TextEditingController();
 
   @override
   void dispose() {
     // Clean up the controller when the widget is disposed.
-    enterValController.dispose();
+    enterNameController.dispose();
+    enterAmountController.dispose();
     super.dispose();
   }
 
+
   @override
   Widget build(BuildContext context) {
+
+
+
     return AlertDialog(
       shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.all(Radius.circular(20.0))),
       title: Text(
-        widget.incomeOrExpense[0].toUpperCase() + widget.incomeOrExpense.substring(1),
+        "Edit Account",
         textAlign: TextAlign.center,
       ),
       content: SingleChildScrollView(
@@ -38,31 +46,32 @@ class _EnterBudgetValueState extends State<EnterBudgetValue> {
           height: 250.0,
           child: Column(
             children: <Widget>[
-              Text(
-                'Balance \$6,750',
-                style: TextStyle(fontSize: 20.0, letterSpacing: 1.2),
-              ),
               SizedBox(
                 height: 10.0,
               ),
-              CircleAvatar(
-                backgroundImage: AssetImage('assets/${widget.incomeOrExpense}/${widget.category}.png'),
-                radius: 20.0,
-                backgroundColor: MyColors.TransparentBack,
+              TextField(
+                controller: enterNameController,
+                cursorColor: MyColors.MainFade2,
+                keyboardType: TextInputType.number,
+                decoration: InputDecoration(
+                  labelText: 'Account Name',
+                  hintText: widget.accountName,
+                  labelStyle: new TextStyle(color: MyColors.MainFade2),
+                  focusedBorder: UnderlineInputBorder(
+                    borderSide: BorderSide(color: MyColors.MainFade2),
+                  ),
+                ),
               ),
-              SizedBox(
-                height: 10.0,
-              ),
-              Text(widget.category[0].toUpperCase() + widget.category.substring(1), textAlign: TextAlign.center, style: TextStyle(fontSize: 12),),
               SizedBox(
                 height: 5.0,
               ),
               TextField(
-                controller: enterValController,
+                controller: enterAmountController,
                 cursorColor: MyColors.MainFade2,
                 keyboardType: TextInputType.number,
                 decoration: InputDecoration(
                   labelText: '\$ Amount',
+                  hintText: widget.accountAmount.toString(),
                   labelStyle: new TextStyle(color: MyColors.MainFade2),
                   focusedBorder: UnderlineInputBorder(
                     borderSide: BorderSide(color: MyColors.MainFade2),
@@ -82,10 +91,10 @@ class _EnterBudgetValueState extends State<EnterBudgetValue> {
                     ),
                     onPressed: () {
                       _dismissDialog(context);
-                      widget.enterBudgetValue( double.tryParse(enterValController.text));
+                      widget.enterAccountDetails( enterNameController.text, double.tryParse(enterAmountController.text), widget.whichAccount);
                     },
                     child: Text(
-                      'Start Budgeting the income',
+                      'Save',
                       style: TextStyle(color: MyColors.WHITE),
                     ),
                   )
