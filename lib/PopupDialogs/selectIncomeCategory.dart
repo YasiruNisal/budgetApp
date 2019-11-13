@@ -57,10 +57,19 @@ class SelectIncomeCategory extends StatelessWidget {
       child: Container(
         child: Column(
           children: <Widget>[
-            CircleAvatar(
-              backgroundImage: AssetImage(url),
-              radius: 20.0,
-              backgroundColor: MyColors.TransparentBack,
+            Container(
+              decoration: new BoxDecoration(
+                color: MyColors.TransparentBack,
+                borderRadius: new BorderRadius.all(new Radius.circular(5.0)),
+              ),
+              height: 40,
+              width: 40,
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Center(
+                  child: Image.asset(url),
+                ),
+              ),
             ),
             SizedBox(
               height: 5,

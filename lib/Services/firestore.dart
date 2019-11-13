@@ -15,6 +15,8 @@ class FireStoreService {
       "normalaccountbalance": value1,
       "savingaccountname" : name2,
       "savingaccountbalance": value2,
+      "numberbudgets":0,
+      "currency":"\$",
     });
   }
 
@@ -42,8 +44,9 @@ class FireStoreService {
   }
 
 
-  Stream<QuerySnapshot> get accountData {
-    return userCollection.snapshots();
+  Stream<DocumentSnapshot> get accountData {
+    print(uid);
+    return userCollection.document(uid).snapshots();
   }
 
 

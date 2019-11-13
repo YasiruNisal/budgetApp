@@ -5,8 +5,9 @@ import 'package:simplybudget/config/colors.dart';
 class SignOutDialog extends StatelessWidget {
 
   final Function signOut;
+  final String email;
 
-  SignOutDialog({this.signOut});
+  SignOutDialog({this.signOut, this.email});
 
 
   @override
@@ -24,12 +25,14 @@ class SignOutDialog extends StatelessWidget {
           height: 100.0,
           child: Column(
             children: <Widget>[
+              Text(email),
               SizedBox(
                 height: 20.0,
               ),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: <Widget>[
+
                   FlatButton.icon(
                     color: MyColors.MainFade2,
                     shape: new RoundedRectangleBorder(

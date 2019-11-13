@@ -2,11 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:simplybudget/Components/accountdetailscard.dart';
+import 'package:simplybudget/Components/loading.dart';
 import 'package:simplybudget/PopupDialogs/editaccountdetails.dart';
 import 'package:simplybudget/Services/auth.dart';
 import 'package:simplybudget/PopupDialogs/selectExpenseCategory.dart';
 import 'package:simplybudget/PopupDialogs/selectIncomeCategory.dart';
 import 'package:simplybudget/Screens/Home/budgeting.dart';
+import 'package:simplybudget/Services/firestore.dart';
 import 'package:simplybudget/config/colors.dart';
 import 'package:simplybudget/Components/maincard.dart';
 import 'package:simplybudget/Components/budgetcard.dart';
@@ -27,204 +30,195 @@ class AccountDetails extends StatefulWidget {
 class _AccountDetailsState extends State<AccountDetails> {
   final AuthService _auth = AuthService();
 
+  int whichAccount = 0;
   String incomeOrExpense = '';
   String category = '';
   double enterValue = 0;
 
+  String normalAccountName = "Spending Account";
+  String savingAccountName = "Saving Account";
+  double normalAccountBalance = 0;
+  double savingAccountBalance = 0;
+  String currency = "\$";
+  int numBudgets = 0;
 
+  @override
+  void initState() {
+    super.initState();
+    FireStoreService(uid: widget.user.uid)
+        .accountData
+        .listen((documentSnapshot) {
+      print(documentSnapshot.data);
+      setState(() {
+        normalAccountName = documentSnapshot.data["normalaccountname"];
+        savingAccountName = documentSnapshot.data["savingaccountname"];
+        normalAccountBalance =
+            documentSnapshot.data["normalaccountbalance"].toDouble();
+        savingAccountBalance =
+            documentSnapshot.data["savingaccountbalance"].toDouble();
+        currency = documentSnapshot.data["currency"];
+        numBudgets = documentSnapshot.data["numberbudgets"];
+      });
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
+//    final accountDetails = Provider.of<DocumentSnapshot>(context);
+//    print(accountDetails.data);
 
-    final accountdetails = Provider.of<QuerySnapshot>(context);
-    print(accountdetails.documents);
-
-    for(var doc in accountdetails.documents){
-      print(doc.data);
-    }
-
-
-    return SingleChildScrollView(
-      child: Column(
-        children: <Widget>[
-          //--------------------------------------------------------------//
-          // Start of the purple gradient area
-          //--------------------------------------------------------------//
-          Container(
-            height: 310,
-            decoration: new BoxDecoration(
-              borderRadius: new BorderRadius.only(
-                  topLeft: Radius.zero,
-                  topRight: Radius.zero,
-                  bottomLeft: Radius.circular(8.0),
-                  bottomRight: Radius.circular(8.0)),
-              gradient: LinearGradient(
-                begin: Alignment.bottomRight,
-                end: Alignment.topRight,
-                stops: [0.1, 0.5, 0.8],
-                colors: [
-                  MyColors.MainFade2,
-                  MyColors.MainFade3,
-                  MyColors.MainFade1,
-                ],
-              ),
-            ),
-            child: Column(
 //
-              crossAxisAlignment: CrossAxisAlignment.center,
+//    if(accountDetails.data == null)
+    {
+//        return Loading();
+    }
+//    else
+    {
+      return SingleChildScrollView(
+          child: Column(
+        children: <Widget>[
+          Padding(
+            padding: const EdgeInsets.only(top: 10.0, left: 10.0),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.end,
               children: <Widget>[
-                SizedBox(
-                  height: 8,
-                ),
-                GestureDetector(
-                  onTap: () {
+                IconButton(
+                  icon: Icon(Icons.person),
+                  color: Colors.white,
+                  onPressed: () {
                     showDialog(
                         context: context,
                         builder: (context) {
-                          return SignOutDialog(signOut: signOut);
+                          return SignOutDialog(
+                            signOut: signOut,
+                            email: widget.user.email,
+                          );
                         });
                   },
-                  child: Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Text(
-                      'My Wallet',
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 22,
-                        letterSpacing: 1,
-                      ),
-                    ),
-                  ),
                 ),
-                //--------------------------------------------------------//
-                // Start of the Account balance card
-                //--------------------------------------------------------//
-                MainCard(
-                    onCardPress: () {
-                      showDialog(context: context,
-                      builder: (context){
-                        return EditAccountDetails(enterAccountDetails: editAccountDetails, accountName: "New Name", accountAmount: 6580, whichAccount: "normalaccount");
-                      });
-                    },
-                    icon: 'assets/images/debit_card.svg',
-                    color: MyColors.AccountOneColor,
-                    mainText: 'Account Balance',
-                    mainValue: '\$6,750',
-                    buttonIcon: Icons.add,
-                    isButtonVisible: true,
-                    onButtonPress: () {
-                      showDialog(
-                          context: context,
-                          builder: (context) {
-                            return SelectIncomeExpense(
-                                setIncomeExpense: setIncomeExpense);
-                          });
-                    },
-                    secondButtonIcon: Icons.arrow_right,
-                    isSecondButtonVisible: true,
-                    onSecondButtonPress:(){
-                      showDialog(
-                          context: context,
-                          builder: (context) {
-                            return SelectIncomeExpense(
-                                setIncomeExpense: setIncomeExpense);
-                          });
-                    }
-                ),
-
-                //--------------------------------------------------------//
-                // End of the Account balance card
-                //--------------------------------------------------------//
-                //--------------------------------------------------------//
-                // Start of the Savings account balance card
-                //--------------------------------------------------------//
-                MainCard(
-                    onCardPress: () {
-                      print("card PRESSEDDDD");
-                    },
-                    icon: 'assets/images/credit_card.svg',
-                    color: MyColors.AccountTwoColor,
-                    mainText: 'Savings Account Balance',
-                    mainValue: '\$12,700',
-                    buttonIcon: Icons.add,
-                    isButtonVisible: true,
-                    onButtonPress: () {
-                      showDialog(
-                          context: context,
-                          builder: (context) {
-                            return SelectIncomeExpense(
-                                setIncomeExpense: setIncomeExpense);
-                          });
-                    },
-                    secondButtonIcon: Icons.arrow_right,
-                    isSecondButtonVisible: true,
-                    onSecondButtonPress:(){
-                      showDialog(
-                          context: context,
-                          builder: (context) {
-                            return SelectIncomeExpense(
-                                setIncomeExpense: setIncomeExpense);
-                          });
-                    }
-                ),
-                //--------------------------------------------------------//
-                // Start of the Account balance card
-                //--------------------------------------------------------//
               ],
             ),
           ),
-          //--------------------------------------------------------------//
-          // End of the purple gradient area
-          //--------------------------------------------------------------//
-          SizedBox(
-            height: 15,
+          SizedBox(height: 10.0),
+          Padding(
+            padding: EdgeInsets.only(left: 40.0),
+            child: Row(
+              children: <Widget>[
+                Text('My',
+                    style: TextStyle(
+//                        fontFamily: 'Montserrat',
+                        color: Colors.white,
+                        fontSize: 25.0)),
+                SizedBox(width: 10.0),
+                Text('Wallet',
+                    style: TextStyle(
+//                        fontFamily: 'Montserrat',
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
+                        fontSize: 25.0))
+              ],
+            ),
           ),
-          Text(
-            'Budgets',
-            style:
-            TextStyle(fontSize: 20.0, color: MyColors.TextSecondColor),
-          ),
+          SizedBox(height: 20.0),
           Container(
+            height: MediaQuery.of(context).size.height - 140.0,
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(75.0),
+              ),
+            ),
             child: Column(
               children: <Widget>[
-                BudgetCard(
-                  budgetName: "Bills",
-                  budgetSetValue: "\$350",
-                  budgetSpentValue: "\$300",
-                  budgetSpentValueColor: MyColors.GREEN,
-                  onCardClick: () {
-                    showDialog(
-                        context: context,
-                        builder: (context) {
-                          return BudgetEntryDialog();
-                        });
-                  },
+                Padding(
+                    padding: EdgeInsets.only(top: 25.0),
+                    child: Container(
+                        height: MediaQuery.of(context).size.height - 475.0,
+                        child: ListView(children: [
+                          AccountDetailsCard(
+                              imgPath: 'assets/images/account.png',
+                              balance: normalAccountBalance,
+                              accountName: normalAccountName,
+                              currency: currency,
+                              onPlusClick: () {
+                                whichAccount = 1;
+                                showDialog(
+                                    context: context,
+                                    builder: (context) {
+                                      return SelectIncomeExpense(
+                                          setIncomeExpense: setIncomeExpense);
+                                    });
+                              }),
+                          AccountDetailsCard(
+                              imgPath: 'assets/images/savingaccount.png',
+                              balance: savingAccountBalance,
+                              accountName: savingAccountName,
+                              currency: currency,
+                              onPlusClick: () {
+                                whichAccount = 2;
+                                showDialog(
+                                    context: context,
+                                    builder: (context) {
+                                      return SelectIncomeExpense(
+                                          setIncomeExpense: setIncomeExpense);
+                                    });
+                              }),
+                        ]))),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    Text('My',
+                        style: TextStyle(
+//                        fontFamily: 'Montserrat',
+                            color: MyColors.TextSecondColor,
+                            fontSize: 20.0)),
+                    SizedBox(width: 10.0),
+                    Text('Budgets',
+                        style: TextStyle(
+//                        fontFamily: 'Montserrat',
+                            fontWeight: FontWeight.bold,
+                            color: MyColors.TextSecondColor,
+                            fontSize: 20.0))
+                  ],
                 ),
-                BudgetCard(
-                  budgetName: "Car",
-                  budgetSetValue: "\$120",
-                  budgetSpentValue: "\$125",
-                  budgetSpentValueColor: MyColors.RED,
-                  onCardClick: () {
-                    showDialog(
-                        context: context,
-                        builder: (context) {
-                          return BudgetEntryDialog();
-                        });
-                  },
+                SizedBox(
+                  height: 15.0,
                 ),
+                DecideBudgetWidget(),
               ],
             ),
           ),
         ],
-      ),
-    );
+      ));
+    }
   }
 
-  //--------------------------------------------------------//
-  // Select income or expense from the popup dialog
-  //--------------------------------------------------------//
+  Widget DecideBudgetWidget() {
+    if (numBudgets == 0) {
+      return FlatButton.icon(
+        color: MyColors.MainFade2,
+        shape: new RoundedRectangleBorder(
+          borderRadius: new BorderRadius.circular(18.0),
+        ),
+        onPressed: () {},
+        icon: Icon(Icons.add, size: 18.0, color: MyColors.WHITE),
+        label: Text(
+          "Start Creating a Budget",
+          style: TextStyle(
+            fontSize: 15.0,
+            color: MyColors.WHITE,
+          ),
+        ),
+//                            color: MyColors.MainFade2,
+      );
+    } else {
+      return Text("its 9999999999999999");
+    }
+  }
+
+//--------------------------------------------------------//
+// Select income or expense from the popup dialog
+//--------------------------------------------------------//
   void setIncomeExpense(String val) {
     setState(() {
       incomeOrExpense = val;
@@ -241,9 +235,9 @@ class _AccountDetailsState extends State<AccountDetails> {
         });
   }
 
-  //--------------------------------------------------------//
-  // Select the income category from the icon popup dialog
-  //--------------------------------------------------------//
+//--------------------------------------------------------//
+// Select the income category from the icon popup dialog
+//--------------------------------------------------------//
   void setIncomeCategory(String val) {
     setState(() {
       category = val;
@@ -258,9 +252,9 @@ class _AccountDetailsState extends State<AccountDetails> {
         });
   }
 
-  //--------------------------------------------------------//
-  // Select the expense category from the icon popup dialog
-  //--------------------------------------------------------//
+//--------------------------------------------------------//
+// Select the expense category from the icon popup dialog
+//--------------------------------------------------------//
   void setExpenseCategory(String val) {
     setState(() {
       category = val;
@@ -271,13 +265,13 @@ class _AccountDetailsState extends State<AccountDetails> {
           return EnterBudgetValue(
               enterBudgetValue: enterBudgetValue,
               incomeOrExpense: incomeOrExpense,
-              category:category);
+              category: category);
         });
   }
 
-  //--------------------------------------------------------//
-  // Enter a dollar value spent
-  //--------------------------------------------------------//
+//--------------------------------------------------------//
+// Enter a dollar value spent
+//--------------------------------------------------------//
   void enterBudgetValue(double val) {
     setState(() {
       enterValue = val;
@@ -289,7 +283,7 @@ class _AccountDetailsState extends State<AccountDetails> {
     // need to write to the database here
   }
 
-  void editAccountDetails(String name, double amount, String type){
+  void editAccountDetails(String name, double amount, String type) {
     print(name + "  " + amount.toString() + "  " + type);
   }
 
