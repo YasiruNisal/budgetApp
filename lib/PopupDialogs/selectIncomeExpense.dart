@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:simplybudget/config/colors.dart';
+import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
+import 'package:intl/intl.dart';
 
 class SelectIncomeExpense extends StatelessWidget {
-  final void Function(String) setIncomeExpense;
+  final void Function(int) setIncomeExpense;
 
   SelectIncomeExpense({this.setIncomeExpense});
 
@@ -33,7 +35,7 @@ class SelectIncomeExpense extends StatelessWidget {
                     ),
                     onPressed: () {
                       _dismissDialog(context);
-                      setIncomeExpense('income');
+                      setIncomeExpense(1);
 //                      incomeCategory(context);
                     },
                     child: Text(
@@ -48,12 +50,25 @@ class SelectIncomeExpense extends StatelessWidget {
                       ),
                       onPressed: () {
                         _dismissDialog(context);
-                        setIncomeExpense('expense');
+                        setIncomeExpense(2);
                       },
                       child: Text(
                         'Expense',
                         style: TextStyle(color: MyColors.WHITE),
                       )),
+//                  FlatButton(
+//                      onPressed: () {
+//                        DatePicker.showDatePicker(context, showTitleActions: true, minTime: DateTime(2018, 3, 5), maxTime: DateTime(2020, 6, 7), onChanged: (date) {
+//                          print('change $date');
+//                        }, onConfirm: (date) {
+//
+//                          print('confirm' + (DateTime.parse(date.toString()).millisecondsSinceEpoch).toString());
+//                        }, currentTime: DateTime.now(), locale: LocaleType.en);
+//                      },
+//                      child: Text(
+//                        'show date time picker',
+//                        style: TextStyle(color: Colors.blue),
+//                      ))
                 ],
               )
             ],

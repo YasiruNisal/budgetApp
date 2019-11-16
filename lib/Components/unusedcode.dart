@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:simplybudget/config/colors.dart';
-import 'package:datetime_picker_formfield/datetime_picker_formfield.dart';
 import 'package:intl/intl.dart';
 
 class UnUsedCode {
@@ -278,113 +277,113 @@ class UnUsedCode {
         });
   }
 
-  void budgetingPeriodDialog(context) {
-    showDialog(
-        context: context,
-        builder: (context) {
-          final format = DateFormat("yyyy-MM-dd");
-          int selectitem = 1;
-          return AlertDialog(
-            shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.all(Radius.circular(20.0))),
-            title: Text(
-              'Budgeting Period',
-              textAlign: TextAlign.center,
-            ),
-            content: SingleChildScrollView(
-              child: Container(
-                height: 240.0,
-                child: Column(
-                  children: <Widget>[
-                    Column(children: <Widget>[
-                      Text(
-                        'Pick Start Date',
-                        style: TextStyle(color: MyColors.MainFade2),
-                      ),
-                      Theme(
-                        data: Theme.of(context).copyWith(
-                          primaryColor:
-                          MyColors.MainFade2, //color of the main banner
-                          accentColor: MyColors
-                              .MainFade2, //color of circle indicating the selected date
-                          buttonTheme: ButtonThemeData(
-                              buttonColor: MyColors.MainFade2,
-                              textTheme: ButtonTextTheme
-                                  .accent //color of the text in the button "OK/CANCEL"
-                          ),
-                        ),
-                        child: DateTimeField(
-                          format: format,
-                          onShowPicker: (context, currentValue) {
-                            return showDatePicker(
-                                context: context,
-                                firstDate: DateTime(1900),
-                                initialDate: currentValue ?? DateTime.now(),
-                                lastDate: DateTime(2100));
-                          },
-                        ),
-                      ),
-                    ]),
-                    SizedBox(
-                      height: 20.0,
-                    ),
-                    Text(
-                      'Pick Start date',
-                      style: TextStyle(color: MyColors.MainFade2),
-                    ),
-                    Center(
-                      child: DropdownButton<String>(
-                        items: [
-                          DropdownMenuItem<String>(
-                            child: Text('Item 1'),
-                            value: 'one',
-                          ),
-                          DropdownMenuItem<String>(
-                            child: Text('Item 2'),
-                            value: 'two',
-                          ),
-                          DropdownMenuItem<String>(
-                            child: Text('Item 3'),
-                            value: 'three',
-                          ),
-                        ],
-                        onChanged: (String value) {
-//                          setState(() {
-//                            _value = value;
-//                          });
-                        },
-                        hint: Text('Select Item'),
-//                        value: _value,
-                      ),
-                    ),
-                    SizedBox(
-                      height: 20.0,
-                    ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.end,
-                      children: <Widget>[
-                        FlatButton(
-                          color: MyColors.MainFade2,
-                          shape: new RoundedRectangleBorder(
-                            borderRadius: new BorderRadius.circular(18.0),
-                          ),
-                          onPressed: () {
-                            _dismissDialog(context);
-                          },
-                          child: Text(
-                            'Done',
-                            style: TextStyle(color: MyColors.WHITE),
-                          ),
-                        )
-                      ],
-                    )
-                  ],
-                ),
-              ),
-            ),
-          );
-        });
-  }
+//  void budgetingPeriodDialog(context) {
+//    showDialog(
+//        context: context,
+//        builder: (context) {
+//          final format = DateFormat("yyyy-MM-dd");
+//          int selectitem = 1;
+//          return AlertDialog(
+//            shape: RoundedRectangleBorder(
+//                borderRadius: BorderRadius.all(Radius.circular(20.0))),
+//            title: Text(
+//              'Budgeting Period',
+//              textAlign: TextAlign.center,
+//            ),
+//            content: SingleChildScrollView(
+//              child: Container(
+//                height: 240.0,
+//                child: Column(
+//                  children: <Widget>[
+//                    Column(children: <Widget>[
+//                      Text(
+//                        'Pick Start Date',
+//                        style: TextStyle(color: MyColors.MainFade2),
+//                      ),
+//                      Theme(
+//                        data: Theme.of(context).copyWith(
+//                          primaryColor:
+//                          MyColors.MainFade2, //color of the main banner
+//                          accentColor: MyColors
+//                              .MainFade2, //color of circle indicating the selected date
+//                          buttonTheme: ButtonThemeData(
+//                              buttonColor: MyColors.MainFade2,
+//                              textTheme: ButtonTextTheme
+//                                  .accent //color of the text in the button "OK/CANCEL"
+//                          ),
+//                        ),
+//                        child: DateTimeField(
+//                          format: format,
+//                          onShowPicker: (context, currentValue) {
+//                            return showDatePicker(
+//                                context: context,
+//                                firstDate: DateTime(1900),
+//                                initialDate: currentValue ?? DateTime.now(),
+//                                lastDate: DateTime(2100));
+//                          },
+//                        ),
+//                      ),
+//                    ]),
+//                    SizedBox(
+//                      height: 20.0,
+//                    ),
+//                    Text(
+//                      'Pick Start date',
+//                      style: TextStyle(color: MyColors.MainFade2),
+//                    ),
+//                    Center(
+//                      child: DropdownButton<String>(
+//                        items: [
+//                          DropdownMenuItem<String>(
+//                            child: Text('Item 1'),
+//                            value: 'one',
+//                          ),
+//                          DropdownMenuItem<String>(
+//                            child: Text('Item 2'),
+//                            value: 'two',
+//                          ),
+//                          DropdownMenuItem<String>(
+//                            child: Text('Item 3'),
+//                            value: 'three',
+//                          ),
+//                        ],
+//                        onChanged: (String value) {
+////                          setState(() {
+////                            _value = value;
+////                          });
+//                        },
+//                        hint: Text('Select Item'),
+////                        value: _value,
+//                      ),
+//                    ),
+//                    SizedBox(
+//                      height: 20.0,
+//                    ),
+//                    Row(
+//                      mainAxisAlignment: MainAxisAlignment.end,
+//                      children: <Widget>[
+//                        FlatButton(
+//                          color: MyColors.MainFade2,
+//                          shape: new RoundedRectangleBorder(
+//                            borderRadius: new BorderRadius.circular(18.0),
+//                          ),
+//                          onPressed: () {
+//                            _dismissDialog(context);
+//                          },
+//                          child: Text(
+//                            'Done',
+//                            style: TextStyle(color: MyColors.WHITE),
+//                          ),
+//                        )
+//                      ],
+//                    )
+//                  ],
+//                ),
+//              ),
+//            ),
+//          );
+//        });
+//  }
 
   _dismissDialog(context) {
     Navigator.pop(context);

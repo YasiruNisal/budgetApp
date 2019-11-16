@@ -3,6 +3,11 @@ import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:simplybudget/config/colors.dart';
 
 class Loading extends StatelessWidget {
+
+  final double size;
+
+  Loading({this.size});
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -10,7 +15,7 @@ class Loading extends StatelessWidget {
       child: Center(
         child: SpinKitRotatingCircle(
           color: MyColors.MainFade1,
-          size: 50.0,
+          size: size,
         ),
       ),
     );

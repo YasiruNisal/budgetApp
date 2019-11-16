@@ -4,10 +4,11 @@ import 'package:simplybudget/config/colors.dart';
 class EnterBudgetValue extends StatefulWidget {
 
   final void Function(double) enterBudgetValue;
-  final String incomeOrExpense;
+  final int incomeOrExpense;
   final String category;
+  final double currentBalance;
 
-  EnterBudgetValue({this.enterBudgetValue, this.incomeOrExpense, this.category});
+  EnterBudgetValue({this.enterBudgetValue, this.incomeOrExpense, this.category, this.currentBalance});
 
   @override
   _EnterBudgetValueState createState() => _EnterBudgetValueState();
@@ -16,6 +17,7 @@ class EnterBudgetValue extends StatefulWidget {
 class _EnterBudgetValueState extends State<EnterBudgetValue> {
 
   final enterValController = TextEditingController();
+
 
   @override
   void dispose() {
@@ -26,11 +28,23 @@ class _EnterBudgetValueState extends State<EnterBudgetValue> {
 
   @override
   Widget build(BuildContext context) {
+    String heading = '';
+
+    if(widget.incomeOrExpense == 1)
+      {
+        heading = 'income';
+      }
+    else
+      {
+       heading = 'expense';
+      }
+
     return AlertDialog(
       shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.all(Radius.circular(20.0))),
       title: Text(
-        widget.incomeOrExpense[0].toUpperCase() + widget.incomeOrExpense.substring(1),
+
+        heading[0].toUpperCase() + heading.substring(1),
         textAlign: TextAlign.center,
       ),
       content: SingleChildScrollView(
@@ -39,16 +53,25 @@ class _EnterBudgetValueState extends State<EnterBudgetValue> {
           child: Column(
             children: <Widget>[
               Text(
-                'Balance \$6,750',
+                'Balance \$ ' + widget.currentBalance.toString(),
                 style: TextStyle(fontSize: 20.0, letterSpacing: 1.2),
               ),
               SizedBox(
                 height: 10.0,
               ),
-              CircleAvatar(
-                backgroundImage: AssetImage('assets/${widget.incomeOrExpense}/${widget.category}.png'),
-                radius: 20.0,
-                backgroundColor: MyColors.TransparentBack,
+              Container(
+                decoration: new BoxDecoration(
+                  color: MyColors.TransparentBack,
+                  borderRadius: new BorderRadius.all(new Radius.circular(5.0)),
+                ),
+                height: 40,
+                width: 40,
+                child: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Center(
+                    child: Image.asset('assets/${heading}/${widget.category}.png'),
+                  ),
+                ),
               ),
               SizedBox(
                 height: 10.0,
@@ -85,7 +108,7 @@ class _EnterBudgetValueState extends State<EnterBudgetValue> {
                       widget.enterBudgetValue( double.tryParse(enterValController.text));
                     },
                     child: Text(
-                      'Start Budgeting the income',
+                      'Save',
                       style: TextStyle(color: MyColors.WHITE),
                     ),
                   )

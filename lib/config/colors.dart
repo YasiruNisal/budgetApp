@@ -14,6 +14,7 @@ class MyColors
   static const AccountTwoColor = Color(0xffEDBF81);
 
   static const WHITE = Color(0xffFFFFFF);
+  static const BLACK = Color(0xff000000);
   static const GREEN = Color(0xff5ED0BE);
   static const RED = Color(0xffF96D76);
 
