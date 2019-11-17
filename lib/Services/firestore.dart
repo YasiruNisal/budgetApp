@@ -27,8 +27,13 @@ class FireStoreService {
     WriteBatch batch = reference.batch();
     CollectionReference normalAccount = userCollection.document(uid).collection("normalaccount");
     DocumentReference normalAccountBalance = userCollection.document(uid);
+    double newAccountBalance = 0;
+    if(incomeExpense == 1 ){
+      newAccountBalance = currentAccountBalance + amount;
+    }else if(incomeExpense == 2){
+       newAccountBalance = currentAccountBalance - amount;
+    }
 
-    double newAccountBalance = currentAccountBalance - amount;
 
     batch.setData(normalAccount.document(),
         {
@@ -39,6 +44,26 @@ class FireStoreService {
         });
 
     batch.updateData(normalAccountBalance, {"normalaccountbalance" : newAccountBalance});
+
+    return await batch.commit();
+  }
+
+  Future setBudgetHistory(String budgetName, double currentSpentValue, double newEnteredValue, String expenseCategory, int timestamp) async
+  {
+    WriteBatch batch = reference.batch();
+    CollectionReference budgetHistory = userCollection.document(uid).collection("newbudget").document(budgetName).collection("history");
+    DocumentReference selectedBudget = userCollection.document(uid).collection("newbudget").document(budgetName);
+
+    double newBudegtBalance = currentSpentValue + newEnteredValue;
+
+    batch.setData(budgetHistory.document(),
+        {
+          "expensecategory":  expenseCategory,
+          "timestamp": timestamp,
+          "amount":newEnteredValue
+        });
+
+    batch.updateData(selectedBudget, {"budgetspent" : newBudegtBalance});
 
     return await batch.commit();
   }
@@ -82,14 +107,15 @@ class FireStoreService {
 
 
   Stream<DocumentSnapshot> get accountData {
-    print(uid);
     return userCollection.document(uid).snapshots();
   }
 
   Stream<QuerySnapshot> get budgetList {
-    print(uid);
     return userCollection.document(uid).collection("newbudget").snapshots();
   }
 
+  Stream<QuerySnapshot>  budgetHistoryList(String budgetName) {
+    return userCollection.document(uid).collection("newbudget").document(budgetName).collection("history").snapshots();
+  }
 
 }

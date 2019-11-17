@@ -105,7 +105,7 @@ class _AccountDetailsState extends State<AccountDetails> {
         ),
         SizedBox(height: 20.0),
         Container(
-          height: MediaQuery.of(context).size.height ,
+          height: MediaQuery.of(context).size.height + 5*numBudgets,
           decoration: BoxDecoration(
             color: Colors.white,
             borderRadius: BorderRadius.only(
@@ -113,12 +113,13 @@ class _AccountDetailsState extends State<AccountDetails> {
             ),
           ),
           child: Column(
+
             children: <Widget>[
               Padding(
                   padding: EdgeInsets.only(top: 25.0),
                   child: Container(
-                      height: MediaQuery.of(context).size.height - 475.0,
-                      child: ListView(children: [
+                      height: MediaQuery.of(context).size.height - 375.0,
+                      child: Column(children: [
                         AccountDetailsCard(
                             imgPath: 'assets/images/account.png',
                             balance: normalAccountBalance,
@@ -173,6 +174,7 @@ class _AccountDetailsState extends State<AccountDetails> {
                 height: 15.0,
               ),
               decideBudgetWidget(createNewBudget),
+
             ],
           ),
         ),
@@ -205,6 +207,7 @@ class _AccountDetailsState extends State<AccountDetails> {
           ListBudgetsHomeScreen(
             user: widget.user,
           ),
+
           SizedBox(
             height: 20.0,
           ),
@@ -260,7 +263,6 @@ class _AccountDetailsState extends State<AccountDetails> {
       repeatPeriod = "Every Years";
     }
 
-    print("COME HERE BEFOERE ERROR******************" + name + "-");
     dynamic result = FireStoreService(uid: widget.user.uid).createNewBudget(name, budgetLimit, pickedTime, decideDropDownSelectNewBudget(repeatPeriod, startDate), numBudgets);
   }
 

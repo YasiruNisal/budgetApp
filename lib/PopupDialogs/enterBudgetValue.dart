@@ -49,11 +49,11 @@ class _EnterBudgetValueState extends State<EnterBudgetValue> {
       ),
       content: SingleChildScrollView(
         child: Container(
-          height: 250.0,
+          height: 270.0,
           child: Column(
             children: <Widget>[
               Text(
-                'Balance \$ ' + widget.currentBalance.toString(),
+                'Balance \$ ' + widget.currentBalance.toStringAsFixed(2) ,
                 style: TextStyle(fontSize: 20.0, letterSpacing: 1.2),
               ),
               SizedBox(
@@ -93,7 +93,7 @@ class _EnterBudgetValueState extends State<EnterBudgetValue> {
                 ),
               ),
               SizedBox(
-                height: 20.0,
+                height: 25.0,
               ),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,

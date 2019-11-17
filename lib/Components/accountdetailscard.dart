@@ -25,22 +25,35 @@ class AccountDetailsCard extends StatelessWidget {
               children: <Widget>[
                 Container(
                     child: Row(children: [
-                  Padding(
-                    padding: const EdgeInsets.all(12.0),
-                    child: Hero(tag: imgPath, child: Image(image: AssetImage(imgPath), fit: BoxFit.cover, height: 55.0, width: 55.0)),
-                  ),
-                  SizedBox(width: 10.0),
-                  Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                    Text(currency + ' ' + formatMoney(balance),
-                        style: TextStyle(
-//                                        fontFamily: 'Montserrat',
-                            fontSize: 25.0,
-                            fontWeight: FontWeight.bold)),
-                    Text(accountName,
-                        style: TextStyle(
-//                                        fontFamily: 'Montserrat',
-                            fontSize: 15.0,
-                            color: Colors.grey))
+                        Padding(
+                          padding: const EdgeInsets.all(12.0),
+                          child: Hero(tag: imgPath, child: Image(image: AssetImage(imgPath), fit: BoxFit.cover, height: 55.0, width: 55.0)),
+                        ),
+                        SizedBox(width: 10.0),
+                        Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                          Container(
+                            alignment: Alignment.topLeft,
+                            width: 190,
+                            child: Text(currency + ' ' + formatMoney(balance),
+                                style: TextStyle(
+      //                                        fontFamily: 'Montserrat',
+                                    fontSize: 25.0,
+                                    fontWeight: FontWeight.bold)),
+                          ),
+                          Container(
+                            alignment: Alignment.topLeft,
+                            width: 190,
+                            child: Text(
+                              accountName,
+                              style: TextStyle(
+      //                                        fontFamily: 'Montserrat',
+                                  fontSize: 18.0,
+                                  color: Colors.grey),
+                              textAlign: TextAlign.left,
+                            ),
+                          ),
                   ])
                 ])),
                 IconButton(

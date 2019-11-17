@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:simplybudget/config/colors.dart';
 
@@ -21,8 +22,8 @@ class SelectExpenseCategory extends StatelessWidget {
         child: GridView.count(
             crossAxisCount: 3,
             childAspectRatio: 0.8,
-            padding: const EdgeInsets.all(2.0),
-            mainAxisSpacing: 2.0,
+            padding: const EdgeInsets.all(0.0),
+            mainAxisSpacing: 6.0,
             crossAxisSpacing: 2.0,
             children: <Expense>[
               Expense(text: 'coffee', color: MyColors.ExpenseCategory1),
@@ -110,7 +111,8 @@ class SelectExpenseCategory extends StatelessWidget {
             Text(
               text[0].toUpperCase() + text.substring(1),
               textAlign: TextAlign.center,
-              style: TextStyle(fontSize: 12),
+              overflow: TextOverflow.ellipsis,
+              style: TextStyle(fontSize: 12,),
             ),
           ],
         ),
