@@ -12,6 +12,8 @@ import 'package:simplybudget/PopupDialogs/enterBudgetValue.dart';
 import 'package:simplybudget/PopupDialogs/selectIncomeExpense.dart';
 import 'package:simplybudget/PopupDialogs/signout.dart';
 
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+
 class AccountDetails extends StatefulWidget {
   final FirebaseUser user;
 
@@ -105,7 +107,7 @@ class _AccountDetailsState extends State<AccountDetails> {
         ),
         SizedBox(height: 20.0),
         Container(
-          height: MediaQuery.of(context).size.height + 5*numBudgets,
+//          height: MediaQuery.of(context).size.height + 5*numBudgets,
           decoration: BoxDecoration(
             color: Colors.white,
             borderRadius: BorderRadius.only(
@@ -118,9 +120,9 @@ class _AccountDetailsState extends State<AccountDetails> {
               Padding(
                   padding: EdgeInsets.only(top: 25.0),
                   child: Container(
-                      height: MediaQuery.of(context).size.height - 375.0,
+//                      height: ScreenUtil().setHeight(400),//MediaQuery.of(context).size.height -
                       child: Column(children: [
-                        AccountDetailsCard(
+                          AccountDetailsCard(
                             imgPath: 'assets/images/account.png',
                             balance: normalAccountBalance,
                             accountName: normalAccountName,
@@ -152,6 +154,7 @@ class _AccountDetailsState extends State<AccountDetails> {
                                     return SelectIncomeExpense(setIncomeExpense: setIncomeExpense);
                                   });
                             }),
+                        SizedBox(height: 20.0,),
                       ]))),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -174,6 +177,7 @@ class _AccountDetailsState extends State<AccountDetails> {
                 height: 15.0,
               ),
               decideBudgetWidget(createNewBudget),
+              SizedBox(height: 20.0,)
 
             ],
           ),

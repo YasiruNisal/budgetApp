@@ -115,7 +115,7 @@ class FireStoreService {
   }
 
   Stream<QuerySnapshot>  budgetHistoryList(String budgetName) {
-    return userCollection.document(uid).collection("newbudget").document(budgetName).collection("history").snapshots();
+    return userCollection.document(uid).collection("newbudget").document(budgetName).collection("history").orderBy("timestamp").snapshots();
   }
 
 }

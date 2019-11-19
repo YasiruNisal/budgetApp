@@ -71,7 +71,41 @@ class _BudgetDetailsState extends State<BudgetDetails> {
         ),
         body: ListView(children: [
           Stack(children: [
-            Container(height: MediaQuery.of(context).size.height + (9*30), width: MediaQuery.of(context).size.width, color: Colors.transparent),
+            Container(height: MediaQuery.of(context).size.height, //---------------------------------------------------------------------------------------------------
+                width: MediaQuery.of(context).size.width,
+                color: Colors.transparent),
+            Positioned(
+              top: 10.0,
+              left: 25.0,
+              right: 25.0,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: <Widget>[
+                      Container(
+                        alignment: Alignment.topLeft,
+                        width: 150,
+                        child: Padding(
+                          padding: const EdgeInsets.only(left: 5.0, right: 5.0),
+                          child: Text("\$ " + widget.selectedBudgetLimit.toStringAsFixed(2) + " Limit", overflow: TextOverflow.ellipsis, style: TextStyle(fontSize: 20.0, color: MyColors.WHITE)),
+                        ),
+                      ),
+                      Container(height: 25.0, color: MyColors.WHITE, width: 1.0),
+                      Container(
+                        alignment: Alignment.topLeft,
+                        width: 150,
+                        child: Padding(
+                          padding: const EdgeInsets.only(left: 5.0, right: 5.0),
+                          child: Text("\$ " + widget.selectedBudgetSpent.toStringAsFixed(2) + " Spent", overflow: TextOverflow.ellipsis, style: TextStyle(fontSize: 20.0, color: MyColors.WHITE)),
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
             Positioned(
                 top: 75.0,
                 child: Container(
@@ -81,7 +115,7 @@ class _BudgetDetailsState extends State<BudgetDetails> {
                           topRight: Radius.circular(45.0),
                         ),
                         color: Colors.white),
-                    height: MediaQuery.of(context).size.height + 200,
+                    height: MediaQuery.of(context).size.height, //-------------------------------------------------------------------------------------------------
                     width: MediaQuery.of(context).size.width)),
             Positioned(
                 top: 30.0,
@@ -108,34 +142,6 @@ class _BudgetDetailsState extends State<BudgetDetails> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
-                  Text("Budget Info",
-                      style: TextStyle(
-                        fontSize: 22.0,
-                      )),
-                  SizedBox(height: 20.0),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: <Widget>[
-                      Container(
-                        alignment: Alignment.topLeft,
-                        width: 150,
-                        child: Padding(
-                          padding: const EdgeInsets.only(left: 5.0, right: 5.0),
-                          child: Text("\$ " + widget.selectedBudgetLimit.toStringAsFixed(2) + " Limit", style: TextStyle(fontSize: 20.0, color: Colors.grey)),
-                        ),
-                      ),
-                      Container(height: 25.0, color: Colors.grey, width: 1.0),
-                      Container(
-                        alignment: Alignment.topLeft,
-                        width: 150,
-                        child: Padding(
-                          padding: const EdgeInsets.only(left: 5.0, right: 5.0),
-                          child: Text("\$ " + widget.selectedBudgetSpent.toStringAsFixed(2) + " Spent", style: TextStyle(fontSize: 20.0, color: Colors.grey)),
-                        ),
-                      ),
-                    ],
-                  ),
-                  SizedBox(height: 30.0),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: <Widget>[
@@ -155,6 +161,7 @@ class _BudgetDetailsState extends State<BudgetDetails> {
                   ),
                   SizedBox(height: 20.0),
                   checkIfEmpty(),
+
                 ],
               ),
             ),
@@ -176,10 +183,10 @@ class _BudgetDetailsState extends State<BudgetDetails> {
               Padding(
                 padding: const EdgeInsets.only(bottom: 5.0),
                 child: Container(
-                  height: budgetHistoryList.length*40.toDouble(),
+                  height: MediaQuery.of(context).size.height - (MediaQuery.of(context).size.height/2),//-----------------------------------------------------------------------------------------------------
                   child: SideHeaderListView(
                     itemCount: budgetHistoryList.length,
-                    padding: new EdgeInsets.all(10.0),
+                    padding: new EdgeInsets.all(5.0),
                     itemExtend: 55.0,
                     headerBuilder: (BuildContext context, int index) {
                       return new SizedBox(
@@ -199,6 +206,7 @@ class _BudgetDetailsState extends State<BudgetDetails> {
                   ),
                 ),
               ),
+//              SizedBox(height: 20.0),
             ]));
 
       }
