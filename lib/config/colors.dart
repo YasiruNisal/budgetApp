@@ -4,7 +4,7 @@ class MyColors
 {
   static const MainFade1 = Color(0xFF7A9BEE);
   static const MainFade2 = Color(0xFF7A9BEE);
-  static const MainFade3 = Color(0xFF7A9BEE);
+  static const MainFade3 = Color(0xFF3700B3);
   static const TransparentBack = Color(0xAAB3AEEE);
   static const BackgroundColor = Color(0xffE5E5E5);
   static const TextMainColor = Color(0xff646464);
@@ -17,6 +17,7 @@ class MyColors
   static const BLACK = Color(0xff000000);
   static const GREEN = Color(0xff5ED0BE);
   static const RED = Color(0xffF96D76);
+  static const GREY = Color(0xff757678);
 
   static const ExpenseCategory1 = Color(0xffb0bec5);
   static const ExpenseCategory2 = Color(0xffbcaaa4);

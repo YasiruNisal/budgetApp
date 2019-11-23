@@ -22,15 +22,11 @@ class BudgetDetails extends StatefulWidget {
 
 class _BudgetDetailsState extends State<BudgetDetails> {
   List<DocumentSnapshot> budgetHistoryList;
-
+  int currentPosition = 0;
   @override
   void initState() {
     super.initState();
-//    FireStoreService(uid: widget.user.uid).budgetList.listen((querySnapshot) {
-//      setState(() {
-//        budgetList = querySnapshot.documents;
-//      });
-//    });
+
     FireStoreService(uid: widget.user.uid).budgetHistoryList(widget.selectedBudget.toLowerCase()).listen((querySnapshot) {
       setState(() {
         budgetHistoryList = querySnapshot.documents;
@@ -48,39 +44,44 @@ class _BudgetDetailsState extends State<BudgetDetails> {
     }
 
     return Scaffold(
-        backgroundColor: Color(0xFF7A9BEE),
-        appBar: AppBar(
-          leading: IconButton(
-            onPressed: () {
-              Navigator.of(context).pop();
-            },
-            icon: Icon(Icons.arrow_back_ios),
-            color: Colors.white,
-          ),
-          backgroundColor: Colors.transparent,
-          elevation: 0.0,
-          title: Text(widget.selectedBudget[0].toUpperCase() + widget.selectedBudget.substring(1), style: TextStyle(fontSize: 25.0, color: Colors.white)),
-          centerTitle: true,
-          actions: <Widget>[
-            IconButton(
-              icon: Icon(Icons.delete),
-              onPressed: () {},
+        body: NestedScrollView(
+      headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
+        return <Widget>[
+          SliverAppBar(
+            leading: IconButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              icon: Icon(Icons.arrow_back_ios),
               color: Colors.white,
-            )
-          ],
-        ),
-        body: ListView(children: [
-          Stack(children: [
-            Container(height: MediaQuery.of(context).size.height, //---------------------------------------------------------------------------------------------------
-                width: MediaQuery.of(context).size.width,
-                color: Colors.transparent),
-            Positioned(
-              top: 10.0,
-              left: 25.0,
-              right: 25.0,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: <Widget>[
+            ),
+            backgroundColor: MyColors.MainFade3,
+            expandedHeight: 330.0,
+            floating: true,
+            pinned: true,
+            actions: <Widget>[
+              IconButton(
+                icon: Icon(Icons.delete),
+                onPressed: () {},
+                color: MyColors.WHITE,
+              ),
+              IconButton(
+                icon: Icon(Icons.edit),
+                onPressed: () {},
+                color: MyColors.WHITE,
+              ),
+              IconButton(
+                icon: Icon(Icons.arrow_drop_down),
+                onPressed: () {},
+                color: MyColors.WHITE,
+              )
+            ],
+            flexibleSpace: FlexibleSpaceBar(
+              centerTitle: true,
+              title: Text(widget.selectedBudget[0].toUpperCase() + widget.selectedBudget.substring(1), style: TextStyle(fontSize: 18.0, color: MyColors.WHITE)),
+              background: Padding(
+                padding: const EdgeInsets.only(top: 80.0, left: 10, right: 10.0),
+                child: Column(children: <Widget>[
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: <Widget>[
@@ -92,7 +93,7 @@ class _BudgetDetailsState extends State<BudgetDetails> {
                           child: Text("\$ " + widget.selectedBudgetLimit.toStringAsFixed(2) + " Limit", overflow: TextOverflow.ellipsis, style: TextStyle(fontSize: 20.0, color: MyColors.WHITE)),
                         ),
                       ),
-                      Container(height: 25.0, color: MyColors.WHITE, width: 1.0),
+                      Container(height: 25.0, color: MyColors.GREY, width: 1.0),
                       Container(
                         alignment: Alignment.topLeft,
                         width: 150,
@@ -103,127 +104,129 @@ class _BudgetDetailsState extends State<BudgetDetails> {
                       ),
                     ],
                   ),
-                ],
-              ),
-            ),
-            Positioned(
-                top: 75.0,
-                child: Container(
-                    decoration: BoxDecoration(
-                        borderRadius: BorderRadius.only(
-                          topLeft: Radius.circular(45.0),
-                          topRight: Radius.circular(45.0),
-                        ),
-                        color: Colors.white),
-                    height: MediaQuery.of(context).size.height, //-------------------------------------------------------------------------------------------------
-                    width: MediaQuery.of(context).size.width)),
-            Positioned(
-                top: 30.0,
-                left: (MediaQuery.of(context).size.width / 2) - 100.0,
-                child: Hero(
-                    tag: 'donut pie chart',
-                    child: Container(
-                        child: CircularPercentIndicator(
-                          radius: 170.0,
-                          lineWidth: 30.0,
-                          percent: percentage,
-                          center: new Text(
-                            (percentage * 100).toStringAsFixed(1) + " %",
-                            style: TextStyle(fontSize: 25.0, fontWeight: FontWeight.bold),
-                          ),
-                          progressColor: donutColor,
-                        ),
-                        height: 200.0,
-                        width: 200.0))),
-            Positioned(
-              top: 250.0,
-              left: 25.0,
-              right: 25.0,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: <Widget>[
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: <Widget>[
-                      Text('Budget',
-                          style: TextStyle(
-//                        fontFamily: 'Montserrat',
-                              color: MyColors.TextMainColor,
-                              fontSize: 20.0)),
-                      SizedBox(width: 5.0),
-                      Text('Spendings',
-                          style: TextStyle(
-//                        fontFamily: 'Montserrat',
-                              fontWeight: FontWeight.bold,
-                              color: MyColors.TextMainColor,
-                              fontSize: 20.0))
-                    ],
+                  CircularPercentIndicator(
+                    radius: 170.0,
+                    lineWidth: 20.0,
+                    percent: percentage,
+                    center: new Text(
+                      (percentage * 100).toStringAsFixed(1) + " %",
+                      style: TextStyle(fontSize: 25.0, fontWeight: FontWeight.bold, color: MyColors.WHITE),
+                    ),
+                    progressColor: donutColor,
                   ),
-                  SizedBox(height: 20.0),
-                  checkIfEmpty(),
-
-                ],
+                ]),
               ),
             ),
-          ]),
-        ]));
+          ),
+        ];
+      },
+      body: checkIfEmpty(),
+    ));
+  }
+
+  Widget _itemBuilder(BuildContext context, int index) {
+    return budgetDetails(budgetHistoryList[index].data["expensecategory"], budgetHistoryList[index].data["amount"]);
+  }
+
+  Widget _headerBuilder(BuildContext context, int index) {
+    return new SizedBox(
+        width: 50.0,
+        child: dayFromUnix(budgetHistoryList[index].data["timestamp"]
+//                        style: Theme.of(context).textTheme.headline,
+            ));
+  }
+
+  bool _shouldShowHeader(int position) {
+    if (position < 0) {
+      return true;
+    }
+    if (position == 0 && currentPosition < 0) {
+      return true;
+    }
+
+    if (position != 0 && position != currentPosition && !_hasSameHeader(position, position - 1)) {
+      return true;
+    }
+
+    if (position != budgetHistoryList.length - 1 && !_hasSameHeader(position, position + 1) && position == currentPosition) {
+      return true;
+    }
+    return false;
+  }
+
+  bool _hasSameHeader(int a, int b) {
+//                          return names[a].substring(0, 1) == names[b].substring(0, 1);
+    return DateTime.fromMillisecondsSinceEpoch(budgetHistoryList[a].data["timestamp"]).day.toString() == DateTime.fromMillisecondsSinceEpoch(budgetHistoryList[b].data["timestamp"]).day.toString();
   }
 
   Widget checkIfEmpty() {
-
-    if(budgetHistoryList == null){
-      return Loading(size:20.0);
-    }
-    else{
+    if (budgetHistoryList == null) {
+      return Loading(size: 20.0);
+    } else {
       if (budgetHistoryList.length == 0) {
-        return Text("Seems to be empty", textAlign: TextAlign.center,);
+        return Text(
+          "Seems to be empty",
+          textAlign: TextAlign.center,
+        );
       } else {
-        return (
-            Flex(direction: Axis.vertical, children: [
-              Padding(
-                padding: const EdgeInsets.only(bottom: 5.0),
-                child: Container(
-                  height: MediaQuery.of(context).size.height - (MediaQuery.of(context).size.height/2),//-----------------------------------------------------------------------------------------------------
-                  child: SideHeaderListView(
-                    itemCount: budgetHistoryList.length,
-                    padding: new EdgeInsets.all(5.0),
-                    itemExtend: 55.0,
-                    headerBuilder: (BuildContext context, int index) {
-                      return new SizedBox(
-                          width: 50.0,
-                          child: dayFromUnix(budgetHistoryList[index].data["timestamp"]
-//                        style: Theme.of(context).textTheme.headline,
-                          ));
-                    },
-                    itemBuilder: (BuildContext context, int index) {
-                      return budgetDetails(budgetHistoryList[index].data["expensecategory"], budgetHistoryList[index].data["amount"]);
-                    },
-                    hasSameHeader: (int a, int b) {
-//                          return names[a].substring(0, 1) == names[b].substring(0, 1);
-                      return DateTime.fromMillisecondsSinceEpoch(budgetHistoryList[a].data["timestamp"]).day.toString() ==
-                          DateTime.fromMillisecondsSinceEpoch(budgetHistoryList[b].data["timestamp"]).day.toString();
-                    },
+        return Padding(
+          padding: const EdgeInsets.only(top: 15.0, left: 5.0, right: 5.0),
+          child: Container(
+            color: MyColors.WHITE,
+            child: Stack(
+              children: <Widget>[
+                Positioned(
+                  child: new Opacity(
+                    opacity: _shouldShowHeader(currentPosition) ? 0.0 : 1.0,
+                    child: _headerBuilder(context, currentPosition >= 0 ? currentPosition : 0),
                   ),
+                  top: 0.0 + (5),
+                  left: 0.0 + (5),
                 ),
-              ),
-//              SizedBox(height: 20.0),
-            ]));
-
+                ListView.builder(
+                    padding: EdgeInsets.all(5.0),
+                    itemCount: budgetHistoryList.length,
+                    itemExtent: 55.0,
+                    itemBuilder: (BuildContext context, int index) {
+                      return new Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: <Widget>[
+                          new FittedBox(
+                            child: new Opacity(
+                              opacity: _shouldShowHeader(index) ? 1.0 : 0.0,
+                              child: _headerBuilder(context, index),
+                            ),
+                          ),
+                          new Expanded(child: _itemBuilder(context, index))
+                        ],
+                      );
+                    }),
+              ],
+            ),
+          ),
+        );
       }
     }
-
   }
 
-  Widget budgetDetails(String budgetName, double budgetSpent){
+  Widget budgetDetails(String budgetName, double budgetSpent) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: <Widget>[
-
-            Container( alignment: Alignment.topLeft,
-                width: 140,child: Text(budgetName[0].toUpperCase()+budgetName.substring(1), style: TextStyle(fontSize: 20.0, fontWeight: FontWeight.bold),)),
-            Container( alignment: Alignment.topLeft,
-                width: 100,child: Text("\$ " + budgetSpent.toStringAsFixed(2), style: TextStyle(fontSize: 18.0, color: MyColors.TextSecondColor),)),
-
+        Container(
+            alignment: Alignment.topLeft,
+            width: 140,
+            child: Text(
+              budgetName[0].toUpperCase() + budgetName.substring(1),
+              style: TextStyle(fontSize: 18.0, fontWeight: FontWeight.bold),
+            )),
+        Container(
+            alignment: Alignment.topLeft,
+            width: 100,
+            child: Text(
+              "\$ " + budgetSpent.toStringAsFixed(2),
+              style: TextStyle(fontSize: 18.0, color: MyColors.TextSecondColor),
+            )),
       ],
     );
   }

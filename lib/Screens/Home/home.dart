@@ -32,7 +32,7 @@ class _HomeState extends State<Home> {
 
     return SafeArea(
       child: Scaffold(
-          backgroundColor: Color(0xFF7A9BEE),
+          backgroundColor: Color(0xFF3700B3),
           body: AccountDetails(
             user: widget.user,
           )),

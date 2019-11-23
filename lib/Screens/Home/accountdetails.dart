@@ -3,6 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:simplybudget/Components/accountdetailscard.dart';
 import 'package:simplybudget/Components/listbudgetshome.dart';
 import 'package:simplybudget/PopupDialogs/createNewBudget.dart';
+import 'package:simplybudget/Screens/Home/walletdetails.dart';
 import 'package:simplybudget/Services/auth.dart';
 import 'package:simplybudget/PopupDialogs/selectExpenseCategory.dart';
 import 'package:simplybudget/PopupDialogs/selectIncomeCategory.dart';
@@ -127,6 +128,7 @@ class _AccountDetailsState extends State<AccountDetails> {
                             balance: normalAccountBalance,
                             accountName: normalAccountName,
                             currency: currency,
+                              onTap : normalAccountOnClick,
                             onPlusClick: () {
                               setState(() {
                                 whichAccount = 1;
@@ -154,7 +156,8 @@ class _AccountDetailsState extends State<AccountDetails> {
                                     return SelectIncomeExpense(setIncomeExpense: setIncomeExpense);
                                   });
                             }),
-                        SizedBox(height: 20.0,),
+
+                        SizedBox(height: 45.0,),
                       ]))),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -306,6 +309,13 @@ class _AccountDetailsState extends State<AccountDetails> {
         return unixTime.add(Duration(days: 365)).millisecondsSinceEpoch;
         break;
     }
+  }
+
+  void normalAccountOnClick()
+  {
+    Navigator.of(context).push(MaterialPageRoute(
+        builder: (context) => WalletDetails(user: widget.user, selectAccountName: normalAccountName, selectAccountValue: normalAccountBalance)
+    ));
   }
 
 //--------------------------------------------------------//
