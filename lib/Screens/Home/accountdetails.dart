@@ -248,7 +248,7 @@ class _AccountDetailsState extends State<AccountDetails> {
         });
   }
 
-  void saveNewBudget(String budgetName, double maxLimit, DateTime unixTime, String repeatPeriod) {
+  void saveNewBudget(String budgetName, double maxLimit, DateTime unixTime, int repeatPeriod) {
     DateTime startDate = unixTime;
     if (unixTime == null) {
       startDate = DateTime.now();
@@ -266,50 +266,13 @@ class _AccountDetailsState extends State<AccountDetails> {
       name = "My Budget";
     }
 
-    if(repeatPeriod == null){
-      repeatPeriod = "Every Years";
+    if(repeatPeriod == null){//'Everyday', '2 Days', 'Every Week', 'Every 2 Week', 'Every 4 Week', 'Monthly', 'Every 2 Months', 'Every 3 Months', 'Every 6 Months', 'Every Year'
+      repeatPeriod = 10;
     }
 
-    dynamic result = FireStoreService(uid: widget.user.uid).createNewBudget(name, budgetLimit, pickedTime, decideDropDownSelectNewBudget(repeatPeriod, startDate), numBudgets);
+    dynamic result = FireStoreService(uid: widget.user.uid).createNewBudget(name, budgetLimit, pickedTime, repeatPeriod, numBudgets);
   }
 
-  int decideDropDownSelectNewBudget(String selected, DateTime unixTime) {
-    switch (selected) {
-      case 'Everyday':
-        return unixTime.add(Duration(days: 1)).millisecondsSinceEpoch;
-        break;
-      case '2 Days':
-        return unixTime.add(Duration(days: 2)).millisecondsSinceEpoch;
-        break;
-      case 'Every Week':
-        return unixTime.add(Duration(days: 7)).millisecondsSinceEpoch;
-        break;
-      case 'Every 2 Week':
-        return unixTime.add(Duration(days: 14)).millisecondsSinceEpoch;
-        break;
-      case 'Every 4 Week':
-        return unixTime.add(Duration(days: 28)).millisecondsSinceEpoch;
-        break;
-      case 'Monthly':
-        return unixTime.add(Duration(days: 30)).millisecondsSinceEpoch;
-        break;
-      case 'Every 2 Months':
-        return unixTime.add(Duration(days: 61)).millisecondsSinceEpoch;
-        break;
-      case 'Every 3 Months':
-        return unixTime.add(Duration(days: 92)).millisecondsSinceEpoch;
-        break;
-      case 'Every 6 Months':
-        return unixTime.add(Duration(days: 190)).millisecondsSinceEpoch;
-        break;
-      case 'Every Years':
-        return unixTime.add(Duration(days: 365)).millisecondsSinceEpoch;
-        break;
-      default:
-        return unixTime.add(Duration(days: 365)).millisecondsSinceEpoch;
-        break;
-    }
-  }
 
   void normalAccountOnClick()
   {

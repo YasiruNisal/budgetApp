@@ -52,17 +52,19 @@ class _ListBudgetsHomeScreenState extends State<ListBudgetsHomeScreen> {
                   budgetName: item.data["budgetname"],
                   budgetLimit: item.data["budgetlimit"].toDouble(),
                   budgetSpent: item.data["budgetspent"].toDouble(),
+                  budgetStartDate: item.data["budgetstartdate"],
+                  budgetRepeat: item.data["budgetrepeat"],
                   onPlusClick: budgetPlusOnClick,
                   onCardTap : openBudgetDetailPage,
                 ))
             .toList());
   }
 
-  void openBudgetDetailPage(String budgetName, double budgetLimit, double budgetSpent){
+  void openBudgetDetailPage(String budgetName, double budgetLimit, double budgetSpent, int budgetStartDate, int budgetRepeat){
 
         Navigator.push(
       context,
-      MaterialPageRoute(builder: (context) => BudgetDetails(user: widget.user, selectedBudget: budgetName, selectedBudgetLimit: budgetLimit, selectedBudgetSpent: budgetSpent,)),
+      MaterialPageRoute(builder: (context) => BudgetDetails(user: widget.user, selectedBudget: budgetName, selectedBudgetLimit: budgetLimit, selectedBudgetSpent: budgetSpent, selectBudgetStartDate: budgetStartDate, selectBudgetRepeat: budgetRepeat,)),
     );
   }
 

@@ -4,7 +4,7 @@ import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
 import 'package:intl/intl.dart';
 
 class CreateNewBudget extends StatefulWidget {
-  final void Function(String, double, DateTime, String) newBudgetSet;
+  final void Function(String, double, DateTime, int) newBudgetSet;
 
   CreateNewBudget({this.newBudgetSet});
 
@@ -26,6 +26,8 @@ class _CreateNewBudgetState extends State<CreateNewBudget> {
   DateTime unixPickedStartDate;
 
   String pickedRepeat = "Repeat Period";
+
+  int pickedRepeatFromArray = 10;
 
   int unixRepeatTime = 0;
 
@@ -88,7 +90,8 @@ class _CreateNewBudgetState extends State<CreateNewBudget> {
                           }, onConfirm: (date) {
                             print('confirm' + (DateTime.parse(date.toString()).millisecondsSinceEpoch).toString());
                             setState(() {
-                              unixPickedStartDate = date;//DateTime.parse(date.toString()).millisecondsSinceEpoch;
+
+                              unixPickedStartDate = DateTime(date.year, date.month, date.day );//DateTime.parse(date.toString()).millisecondsSinceEpoch;
                               pickedStartDate = DateFormat("yyyy-MM-dd hh:mm:ss").format(date);
                             });
                           }, currentTime: DateTime.now(), locale: LocaleType.en);
@@ -102,7 +105,7 @@ class _CreateNewBudgetState extends State<CreateNewBudget> {
                     ),
                     DropdownButton<String>(
                       hint: Text(pickedRepeat),
-                      items: <String>['Everyday', '2 Days', 'Every Week', 'Every 2 Week', 'Every 4 Week', 'Monthly', 'Every 2 Months', 'Every 3 Months', 'Every 6 Months', 'Every Years']
+                      items: repeatPeriods
                           .map((String value) {
                         return new DropdownMenuItem<String>(
                           value: value,
@@ -115,6 +118,7 @@ class _CreateNewBudgetState extends State<CreateNewBudget> {
                       onChanged: (selected) {
                         setState(() {
                           pickedRepeat = selected;
+                          pickedRepeatFromArray = repeatPeriods.indexOf(selected);
                         });
                       },
                     ),
@@ -129,7 +133,7 @@ class _CreateNewBudgetState extends State<CreateNewBudget> {
                       onPressed: () {
                         _dismissDialog(context);
 //                        widget.enterBudgetValue( double.tryParse(enterValController.text));
-                        widget.newBudgetSet(enterNameController.text, double.tryParse(enterValController.text), unixPickedStartDate, pickedRepeat);
+                        widget.newBudgetSet(enterNameController.text, double.tryParse(enterValController.text), unixPickedStartDate, pickedRepeatFromArray);
                       },
                       child: Text(
                         'Create',
@@ -143,6 +147,10 @@ class _CreateNewBudgetState extends State<CreateNewBudget> {
           ),
         ));
   }
+
+  var repeatPeriods = <String>[
+    'Everyday', '2 Days', 'Every Week', 'Every 2 Week', 'Every 4 Week', 'Monthly', 'Every 2 Months', 'Every 3 Months', 'Every 6 Months', 'Every Year'
+  ];
 
   _dismissDialog(context) {
     Navigator.pop(context);

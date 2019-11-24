@@ -37,50 +37,66 @@ class _WalletDetailsState extends State<WalletDetails> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        body: NestedScrollView(
-      headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
-        return <Widget>[
-          SliverAppBar(
-            leading: IconButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-              icon: Icon(Icons.arrow_back_ios),
-              color: Colors.white,
-            ),
-            backgroundColor: MyColors.MainFade3,
-            expandedHeight: 180.0,
-            floating: true,
-            pinned: true,
-            actions: <Widget>[
-              IconButton(
-                icon: Icon(Icons.edit),
-                onPressed: () {},
-                color: MyColors.WHITE,
+        body: DefaultTabController(
+      length: 2,
+      child: NestedScrollView(
+        headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
+          return <Widget>[
+            SliverAppBar(
+              leading: IconButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+                icon: Icon(Icons.arrow_back_ios),
+                color: Colors.white,
               ),
-              IconButton(
-                icon: Icon(Icons.arrow_drop_down),
-                onPressed: () {},
-                color: MyColors.WHITE,
-              )
-            ],
-            flexibleSpace: FlexibleSpaceBar(
-              centerTitle: true,
-              title: Text(widget.selectAccountName[0].toUpperCase() + widget.selectAccountName.substring(1), style: TextStyle(fontSize: 15.0, color: MyColors.WHITE)),
-              background: Padding(
-                padding: const EdgeInsets.only(top: 30.0, left: 10, right: 10.0),
-                child: Center(
-                  child: Text(
-                    '\$ ' + formatMoney(widget.selectAccountValue),
-                    style: TextStyle(fontSize: 45.0, color: MyColors.WHITE, fontWeight: FontWeight.w200),
+              backgroundColor: MyColors.MainFade3,
+              expandedHeight: 180.0,
+              floating: true,
+              pinned: true,
+              actions: <Widget>[
+                IconButton(
+                  icon: Icon(Icons.edit),
+                  onPressed: () {},
+                  color: MyColors.WHITE,
+                ),
+                IconButton(
+                  icon: Icon(Icons.arrow_drop_down),
+                  onPressed: () {},
+                  color: MyColors.WHITE,
+                )
+              ],
+              flexibleSpace: FlexibleSpaceBar(
+                centerTitle: true,
+                title: Text(widget.selectAccountName[0].toUpperCase() + widget.selectAccountName.substring(1), style: TextStyle(fontSize: 15.0, color: MyColors.WHITE)),
+                background: Padding(
+                  padding: const EdgeInsets.only(top: 30.0, left: 10, right: 10.0),
+                  child: Center(
+                    child: Text(
+                      '\$ ' + formatMoney(widget.selectAccountValue),
+                      style: TextStyle(fontSize: 45.0, color: MyColors.WHITE, fontWeight: FontWeight.w200),
+                    ),
                   ),
                 ),
               ),
             ),
-          ),
-        ];
-      },
-      body: checkIfEmpty(),
+            SliverPersistentHeader(
+              delegate: _SliverAppBarDelegate(
+                TabBar(
+                  labelColor: Colors.black87,
+                  unselectedLabelColor: Colors.grey,
+                  tabs: [
+                    Tab(icon: Icon(Icons.info), text: "Tab 1"),
+                    Tab(icon: Icon(Icons.lightbulb_outline), text: "Tab 2"),
+                  ],
+                ),
+              ),
+              pinned: true,
+            ),
+          ];
+        },
+        body: checkIfEmpty(),
+      ),
     ));
   }
 
@@ -191,7 +207,10 @@ class _WalletDetailsState extends State<WalletDetails> {
             width: 100,
             child: Text(
               "\$ " + budgetSpent.toStringAsFixed(2),
-              style: TextStyle(fontSize: 18.0, color:amountColor,),
+              style: TextStyle(
+                fontSize: 18.0,
+                color: amountColor,
+              ),
             )),
       ],
     );
@@ -260,5 +279,29 @@ class _WalletDetailsState extends State<WalletDetails> {
   String formatMoney(double val) {
     NumberFormat format = NumberFormat('#,###,###.##');
     return format.format(val).toString();
+  }
+}
+
+class _SliverAppBarDelegate extends SliverPersistentHeaderDelegate {
+  _SliverAppBarDelegate(this._tabBar);
+
+  final TabBar _tabBar;
+
+  @override
+  double get minExtent => _tabBar.preferredSize.height;
+
+  @override
+  double get maxExtent => _tabBar.preferredSize.height;
+
+  @override
+  Widget build(BuildContext context, double shrinkOffset, bool overlapsContent) {
+    return new Container(
+      child: _tabBar,
+    );
+  }
+
+  @override
+  bool shouldRebuild(_SliverAppBarDelegate oldDelegate) {
+    return false;
   }
 }

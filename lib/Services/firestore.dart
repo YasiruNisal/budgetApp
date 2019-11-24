@@ -114,8 +114,8 @@ class FireStoreService {
     return userCollection.document(uid).collection("newbudget").snapshots();
   }
 
-  Stream<QuerySnapshot>  budgetHistoryList(String budgetName) {
-    return userCollection.document(uid).collection("newbudget").document(budgetName).collection("history").orderBy("timestamp", descending: true).snapshots();
+  Stream<QuerySnapshot>  budgetHistoryList(String budgetName, int start, int end) {
+    return userCollection.document(uid).collection("newbudget").document(budgetName).collection("history").where("timestamp", isGreaterThan: start).where("timestamp", isLessThanOrEqualTo: end).orderBy("timestamp", descending: true).snapshots();
   }
 
   Stream<QuerySnapshot>  walletNormalAccountHistoryList() {
