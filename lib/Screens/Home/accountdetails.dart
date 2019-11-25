@@ -36,6 +36,7 @@ class _AccountDetailsState extends State<AccountDetails> {
   String savingAccountName = "Saving Account";
   double normalAccountBalance = 0;
   double savingAccountBalance = 0;
+  int accountCreated = 0;
   String currency = "\$";
   int numBudgets = 0;
 
@@ -50,6 +51,7 @@ class _AccountDetailsState extends State<AccountDetails> {
         savingAccountBalance = documentSnapshot.data["savingaccountbalance"].toDouble();
         currency = documentSnapshot.data["currency"];
         numBudgets = documentSnapshot.data["numberbudgets"];
+        accountCreated = documentSnapshot.data["accountcreated"];
       });
     });
   }
@@ -277,7 +279,7 @@ class _AccountDetailsState extends State<AccountDetails> {
   void normalAccountOnClick()
   {
     Navigator.of(context).push(MaterialPageRoute(
-        builder: (context) => WalletDetails(user: widget.user, selectAccountName: normalAccountName, selectAccountValue: normalAccountBalance)
+        builder: (context) => WalletDetails(user: widget.user, selectAccountName: normalAccountName, selectAccountValue: normalAccountBalance, accountCreated: accountCreated,)
     ));
   }
 

@@ -8,24 +8,35 @@ import 'package:simplybudget/Components/loading.dart';
 import 'package:simplybudget/Services/firestore.dart';
 import 'package:simplybudget/config/colors.dart';
 import 'package:side_header_list_view/side_header_list_view.dart';
+import 'package:jiffy/jiffy.dart';
 
 class WalletDetails extends StatefulWidget {
   final FirebaseUser user;
   final String selectAccountName;
   final double selectAccountValue;
+  final int accountCreated;
 
-  WalletDetails({this.user, this.selectAccountName, this.selectAccountValue});
+  WalletDetails({this.user, this.selectAccountName, this.selectAccountValue, this.accountCreated});
 
   @override
   _WalletDetailsState createState() => _WalletDetailsState();
 }
 
-class _WalletDetailsState extends State<WalletDetails> {
+class _WalletDetailsState extends State<WalletDetails> with TickerProviderStateMixin {
+  TabController _tabController;
   List<DocumentSnapshot> walletHistoryList;
   int currentPosition = 0;
+  List<String> tabStringList;
+  List<Map> startEndDates = List<Map>();
+  int initStartTime = 0;
+  int initEndTime = 0;
+
   @override
   void initState() {
     super.initState();
+    tabStringList = getTabList(widget.accountCreated);
+    _tabController = TabController(length: tabStringList.length, vsync: this, initialIndex: tabStringList.length - 1);
+    _tabController.addListener(_handleTabChange);
 
     FireStoreService(uid: widget.user.uid).walletNormalAccountHistoryList().listen((querySnapshot) {
       setState(() {
@@ -37,66 +48,80 @@ class _WalletDetailsState extends State<WalletDetails> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        body: DefaultTabController(
-      length: 2,
-      child: NestedScrollView(
-        headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
-          return <Widget>[
-            SliverAppBar(
-              leading: IconButton(
-                onPressed: () {
-                  Navigator.of(context).pop();
-                },
-                icon: Icon(Icons.arrow_back_ios),
-                color: Colors.white,
+        body: NestedScrollView(
+      headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
+        return <Widget>[
+          SliverAppBar(
+            leading: IconButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              icon: Icon(Icons.arrow_back_ios),
+              color: Colors.white,
+            ),
+            backgroundColor: MyColors.MainFade3,
+            expandedHeight: 180.0,
+            floating: true,
+            pinned: true,
+            actions: <Widget>[
+              IconButton(
+                icon: Icon(Icons.edit),
+                onPressed: () {},
+                color: MyColors.WHITE,
               ),
-              backgroundColor: MyColors.MainFade3,
-              expandedHeight: 180.0,
-              floating: true,
-              pinned: true,
-              actions: <Widget>[
-                IconButton(
-                  icon: Icon(Icons.edit),
-                  onPressed: () {},
-                  color: MyColors.WHITE,
-                ),
-                IconButton(
-                  icon: Icon(Icons.arrow_drop_down),
-                  onPressed: () {},
-                  color: MyColors.WHITE,
-                )
-              ],
-              flexibleSpace: FlexibleSpaceBar(
-                centerTitle: true,
-                title: Text(widget.selectAccountName[0].toUpperCase() + widget.selectAccountName.substring(1), style: TextStyle(fontSize: 15.0, color: MyColors.WHITE)),
-                background: Padding(
-                  padding: const EdgeInsets.only(top: 30.0, left: 10, right: 10.0),
-                  child: Center(
-                    child: Text(
-                      '\$ ' + formatMoney(widget.selectAccountValue),
-                      style: TextStyle(fontSize: 45.0, color: MyColors.WHITE, fontWeight: FontWeight.w200),
-                    ),
+              IconButton(
+                icon: Icon(Icons.arrow_drop_down),
+                onPressed: () {},
+                color: MyColors.WHITE,
+              )
+            ],
+            flexibleSpace: FlexibleSpaceBar(
+              centerTitle: true,
+              title: Text(widget.selectAccountName[0].toUpperCase() + widget.selectAccountName.substring(1), style: TextStyle(fontSize: 15.0, color: MyColors.WHITE)),
+              background: Padding(
+                padding: const EdgeInsets.only(top: 30.0, left: 10, right: 10.0),
+                child: Center(
+                  child: Text(
+                    '\$ ' + formatMoney(widget.selectAccountValue),
+                    style: TextStyle(fontSize: 45.0, color: MyColors.WHITE, fontWeight: FontWeight.w200),
                   ),
                 ),
               ),
             ),
-            SliverPersistentHeader(
-              delegate: _SliverAppBarDelegate(
-                TabBar(
-                  labelColor: Colors.black87,
-                  unselectedLabelColor: Colors.grey,
-                  tabs: [
-                    Tab(icon: Icon(Icons.info), text: "Tab 1"),
-                    Tab(icon: Icon(Icons.lightbulb_outline), text: "Tab 2"),
-                  ],
-                ),
+          ),
+          SliverPersistentHeader(
+            delegate: _SliverAppBarDelegate(
+              TabBar(
+                indicatorColor: MyColors.MainFade3,
+                controller: _tabController,
+                isScrollable: true,
+                labelColor: Colors.black87,
+                unselectedLabelColor: Colors.grey,
+                tabs: tabStringList
+                    .map((item) => Tab(
+                          child: Text(
+                            item,
+                            style: TextStyle(fontSize: 15),
+                          ),
+                        ))
+                    .toList(),
               ),
-              pinned: true,
             ),
-          ];
-        },
-        body: checkIfEmpty(),
-      ),
+            pinned: true,
+          ),
+        ];
+      },
+      body: TabBarView(
+          controller: _tabController,
+          children: tabStringList
+              .map(
+                (item) => Container(
+                  child: Center(
+                    child: checkIfEmpty(),
+                  ),
+                ),
+              )
+              .toList()),
     ));
   }
 
@@ -133,6 +158,49 @@ class _WalletDetailsState extends State<WalletDetails> {
   bool _hasSameHeader(int a, int b) {
 //                          return names[a].substring(0, 1) == names[b].substring(0, 1);
     return DateTime.fromMillisecondsSinceEpoch(walletHistoryList[a].data["timestamp"]).day.toString() == DateTime.fromMillisecondsSinceEpoch(walletHistoryList[b].data["timestamp"]).day.toString();
+  }
+
+  void _handleTabChange() {
+//    budgetHistoryList = null;
+    print("Calling tabbar handler " + _tabController.index.toString());
+//    FireStoreService(uid: widget.user.uid).budgetHistoryList(widget.selectedBudget.toLowerCase(), startEndDates[ _tabController.index]["start"], startEndDates[ _tabController.index]["end"] ).listen((querySnapshot) {
+//      setState(() {
+//        budgetHistoryList = querySnapshot.documents;
+//      });
+//    });
+  }
+
+  List<String> getTabList(int startDate) {
+    DateTime firstDayOfMonthAccount = DateTime(DateTime.fromMillisecondsSinceEpoch(startDate).year, DateTime.fromMillisecondsSinceEpoch(startDate).month ,0).add( Duration(days: 1));
+    DateTime lastDayOfThisMonth = DateTime( DateTime.now().year, DateTime.now().month + 1 ,0);
+
+    int today = DateTime.now().millisecondsSinceEpoch;
+
+    List<String> tabList = <String>[];
+    int addTime = firstDayOfMonthAccount.millisecondsSinceEpoch;
+    int prevTime = firstDayOfMonthAccount.millisecondsSinceEpoch;
+
+    while (addTime < lastDayOfThisMonth.millisecondsSinceEpoch) {
+      prevTime = addTime;
+
+      DateTime dt = DateTime(DateTime.fromMillisecondsSinceEpoch(addTime).year, DateTime.fromMillisecondsSinceEpoch(addTime).month, 0);
+      var jiffyTime = Jiffy(dt).add(months: 1);
+      addTime = jiffyTime.millisecondsSinceEpoch;
+
+      tabList.add(DateTime.fromMillisecondsSinceEpoch(prevTime).day.toString() +
+          "/" +
+          DateTime.fromMillisecondsSinceEpoch(prevTime).month.toString() +
+          " - " +
+          (DateTime.fromMillisecondsSinceEpoch(addTime).day ).toString() +
+          "/" +
+          DateTime.fromMillisecondsSinceEpoch(addTime).month.toString());
+      startEndDates.add({"start": prevTime, "end": addTime});
+    }
+
+    initStartTime = prevTime;
+    initEndTime = addTime;
+
+    return tabList;
   }
 
   Widget checkIfEmpty() {

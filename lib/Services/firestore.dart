@@ -7,9 +7,6 @@ class FireStoreService {
   final String uid;
   FireStoreService( {this.uid} );
 
-
-
-
   Future setInitialAccountValues(String name1, double value1, String name2, double value2) async
   {
     return await userCollection.document(uid).setData({
@@ -19,6 +16,7 @@ class FireStoreService {
       "savingaccountbalance": value2,
       "numberbudgets":0,
       "currency":"\$",
+      "accountcreated":DateTime.now(),
     });
   }
 
@@ -67,7 +65,6 @@ class FireStoreService {
 
     return await batch.commit();
   }
-
 
   Future createNewBudget(String budgetName, double budgetLimit, int budgetStartDate, int budgetRepeat, int numberBudgets) async
   {
