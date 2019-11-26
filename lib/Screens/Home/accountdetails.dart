@@ -118,49 +118,49 @@ class _AccountDetailsState extends State<AccountDetails> {
             ),
           ),
           child: Column(
-
             children: <Widget>[
               Padding(
                   padding: EdgeInsets.only(top: 25.0),
                   child: Container(
 //                      height: ScreenUtil().setHeight(400),//MediaQuery.of(context).size.height -
                       child: Column(children: [
-                          AccountDetailsCard(
-                            imgPath: 'assets/images/account.png',
-                            balance: normalAccountBalance,
-                            accountName: normalAccountName,
-                            currency: currency,
-                              onTap : normalAccountOnClick,
-                            onPlusClick: () {
-                              setState(() {
-                                whichAccount = 1;
+                    AccountDetailsCard(
+                        imgPath: 'assets/images/account.png',
+                        balance: normalAccountBalance,
+                        accountName: normalAccountName,
+                        currency: currency,
+                        onTap: normalAccountOnClick,
+                        onPlusClick: () {
+                          setState(() {
+                            whichAccount = 1;
+                          });
+
+                          showDialog(
+                              context: context,
+                              builder: (context) {
+                                return SelectIncomeExpense(setIncomeExpense: setIncomeExpense);
                               });
+                        }),
+                    AccountDetailsCard(
+                        imgPath: 'assets/images/savingaccount.png',
+                        balance: savingAccountBalance,
+                        accountName: savingAccountName,
+                        currency: currency,
+                        onPlusClick: () {
+                          setState(() {
+                            whichAccount = 2;
+                          });
 
-                              showDialog(
-                                  context: context,
-                                  builder: (context) {
-                                    return SelectIncomeExpense(setIncomeExpense: setIncomeExpense);
-                                  });
-                            }),
-                        AccountDetailsCard(
-                            imgPath: 'assets/images/savingaccount.png',
-                            balance: savingAccountBalance,
-                            accountName: savingAccountName,
-                            currency: currency,
-                            onPlusClick: () {
-                              setState(() {
-                                whichAccount = 2;
+                          showDialog(
+                              context: context,
+                              builder: (context) {
+                                return SelectIncomeExpense(setIncomeExpense: setIncomeExpense);
                               });
-
-                              showDialog(
-                                  context: context,
-                                  builder: (context) {
-                                    return SelectIncomeExpense(setIncomeExpense: setIncomeExpense);
-                                  });
-                            }),
-
-                        SizedBox(height: 45.0,),
-                      ]))),
+                        }),
+                    SizedBox(
+                      height: 45.0,
+                    ),
+                  ]))),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: <Widget>[
@@ -182,8 +182,9 @@ class _AccountDetailsState extends State<AccountDetails> {
                 height: 15.0,
               ),
               decideBudgetWidget(createNewBudget),
-              SizedBox(height: 20.0,)
-
+              SizedBox(
+                height: 20.0,
+              )
             ],
           ),
         ),
@@ -216,7 +217,6 @@ class _AccountDetailsState extends State<AccountDetails> {
           ListBudgetsHomeScreen(
             user: widget.user,
           ),
-
           SizedBox(
             height: 20.0,
           ),
@@ -268,19 +268,22 @@ class _AccountDetailsState extends State<AccountDetails> {
       name = "My Budget";
     }
 
-    if(repeatPeriod == null){//'Everyday', '2 Days', 'Every Week', 'Every 2 Week', 'Every 4 Week', 'Monthly', 'Every 2 Months', 'Every 3 Months', 'Every 6 Months', 'Every Year'
+    if (repeatPeriod == null) {
+      //'Everyday', '2 Days', 'Every Week', 'Every 2 Week', 'Every 4 Week', 'Monthly', 'Every 2 Months', 'Every 3 Months', 'Every 6 Months', 'Every Year'
       repeatPeriod = 10;
     }
 
     dynamic result = FireStoreService(uid: widget.user.uid).createNewBudget(name, budgetLimit, pickedTime, repeatPeriod, numBudgets);
   }
 
-
-  void normalAccountOnClick()
-  {
+  void normalAccountOnClick() {
     Navigator.of(context).push(MaterialPageRoute(
-        builder: (context) => WalletDetails(user: widget.user, selectAccountName: normalAccountName, selectAccountValue: normalAccountBalance, accountCreated: accountCreated,)
-    ));
+        builder: (context) => WalletDetails(
+              user: widget.user,
+              selectAccountName: normalAccountName,
+              selectAccountValue: normalAccountBalance,
+              accountCreated: accountCreated,
+            )));
   }
 
 //--------------------------------------------------------//

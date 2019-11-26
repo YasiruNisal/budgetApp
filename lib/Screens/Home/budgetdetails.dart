@@ -8,7 +8,7 @@ import 'package:simplybudget/config/colors.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:jiffy/jiffy.dart';
 
-class BudgetDetails extends StatefulWidget  {
+class BudgetDetails extends StatefulWidget {
   final FirebaseUser user;
   final String selectedBudget;
   final double selectedBudgetLimit;
@@ -22,7 +22,7 @@ class BudgetDetails extends StatefulWidget  {
   _BudgetDetailsState createState() => _BudgetDetailsState();
 }
 
-class _BudgetDetailsState extends State<BudgetDetails> with TickerProviderStateMixin{
+class _BudgetDetailsState extends State<BudgetDetails> with TickerProviderStateMixin {
   TabController _tabController;
   List<DocumentSnapshot> budgetHistoryList;
   List<String> tabStringList;
@@ -36,9 +36,8 @@ class _BudgetDetailsState extends State<BudgetDetails> with TickerProviderStateM
   void initState() {
     super.initState();
     tabStringList = getTabList(widget.selectBudgetStartDate, widget.selectBudgetRepeat);
-    _tabController =  TabController(length: tabStringList.length, vsync: this, initialIndex: tabStringList.length-1 );
+    _tabController = TabController(length: tabStringList.length, vsync: this, initialIndex: tabStringList.length - 1);
     _tabController.addListener(_handleTabChange);
-
 
     FireStoreService(uid: widget.user.uid).budgetHistoryList(widget.selectedBudget.toLowerCase(), initStartTime, initEndTime).listen((querySnapshot) {
       setState(() {
@@ -56,17 +55,17 @@ class _BudgetDetailsState extends State<BudgetDetails> with TickerProviderStateM
   @override
   Widget build(BuildContext context) {
     Color donutColor = MyColors.GREEN;
-
+    double percentage = 0;
     double totalSpent = 0;
-    budgetHistoryList.forEach((item) =>
-      totalSpent += item["amount"]
-    );
-    double percentage = totalSpent / widget.selectedBudgetLimit;
-    if (percentage > 1) {
-      percentage = (totalSpent % widget.selectedBudgetLimit) / widget.selectedBudgetLimit;
-      donutColor = MyColors.RED;
-    }
+    if (budgetHistoryList != null) {
+      budgetHistoryList.forEach((item) => totalSpent += item["amount"]);
 
+      percentage = totalSpent / widget.selectedBudgetLimit;
+      if (percentage > 1) {
+        percentage = (totalSpent % widget.selectedBudgetLimit) / widget.selectedBudgetLimit;
+        donutColor = MyColors.RED;
+      }
+    }
     return Scaffold(
         body: NestedScrollView(
             headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
@@ -147,11 +146,16 @@ class _BudgetDetailsState extends State<BudgetDetails> with TickerProviderStateM
                       unselectedLabelColor: Colors.grey,
                       tabs: tabStringList
                           .map((item) => Tab(
-                                child: Text(item, style: TextStyle(fontSize: 15),),
+                                child: Text(
+                                  item,
+                                  style: TextStyle(fontSize: 15),
+                                ),
                               ))
                           .toList(),
-                      onTap: (index){
-                        FireStoreService(uid: widget.user.uid).budgetHistoryList(widget.selectedBudget.toLowerCase(), startEndDates[index]["start"], startEndDates[ index]["end"] ).listen((querySnapshot) {
+                      onTap: (index) {
+                        FireStoreService(uid: widget.user.uid)
+                            .budgetHistoryList(widget.selectedBudget.toLowerCase(), startEndDates[index]["start"], startEndDates[index]["end"])
+                            .listen((querySnapshot) {
                           setState(() {
                             budgetHistoryList = querySnapshot.documents;
                           });
@@ -179,15 +183,16 @@ class _BudgetDetailsState extends State<BudgetDetails> with TickerProviderStateM
   void _handleTabChange() {
 //    budgetHistoryList = null;
     print("Calling tabbar handler " + _tabController.index.toString());
-    FireStoreService(uid: widget.user.uid).budgetHistoryList(widget.selectedBudget.toLowerCase(), startEndDates[ _tabController.index]["start"], startEndDates[ _tabController.index]["end"] ).listen((querySnapshot) {
+    FireStoreService(uid: widget.user.uid)
+        .budgetHistoryList(widget.selectedBudget.toLowerCase(), startEndDates[_tabController.index]["start"], startEndDates[_tabController.index]["end"])
+        .listen((querySnapshot) {
       setState(() {
         budgetHistoryList = querySnapshot.documents;
       });
     });
-
   }
 
-  Widget _itemBuilder(BuildContext context, int index,List<DocumentSnapshot> historyList) {
+  Widget _itemBuilder(BuildContext context, int index, List<DocumentSnapshot> historyList) {
     return budgetDetails(historyList[index].data["expensecategory"], historyList[index].data["amount"]);
   }
 
@@ -199,7 +204,7 @@ class _BudgetDetailsState extends State<BudgetDetails> with TickerProviderStateM
             ));
   }
 
-  bool _shouldShowHeader(int position,  int listLength, List<DocumentSnapshot> historyList) {
+  bool _shouldShowHeader(int position, int listLength, List<DocumentSnapshot> historyList) {
     if (position < 0) {
       return true;
     }
@@ -207,7 +212,7 @@ class _BudgetDetailsState extends State<BudgetDetails> with TickerProviderStateM
       return true;
     }
 
-    if (position != 0 && position != currentPosition && !_hasSameHeader(position, position - 1,  historyList)) {
+    if (position != 0 && position != currentPosition && !_hasSameHeader(position, position - 1, historyList)) {
       return true;
     }
 
@@ -223,9 +228,8 @@ class _BudgetDetailsState extends State<BudgetDetails> with TickerProviderStateM
   }
 
   Widget checkIfEmpty() {
-
     List<DocumentSnapshot> historyList = budgetHistoryList;
-    int length =  0;
+    int length = 0;
 
     if (historyList == null) {
       return Loading(size: 20.0);
@@ -284,8 +288,6 @@ class _BudgetDetailsState extends State<BudgetDetails> with TickerProviderStateM
     int prevTime = startDate;
     Map duration = returnBudgetDuration(repeatPeriod);
 
-
-
     while (addTime < today) {
       prevTime = addTime;
       DateTime dt = DateTime(DateTime.fromMillisecondsSinceEpoch(addTime).year, DateTime.fromMillisecondsSinceEpoch(addTime).month, DateTime.fromMillisecondsSinceEpoch(addTime).day);
@@ -299,9 +301,14 @@ class _BudgetDetailsState extends State<BudgetDetails> with TickerProviderStateM
         addTime = jiffyTime.add(years: duration["time"]).millisecondsSinceEpoch;
       }
 
-
-      tabList.add(DateTime.fromMillisecondsSinceEpoch(prevTime).day.toString() + "/" + DateTime.fromMillisecondsSinceEpoch(prevTime).month.toString() + " - " +(DateTime.fromMillisecondsSinceEpoch(addTime).day -1).toString() + "/" + DateTime.fromMillisecondsSinceEpoch(addTime).month.toString());
-      startEndDates.add({"start": prevTime, "end":addTime});
+      tabList.add(DateTime.fromMillisecondsSinceEpoch(prevTime).day.toString() +
+          "/" +
+          DateTime.fromMillisecondsSinceEpoch(prevTime).month.toString() +
+          " - " +
+          (DateTime.fromMillisecondsSinceEpoch(addTime).day - 1).toString() +
+          "/" +
+          DateTime.fromMillisecondsSinceEpoch(addTime).month.toString());
+      startEndDates.add({"start": prevTime, "end": addTime});
     }
 
     initStartTime = prevTime;
