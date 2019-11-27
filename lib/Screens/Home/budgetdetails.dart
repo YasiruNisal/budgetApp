@@ -78,7 +78,7 @@ class _BudgetDetailsState extends State<BudgetDetails> with TickerProviderStateM
                     icon: Icon(Icons.arrow_back_ios),
                     color: Colors.white,
                   ),
-                  backgroundColor: MyColors.MainFade3,
+                  backgroundColor: MyColors.MainFade1,
                   expandedHeight: 330.0,
                   floating: true,
                   pinned: true,
@@ -97,42 +97,50 @@ class _BudgetDetailsState extends State<BudgetDetails> with TickerProviderStateM
                   flexibleSpace: FlexibleSpaceBar(
                     centerTitle: true,
                     title: Text(widget.selectedBudget[0].toUpperCase() + widget.selectedBudget.substring(1), style: TextStyle(fontSize: 18.0, color: MyColors.WHITE)),
-                    background: Padding(
-                      padding: const EdgeInsets.only(top: 80.0, left: 10, right: 10.0),
-                      child: Column(children: <Widget>[
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: <Widget>[
-                            Container(
-                              alignment: Alignment.topLeft,
-                              width: 150,
-                              child: Padding(
-                                padding: const EdgeInsets.only(left: 5.0, right: 5.0),
-                                child: Text("\$ " + widget.selectedBudgetLimit.toStringAsFixed(2) + " Limit", overflow: TextOverflow.ellipsis, style: TextStyle(fontSize: 20.0, color: MyColors.WHITE)),
-                              ),
-                            ),
-                            Container(height: 25.0, color: MyColors.GREY, width: 1.0),
-                            Container(
-                              alignment: Alignment.topLeft,
-                              width: 150,
-                              child: Padding(
-                                padding: const EdgeInsets.only(left: 5.0, right: 5.0),
-                                child: Text("\$ " + totalSpent.toStringAsFixed(2) + " Spent", overflow: TextOverflow.ellipsis, style: TextStyle(fontSize: 20.0, color: MyColors.WHITE)),
-                              ),
-                            ),
-                          ],
+                    background: Container(
+                      decoration: BoxDecoration(
+                        image: DecorationImage(
+                          image: AssetImage("assets/images/background.png"),
+                          fit: BoxFit.cover,
                         ),
-                        CircularPercentIndicator(
-                          radius: 170.0,
-                          lineWidth: 20.0,
-                          percent: percentage,
-                          center: new Text(
-                            (percentage * 100).toStringAsFixed(1) + " %",
-                            style: TextStyle(fontSize: 25.0, fontWeight: FontWeight.bold, color: MyColors.WHITE),
+                      ),
+                      child: Padding(
+                        padding: const EdgeInsets.only(top: 80.0, left: 10, right: 10.0),
+                        child: Column(children: <Widget>[
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: <Widget>[
+                              Container(
+                                alignment: Alignment.topLeft,
+                                width: 150,
+                                child: Padding(
+                                  padding: const EdgeInsets.only(left: 5.0, right: 5.0),
+                                  child: Text("\$ " + widget.selectedBudgetLimit.toStringAsFixed(2) + " Limit", overflow: TextOverflow.ellipsis, style: TextStyle(fontSize: 20.0, color: MyColors.WHITE)),
+                                ),
+                              ),
+                              Container(height: 25.0, color: MyColors.GREY, width: 1.0),
+                              Container(
+                                alignment: Alignment.topLeft,
+                                width: 150,
+                                child: Padding(
+                                  padding: const EdgeInsets.only(left: 5.0, right: 5.0),
+                                  child: Text("\$ " + totalSpent.toStringAsFixed(2) + " Spent", overflow: TextOverflow.ellipsis, style: TextStyle(fontSize: 20.0, color: MyColors.WHITE)),
+                                ),
+                              ),
+                            ],
                           ),
-                          progressColor: donutColor,
-                        ),
-                      ]),
+                          CircularPercentIndicator(
+                            radius: 170.0,
+                            lineWidth: 20.0,
+                            percent: percentage,
+                            center: new Text(
+                              (percentage * 100).toStringAsFixed(1) + " %",
+                              style: TextStyle(fontSize: 25.0, fontWeight: FontWeight.bold, color: MyColors.WHITE),
+                            ),
+                            progressColor: donutColor,
+                          ),
+                        ]),
+                      ),
                     ),
                   ),
                 ),

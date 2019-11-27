@@ -30,12 +30,18 @@ class _HomeState extends State<Home> {
 //      ),
 //    );
 
-    return SafeArea(
-      child: Scaffold(
-          backgroundColor: Color(0xFF3700B3),
-          body: AccountDetails(
-            user: widget.user,
-          )),
+    return Scaffold(
+//      backgroundColor: Color(0xFF3700B3),
+      body: Container(
+      decoration: BoxDecoration(
+        image: DecorationImage(
+          image: AssetImage("assets/images/background.png"),
+          fit: BoxFit.cover,
+        ),
+      ),
+      child: AccountDetails(
+        user: widget.user,
+      )),
     );
   }
 }

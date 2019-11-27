@@ -17,6 +17,7 @@ class MyColors
   static const BLACK = Color(0xff000000);
   static const GREEN = Color(0xff5ED0BE);
   static const RED = Color(0xffF96D76);
+  static const BLUE = Color(0xff46B3FE);
   static const GREY = Color(0xff757678);
 
   static const ExpenseCategory1 = Color(0xffb0bec5);

@@ -74,7 +74,7 @@ class _WalletDetailsState extends State<WalletDetails> with TickerProviderStateM
               icon: Icon(Icons.arrow_back_ios),
               color: Colors.white,
             ),
-            backgroundColor: MyColors.MainFade3,
+            backgroundColor: MyColors.MainFade1,
             expandedHeight: 350.0,
             floating: true,
             pinned: true,
@@ -84,50 +84,47 @@ class _WalletDetailsState extends State<WalletDetails> with TickerProviderStateM
                 onPressed: () {},
                 color: MyColors.WHITE,
               ),
-              IconButton(
-                icon: Icon(Icons.arrow_drop_down),
-                onPressed: () {},
-                color: MyColors.WHITE,
-              )
             ],
             flexibleSpace: FlexibleSpaceBar(
               centerTitle: true,
               title: Text(widget.selectAccountName[0].toUpperCase() + widget.selectAccountName.substring(1), style: TextStyle(fontSize: 15.0, color: MyColors.WHITE)),
-              background: Padding(
-                padding: const EdgeInsets.only(top: 60.0, left: 10, right: 10.0),
-                child: Center(
-                  child: Column(
-                    children: <Widget>[
-                      Text(
-                        'Total Balance ',
-                        style: TextStyle(fontSize: 30.0, color: MyColors.WHITE, fontWeight: FontWeight.w200),
-                      ),
-                      SizedBox(
-                        height: 15.0,
-                      ),
-                      Text(
-                        '\$ ' + formatMoney(widget.selectAccountValue),
-                        style: TextStyle(fontSize: 45.0, color: MyColors.WHITE, fontWeight: FontWeight.w200),
-                      ),
-                      SizedBox(
-                        height: 25.0,
-                      ),
-                      Text(
-                        'Cashflow ',
-                        style: TextStyle(fontSize: 30.0, color: MyColors.WHITE, fontWeight: FontWeight.w200),
-                      ),
-                      SizedBox(
-                        height: 15.0,
-                      ),
-                      Text(
-                        'Income ' + formatMoney(earnings) + ' - ' + 'Expense ' + formatMoney(expense),
-                        style: TextStyle(fontSize: 20.0, color: MyColors.WHITE, fontWeight: FontWeight.w200),
-                      ),
-                      Text(
-                        'Remain ' + formatMoney(cashFlow),
-                        style: TextStyle(fontSize: 20.0, color: MyColors.WHITE, fontWeight: FontWeight.w200),
-                      ),
-                    ],
+              background: Container(
+                decoration: BoxDecoration(
+                  image: DecorationImage(
+                    image: AssetImage("assets/images/background.png"),
+                    fit: BoxFit.cover,
+                  ),
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.only(top: 60.0, left: 10, right: 10.0),
+                  child: Center(
+                    child: Column(
+                      children: <Widget>[
+                        Text(
+                          'Net Balance ',
+                          style: TextStyle(fontSize: 20.0, color: MyColors.WHITE, fontWeight: FontWeight.w200),
+                        ),
+                        SizedBox(
+                          height: 10.0,
+                        ),
+                        Text(
+                          '\$ ' + formatMoney(widget.selectAccountValue),
+                          style: TextStyle(fontSize: 45.0, color: MyColors.WHITE, fontWeight: FontWeight.w200),
+                        ),
+                        SizedBox(
+                          height: 10.0,
+                        ),
+                        Text(
+                          'Cashflow ',
+                          style: TextStyle(fontSize: 20.0, color: MyColors.WHITE, fontWeight: FontWeight.w200),
+                        ),
+                        SizedBox(
+                          height: 15.0,
+                        ),
+                        getSummaryDetails (earnings, expense, cashFlow),
+
+                      ],
+                    ),
                   ),
                 ),
               ),
@@ -167,6 +164,26 @@ class _WalletDetailsState extends State<WalletDetails> with TickerProviderStateM
               )
               .toList()),
     ));
+  }
+
+  Widget getSummaryDetails (double earnings, double expense, double cashFlow){
+    return Container(
+      padding: EdgeInsets.all(18.0),
+      decoration: BoxDecoration(
+        color: MyColors.WHITE,
+        borderRadius: BorderRadius.all(
+           Radius.circular(15.0),
+        ),
+      ),
+//      color: MyColors.WHITE,
+      child: Column(
+        children: <Widget>[
+          budgetDetails("Total Income", earnings, 1),
+          budgetDetails("Total Expense", expense, 2),
+          budgetDetails("Remainder", cashFlow, 3),
+        ],
+      ),
+    );
   }
 
   //+++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -309,13 +326,16 @@ class _WalletDetailsState extends State<WalletDetails> with TickerProviderStateM
     Color amountColor = MyColors.TextSecondColor;
     if (incomeExpense == 1) {
       amountColor = MyColors.GREEN;
-    } else {
+    } else if(incomeExpense == 2) {
       amountColor = MyColors.RED;
+    }else{
+      amountColor = MyColors.BLUE;
     }
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: <Widget>[
         Container(
+          color: MyColors.WHITE,
             alignment: Alignment.topLeft,
             width: 140,
             child: Text(
@@ -323,6 +343,7 @@ class _WalletDetailsState extends State<WalletDetails> with TickerProviderStateM
               style: TextStyle(fontSize: 18.0, fontWeight: FontWeight.bold),
             )),
         Container(
+            color: MyColors.WHITE,
             alignment: Alignment.topLeft,
             width: 100,
             child: Text(

@@ -67,7 +67,7 @@ class _AccountDetailsState extends State<AccountDetails> {
         child: Column(
       children: <Widget>[
         Padding(
-          padding: const EdgeInsets.only(top: 10.0, left: 10.0),
+          padding: const EdgeInsets.only(top: 15.0, left: 10.0),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.end,
             children: <Widget>[
