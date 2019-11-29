@@ -5,8 +5,13 @@ import 'package:intl/intl.dart';
 
 class CreateNewBudget extends StatefulWidget {
   final void Function(String, double, DateTime, int) newBudgetSet;
+  final String newOrEdit;
+  final String budgetName;
+  final double budgetLimit;
+  final int budgetStartDate;
+  final int budgetRepeatPeriod;
 
-  CreateNewBudget({this.newBudgetSet});
+  CreateNewBudget({this.newBudgetSet, this.newOrEdit, this.budgetName, this.budgetLimit, this.budgetStartDate, this.budgetRepeatPeriod});
 
   @override
   _CreateNewBudgetState createState() => _CreateNewBudgetState();
@@ -17,9 +22,10 @@ class _CreateNewBudgetState extends State<CreateNewBudget> {
 
   final enterValController = TextEditingController();
 
-  final String budgetName = "";
+  String budgetName = "";
 
-  final double budgetMaxValue = 0;
+
+  double budgetMaxValue = 0;
 
   String pickedStartDate = "Pick Start Date";
 
@@ -31,12 +37,30 @@ class _CreateNewBudgetState extends State<CreateNewBudget> {
 
   int unixRepeatTime = 0;
 
+
+  @override
+  initState() {
+    super.initState();
+    // Add listeners to this class
+
+    print(widget.budgetRepeatPeriod);
+
+    widget.budgetName != null ? enterNameController.text = widget.budgetName: budgetName = "";
+    widget.budgetLimit != null ? enterValController.text = widget.budgetLimit.toString() : budgetMaxValue = 0;
+    widget.budgetStartDate != null ? unixPickedStartDate = DateTime(DateTime.fromMillisecondsSinceEpoch(widget.budgetStartDate).year, DateTime.fromMillisecondsSinceEpoch(widget.budgetStartDate).month, DateTime.fromMillisecondsSinceEpoch(widget.budgetStartDate).day ):  pickedStartDate = "Pick Start Date";
+    widget.budgetRepeatPeriod != null ? pickedRepeat = repeatPeriods[widget.budgetRepeatPeriod-1] : pickedRepeat = "Repeat Period";
+
+  }
+
+
   @override
   Widget build(BuildContext context) {
+
+
     return AlertDialog(
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(20.0))),
         title: Text(
-          "New Budget",
+          widget.newOrEdit,
           textAlign: TextAlign.center,
         ),
         content: SingleChildScrollView(
@@ -51,6 +75,7 @@ class _CreateNewBudgetState extends State<CreateNewBudget> {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: <Widget>[
                     TextField(
+
                       controller: enterNameController,
                       cursorColor: MyColors.MainFade2,
                       decoration: InputDecoration(

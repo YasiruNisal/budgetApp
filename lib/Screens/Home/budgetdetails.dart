@@ -3,6 +3,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:percent_indicator/percent_indicator.dart';
 import 'package:simplybudget/Components/loading.dart';
+import 'package:simplybudget/PopupDialogs/createNewBudget.dart';
 import 'package:simplybudget/Services/firestore.dart';
 import 'package:simplybudget/config/colors.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -90,7 +91,9 @@ class _BudgetDetailsState extends State<BudgetDetails> with TickerProviderStateM
                     ),
                     IconButton(
                       icon: Icon(Icons.edit),
-                      onPressed: () {},
+                      onPressed: () {
+                        editThisBudget();
+                      },
                       color: MyColors.WHITE,
                     ),
                   ],
@@ -186,6 +189,42 @@ class _BudgetDetailsState extends State<BudgetDetails> with TickerProviderStateM
                       ),
                     )
                     .toList())));
+  }
+
+
+  void editThisBudget() {
+    showDialog(
+        context: context,
+        builder: (context) {
+          return CreateNewBudget(newBudgetSet: editBudget, newOrEdit: "New Budget", budgetName: widget.selectedBudget, budgetLimit: widget.selectedBudgetLimit, budgetStartDate: widget.selectBudgetStartDate, budgetRepeatPeriod: widget.selectBudgetRepeat,);
+        });
+  }
+
+
+  void editBudget(String budgetName, double maxLimit, DateTime unixTime, int repeatPeriod) {
+    DateTime startDate = unixTime;
+    if (unixTime == null) {
+      startDate = DateTime.now();
+    }
+
+    int pickedTime = startDate.millisecondsSinceEpoch;
+
+    double budgetLimit = maxLimit;
+    if (maxLimit == null) {
+      budgetLimit = 0;
+    }
+
+    String name = budgetName;
+    if (budgetName == null || budgetName.length == 0) {
+      name = "My Budget";
+    }
+
+    if (repeatPeriod == null) {
+      //'Everyday', '2 Days', 'Every Week', 'Every 2 Week', 'Every 4 Week', 'Monthly', 'Every 2 Months', 'Every 3 Months', 'Every 6 Months', 'Every Year'
+      repeatPeriod = 10;
+    }
+
+    dynamic result = FireStoreService(uid: widget.user.uid).editBudget(name, budgetLimit, pickedTime, repeatPeriod);
   }
 
   void _handleTabChange() {

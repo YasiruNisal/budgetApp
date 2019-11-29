@@ -246,7 +246,7 @@ class _AccountDetailsState extends State<AccountDetails> {
     showDialog(
         context: context,
         builder: (context) {
-          return CreateNewBudget(newBudgetSet: saveNewBudget);
+          return CreateNewBudget(newBudgetSet: saveNewBudget, newOrEdit: "New Budget",);
         });
   }
 

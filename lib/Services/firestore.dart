@@ -85,6 +85,19 @@ class FireStoreService {
     return await batch.commit();
   }
 
+  Future editBudget(String budgetName, double budgetLimit, int budgetStartDate, int budgetRepeat,) async
+  {
+
+    DocumentReference newBudget = userCollection.document(uid).collection("newbudget").document(budgetName.toLowerCase());
+
+    return await newBudget.updateData({
+      "budgetname" : budgetName,
+      "budgetlimit" : budgetLimit,
+      "budgetstartdate" : budgetStartDate,
+      "budgetrepeat" : budgetRepeat,
+    });
+  }
+
   Future setInitialSavingAccount() async
   {
     return await userCollection.document(uid).collection("savingaccount").add({
