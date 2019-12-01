@@ -20,6 +20,7 @@ class ListBudgetsHomeScreen extends StatefulWidget {
 class _ListBudgetsHomeScreenState extends State<ListBudgetsHomeScreen> {
   List<DocumentSnapshot> budgetList;
 
+  String selectedBudgetID = "";
   String selectedBudgetName = "";
   double selectedBudgetLimit = 0;
   double selectedBudgetSpent = 0;
@@ -49,29 +50,38 @@ class _ListBudgetsHomeScreenState extends State<ListBudgetsHomeScreen> {
     return Column(
         children: budgets
             .map((item) => BudgetDetailCard(
+                  id: item.documentID,
                   budgetName: item.data["budgetname"],
                   budgetLimit: item.data["budgetlimit"].toDouble(),
                   budgetSpent: item.data["budgetspent"].toDouble(),
                   budgetStartDate: item.data["budgetstartdate"],
                   budgetRepeat: item.data["budgetrepeat"],
                   onPlusClick: budgetPlusOnClick,
-                  onCardTap : openBudgetDetailPage,
+                  onCardTap: openBudgetDetailPage,
                 ))
             .toList());
   }
 
-  void openBudgetDetailPage(String budgetName, double budgetLimit, double budgetSpent, int budgetStartDate, int budgetRepeat){
-
-        Navigator.push(
+  void openBudgetDetailPage(String id, String budgetName, double budgetLimit, double budgetSpent, int budgetStartDate, int budgetRepeat) {
+    Navigator.push(
       context,
-      MaterialPageRoute(builder: (context) => BudgetDetails(user: widget.user, selectedBudget: budgetName, selectedBudgetLimit: budgetLimit, selectedBudgetSpent: budgetSpent, selectBudgetStartDate: budgetStartDate, selectBudgetRepeat: budgetRepeat,)),
+      MaterialPageRoute(
+          builder: (context) => BudgetDetails(
+                user: widget.user,
+            selectedBudgetID : id,
+                selectedBudget: budgetName,
+                selectedBudgetLimit: budgetLimit,
+                selectedBudgetSpent: budgetSpent,
+                selectBudgetStartDate: budgetStartDate,
+                selectBudgetRepeat: budgetRepeat,
+              )),
     );
   }
 
-  void budgetPlusOnClick(String budgetName, double budgetLimit, double budgetSpent) {
-
+  void budgetPlusOnClick(String id, double budgetLimit, double budgetSpent) {
     setState(() {
-      selectedBudgetName = budgetName;
+      selectedBudgetID = id;
+//      selectedBudgetName = budgetName;
       selectedBudgetLimit = budgetLimit;
       selectedBudgetSpent = budgetSpent;
     });
@@ -102,9 +112,8 @@ class _ListBudgetsHomeScreenState extends State<ListBudgetsHomeScreen> {
       enterValue = val;
     });
 
-
 //    print(normalAccountBalance);String budgetName, double currentSpentValue, double newEnteredValue, String expenseCategory, int timestamp
-    dynamic result = FireStoreService(uid: widget.user.uid).setBudgetHistory(selectedBudgetName, selectedBudgetSpent, enterValue, category, new DateTime.now().millisecondsSinceEpoch);
+    dynamic result = FireStoreService(uid: widget.user.uid).setBudgetHistory(selectedBudgetID, selectedBudgetSpent, enterValue, category, new DateTime.now().millisecondsSinceEpoch);
     // need to write to the database here.
     if (result != null) {
       setState(() {

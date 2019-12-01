@@ -4,17 +4,18 @@ import 'package:simplybudget/config/colors.dart';
 
 class BudgetDetailCard extends StatelessWidget {
 //  final Function onPlusClick;
+  final String id;
   final double budgetLimit;
   final double budgetSpent;
   final String budgetName;
   final int budgetStartDate;
   final int budgetRepeat;
   final Function(String, double, double) onPlusClick;
-  final Function(String, double, double, int, int) onCardTap;
+  final Function(String, String, double, double, int, int) onCardTap;
 
 //  final String currency;
 
-  BudgetDetailCard({this.budgetName, this.budgetLimit, this.budgetSpent, this.onPlusClick, this.onCardTap, this.budgetStartDate, this.budgetRepeat});
+  BudgetDetailCard({this.id, this.budgetName, this.budgetLimit, this.budgetSpent, this.onPlusClick, this.onCardTap, this.budgetStartDate, this.budgetRepeat});
 
 
   @override
@@ -32,7 +33,7 @@ class BudgetDetailCard extends StatelessWidget {
           padding: EdgeInsets.only(left: 15.0, right: 10.0, top: 15.0),
           child: InkWell(
               onTap: () {
-                onCardTap(budgetName.toLowerCase(), budgetLimit, budgetSpent, budgetStartDate, budgetRepeat);
+                onCardTap(id, budgetName, budgetLimit, budgetSpent, budgetStartDate, budgetRepeat);
               },
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -72,7 +73,7 @@ class BudgetDetailCard extends StatelessWidget {
                       icon: Icon(Icons.add),
                       color: Colors.black,
                       onPressed: () {
-                        onPlusClick(budgetName.toLowerCase(), budgetLimit, budgetSpent);
+                        onPlusClick(id, budgetLimit, budgetSpent);
                       })
                 ],
               ))),

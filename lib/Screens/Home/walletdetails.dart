@@ -3,11 +3,10 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:percent_indicator/percent_indicator.dart';
 import 'package:simplybudget/Components/loading.dart';
+import 'package:simplybudget/PopupDialogs/editaccountdetails.dart';
 import 'package:simplybudget/Services/firestore.dart';
 import 'package:simplybudget/config/colors.dart';
-import 'package:side_header_list_view/side_header_list_view.dart';
 import 'package:jiffy/jiffy.dart';
 
 class WalletDetails extends StatefulWidget {
@@ -30,13 +29,22 @@ class _WalletDetailsState extends State<WalletDetails> with TickerProviderStateM
   List<Map> startEndDates = List<Map>();
   int initStartTime = 0;
   int initEndTime = 0;
+  String selectAccountName = "Loading";
+  double selectAccountValue = 0.0;
+
 
   @override
   void initState() {
     super.initState();
+
     tabStringList = getTabList(widget.accountCreated);
     _tabController = TabController(length: tabStringList.length, vsync: this, initialIndex: tabStringList.length - 1);
     _tabController.addListener(_handleTabChange);
+
+    setState(() {
+      selectAccountName =  widget.selectAccountName;
+      selectAccountValue = widget.selectAccountValue;
+    });
 
     FireStoreService(uid: widget.user.uid).walletNormalAccountHistoryList(initStartTime, initEndTime).listen((querySnapshot) {
       setState(() {
@@ -81,13 +89,15 @@ class _WalletDetailsState extends State<WalletDetails> with TickerProviderStateM
             actions: <Widget>[
               IconButton(
                 icon: Icon(Icons.edit),
-                onPressed: () {},
+                onPressed: () {
+                  editAccount();
+                },
                 color: MyColors.WHITE,
               ),
             ],
             flexibleSpace: FlexibleSpaceBar(
               centerTitle: true,
-              title: Text(widget.selectAccountName[0].toUpperCase() + widget.selectAccountName.substring(1), style: TextStyle(fontSize: 15.0, color: MyColors.WHITE)),
+              title: Text(selectAccountName[0].toUpperCase() + selectAccountName.substring(1), style: TextStyle(fontSize: 15.0, color: MyColors.WHITE)),
               background: Container(
                 decoration: BoxDecoration(
                   image: DecorationImage(
@@ -108,7 +118,7 @@ class _WalletDetailsState extends State<WalletDetails> with TickerProviderStateM
                           height: 10.0,
                         ),
                         Text(
-                          '\$ ' + formatMoney(widget.selectAccountValue),
+                          '\$ ' + formatMoney(selectAccountValue),
                           style: TextStyle(fontSize: 45.0, color: MyColors.WHITE, fontWeight: FontWeight.w200),
                         ),
                         SizedBox(
@@ -121,8 +131,7 @@ class _WalletDetailsState extends State<WalletDetails> with TickerProviderStateM
                         SizedBox(
                           height: 15.0,
                         ),
-                        getSummaryDetails (earnings, expense, cashFlow),
-
+                        _getSummaryDetails(earnings, expense, cashFlow),
                       ],
                     ),
                   ),
@@ -166,64 +175,58 @@ class _WalletDetailsState extends State<WalletDetails> with TickerProviderStateM
     ));
   }
 
-  Widget getSummaryDetails (double earnings, double expense, double cashFlow){
+  void editAccount() {
+    showDialog(
+        context: context,
+        builder: (context) {
+          return EditAccountDetails(
+            accountName: widget.selectAccountName,
+            accountAmount: widget.selectAccountValue,
+            whichAccount: 0,
+            enterAccountDetails: saveEditAccount,
+          );
+        });
+  }
+
+  void saveEditAccount(String name, double newNetBalance, int whichAccount ) async{
+    setState(() {
+      selectAccountValue = newNetBalance;
+      selectAccountName = name;
+    });
+
+    dynamic result = await FireStoreService(uid: widget.user.uid).editAccountEntry("Account Edited", newNetBalance, name, whichAccount);
+
+
+  }
+
+//--------------------------------------------------------//
+// Shows the wallet current period summery widget in the appbar
+//--------------------------------------------------------//
+  Widget _getSummaryDetails(double earnings, double expense, double cashFlow) {
     return Container(
       padding: EdgeInsets.all(18.0),
       decoration: BoxDecoration(
         color: MyColors.WHITE,
         borderRadius: BorderRadius.all(
-           Radius.circular(15.0),
+          Radius.circular(15.0),
         ),
       ),
 //      color: MyColors.WHITE,
       child: Column(
         children: <Widget>[
           budgetDetails("Total Income", earnings, 1),
+          SizedBox(height: 5.0,),
           budgetDetails("Total Expense", expense, 2),
+          SizedBox(height: 5.0,),
           budgetDetails("Remainder", cashFlow, 3),
         ],
       ),
     );
   }
 
-  //+++++++++++++++++++++++++++++++++++++++++++++++++++++++
-  Widget _itemBuilder(BuildContext context, int index, List<DocumentSnapshot> historyList) {
-    return budgetDetails(historyList[index].data["incomeexpensecategory"], historyList[index].data["amount"], historyList[index].data["incomeexpense"]);
-  }
-
-  Widget _headerBuilder(BuildContext context, int index, List<DocumentSnapshot> historyList) {
-    return new SizedBox(
-        width: 50.0,
-        child: dayFromUnix(historyList[index].data["timestamp"]
-//                        style: Theme.of(context).textTheme.headline,
-            ));
-  }
-
-  bool _shouldShowHeader(int position, int listLength, List<DocumentSnapshot> historyList) {
-    if (position < 0) {
-      return true;
-    }
-    if (position == 0 && currentPosition < 0) {
-      return true;
-    }
-
-    if (position != 0 && position != currentPosition && !_hasSameHeader(position, position - 1, historyList)) {
-      return true;
-    }
-
-    if (position != listLength - 1 && !_hasSameHeader(position, position + 1, historyList) && position == currentPosition) {
-      return true;
-    }
-    return false;
-  }
-
-  bool _hasSameHeader(int a, int b, List<DocumentSnapshot> historyList) {
-//                          return names[a].substring(0, 1) == names[b].substring(0, 1);
-    return DateTime.fromMillisecondsSinceEpoch(historyList[a].data["timestamp"]).day.toString() == DateTime.fromMillisecondsSinceEpoch(historyList[b].data["timestamp"]).day.toString();
-  }
-
-  //++++++++++++++++++++++++++++++++++++++++++++++++++++
-
+//--------------------------------------------------------//
+// Callback function when a tab is changed
+//--------------------------------------------------------//
   void _handleTabChange() {
     FireStoreService(uid: widget.user.uid).walletNormalAccountHistoryList(startEndDates[_tabController.index]["start"], startEndDates[_tabController.index]["end"]).listen((querySnapshot) {
       setState(() {
@@ -232,6 +235,9 @@ class _WalletDetailsState extends State<WalletDetails> with TickerProviderStateM
     });
   }
 
+//--------------------------------------------------------//
+// Creates a list of day/month for the tabs
+//--------------------------------------------------------//
   List<String> getTabList(int startDate) {
     int firstDayOfMonthAccount = DateTime(DateTime.fromMillisecondsSinceEpoch(startDate).year, DateTime.fromMillisecondsSinceEpoch(startDate).month, DateTime.fromMillisecondsSinceEpoch(startDate).day)
         .add(Duration(days: 1))
@@ -269,6 +275,9 @@ class _WalletDetailsState extends State<WalletDetails> with TickerProviderStateM
     return tabList;
   }
 
+  //--------------------------------------------------------//
+//
+//--------------------------------------------------------//
   Widget checkIfEmpty() {
     List<DocumentSnapshot> historyList = walletHistoryList;
     int length = 0;
@@ -326,21 +335,21 @@ class _WalletDetailsState extends State<WalletDetails> with TickerProviderStateM
     Color amountColor = MyColors.TextSecondColor;
     if (incomeExpense == 1) {
       amountColor = MyColors.GREEN;
-    } else if(incomeExpense == 2) {
+    } else if (incomeExpense == 2) {
       amountColor = MyColors.RED;
-    }else{
+    } else {
       amountColor = MyColors.BLUE;
     }
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: <Widget>[
         Container(
-          color: MyColors.WHITE,
+            color: MyColors.WHITE,
             alignment: Alignment.topLeft,
             width: 140,
             child: Text(
               budgetName[0].toUpperCase() + budgetName.substring(1),
-              style: TextStyle(fontSize: 18.0, fontWeight: FontWeight.bold),
+              style: TextStyle(fontSize: 18.0, fontWeight: FontWeight.normal),
             )),
         Container(
             color: MyColors.WHITE,
@@ -355,6 +364,40 @@ class _WalletDetailsState extends State<WalletDetails> with TickerProviderStateM
             )),
       ],
     );
+  }
+
+  Widget _itemBuilder(BuildContext context, int index, List<DocumentSnapshot> historyList) {
+    return budgetDetails(historyList[index].data["incomeexpensecategory"], historyList[index].data["amount"], historyList[index].data["incomeexpense"]);
+  }
+
+  Widget _headerBuilder(BuildContext context, int index, List<DocumentSnapshot> historyList) {
+    return new SizedBox(
+        width: 50.0,
+        child: dayFromUnix(historyList[index].data["timestamp"]
+//                        style: Theme.of(context).textTheme.headline,
+            ));
+  }
+
+  bool _shouldShowHeader(int position, int listLength, List<DocumentSnapshot> historyList) {
+    if (position < 0) {
+      return true;
+    }
+    if (position == 0 && currentPosition < 0) {
+      return true;
+    }
+
+    if (position != 0 && position != currentPosition && !_hasSameHeader(position, position - 1, historyList)) {
+      return true;
+    }
+
+    if (position != listLength - 1 && !_hasSameHeader(position, position + 1, historyList) && position == currentPosition) {
+      return true;
+    }
+    return false;
+  }
+
+  bool _hasSameHeader(int a, int b, List<DocumentSnapshot> historyList) {
+    return DateTime.fromMillisecondsSinceEpoch(historyList[a].data["timestamp"]).day.toString() == DateTime.fromMillisecondsSinceEpoch(historyList[b].data["timestamp"]).day.toString();
   }
 
   Widget dayFromUnix(int timestamp) {

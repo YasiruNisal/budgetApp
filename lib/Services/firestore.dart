@@ -46,11 +46,35 @@ class FireStoreService {
     return await batch.commit();
   }
 
-  Future setBudgetHistory(String budgetName, double currentSpentValue, double newEnteredValue, String expenseCategory, int timestamp) async
+  Future editAccountEntry(String incomeExpenseCategory, double newAccountBalance, String normalAccountName,  int whichAccount) async
+  {
+    String name = "normalaccount";
+    if(whichAccount == 1){
+      name = "savingaccount";
+    }
+    WriteBatch batch = reference.batch();
+    CollectionReference normalAccount = userCollection.document(uid).collection(name);
+    DocumentReference normalAccountBalance = userCollection.document(uid);
+
+
+    batch.setData(normalAccount.document(),
+        {
+          "incomeexpense": 3,
+          "incomeexpensecategory":  incomeExpenseCategory,
+          "timestamp": DateTime.now().millisecondsSinceEpoch,
+          "amount":newAccountBalance
+        });
+
+    batch.updateData(normalAccountBalance, {"normalaccountbalance" : newAccountBalance, "normalaccountname" : normalAccountName});
+
+    return await batch.commit();
+  }
+
+  Future setBudgetHistory(String budgetID, double currentSpentValue, double newEnteredValue, String expenseCategory, int timestamp) async
   {
     WriteBatch batch = reference.batch();
-    CollectionReference budgetHistory = userCollection.document(uid).collection("newbudget").document(budgetName).collection("history");
-    DocumentReference selectedBudget = userCollection.document(uid).collection("newbudget").document(budgetName);
+    CollectionReference budgetHistory = userCollection.document(uid).collection("newbudget").document(budgetID).collection("history");
+    DocumentReference selectedBudget = userCollection.document(uid).collection("newbudget").document(budgetID);
 
     double newBudegtBalance = currentSpentValue + newEnteredValue;
 
@@ -70,9 +94,9 @@ class FireStoreService {
   {
     WriteBatch batch = reference.batch();
     DocumentReference normalAccountBalance = userCollection.document(uid);
-    DocumentReference newBudget = userCollection.document(uid).collection("newbudget").document(budgetName.toLowerCase());
+    CollectionReference newBudget = userCollection.document(uid).collection("newbudget");
 
-    batch.setData( newBudget, {
+    batch.setData( newBudget.document(), {
       "budgetname" : budgetName,
       "budgetlimit" : budgetLimit,
       "budgetstartdate" : budgetStartDate,
@@ -85,10 +109,10 @@ class FireStoreService {
     return await batch.commit();
   }
 
-  Future editBudget(String budgetName, double budgetLimit, int budgetStartDate, int budgetRepeat,) async
+  Future editBudget(String budgetID, String budgetName, double budgetLimit, int budgetStartDate, int budgetRepeat,) async
   {
 
-    DocumentReference newBudget = userCollection.document(uid).collection("newbudget").document(budgetName.toLowerCase());
+    DocumentReference newBudget = userCollection.document(uid).collection("newbudget").document(budgetID);
 
     return await newBudget.updateData({
       "budgetname" : budgetName,
@@ -96,6 +120,14 @@ class FireStoreService {
       "budgetstartdate" : budgetStartDate,
       "budgetrepeat" : budgetRepeat,
     });
+  }
+
+  Future deleteBudget(String budgetID,) async
+  {
+
+    DocumentReference newBudget = userCollection.document(uid).collection("newbudget").document(budgetID);
+
+    return await newBudget.delete();
   }
 
   Future setInitialSavingAccount() async
@@ -124,8 +156,8 @@ class FireStoreService {
     return userCollection.document(uid).collection("newbudget").snapshots();
   }
 
-  Stream<QuerySnapshot>  budgetHistoryList(String budgetName, int start, int end) {
-    return userCollection.document(uid).collection("newbudget").document(budgetName).collection("history").where("timestamp", isGreaterThan: start).where("timestamp", isLessThanOrEqualTo: end).orderBy("timestamp", descending: true).snapshots();
+  Stream<QuerySnapshot>  budgetHistoryList(String budgetID, int start, int end) {
+    return userCollection.document(uid).collection("newbudget").document(budgetID).collection("history").where("timestamp", isGreaterThan: start).where("timestamp", isLessThanOrEqualTo: end).orderBy("timestamp", descending: true).snapshots();
   }
 
   Stream<QuerySnapshot>  walletNormalAccountHistoryList(int start, int end) {

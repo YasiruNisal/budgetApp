@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:simplybudget/Components/accountdetailscard.dart';
 import 'package:simplybudget/Components/listbudgetshome.dart';
-import 'package:simplybudget/PopupDialogs/createNewBudget.dart';
+import 'package:simplybudget/PopupDialogs/createOrEditBudget.dart';
 import 'package:simplybudget/Screens/Home/walletdetails.dart';
 import 'package:simplybudget/Services/auth.dart';
 import 'package:simplybudget/PopupDialogs/selectExpenseCategory.dart';
@@ -12,8 +12,6 @@ import 'package:simplybudget/config/colors.dart';
 import 'package:simplybudget/PopupDialogs/enterBudgetValue.dart';
 import 'package:simplybudget/PopupDialogs/selectIncomeExpense.dart';
 import 'package:simplybudget/PopupDialogs/signout.dart';
-
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class AccountDetails extends StatefulWidget {
   final FirebaseUser user;
@@ -79,7 +77,7 @@ class _AccountDetailsState extends State<AccountDetails> {
                       context: context,
                       builder: (context) {
                         return SignOutDialog(
-                          signOut: signOut,
+                          signOut: _signOut,
                           email: widget.user.email,
                         );
                       });
@@ -129,16 +127,16 @@ class _AccountDetailsState extends State<AccountDetails> {
                         balance: normalAccountBalance,
                         accountName: normalAccountName,
                         currency: currency,
-                        onTap: normalAccountOnClick,
+                        onTap: _normalAccountOnClick,
                         onPlusClick: () {
                           setState(() {
-                            whichAccount = 1;
+                            whichAccount = 0;
                           });
 
                           showDialog(
                               context: context,
                               builder: (context) {
-                                return SelectIncomeExpense(setIncomeExpense: setIncomeExpense);
+                                return SelectIncomeExpense(setIncomeExpense: _setIncomeExpense);
                               });
                         }),
                     AccountDetailsCard(
@@ -148,13 +146,13 @@ class _AccountDetailsState extends State<AccountDetails> {
                         currency: currency,
                         onPlusClick: () {
                           setState(() {
-                            whichAccount = 2;
+                            whichAccount = 1;
                           });
 
                           showDialog(
                               context: context,
                               builder: (context) {
-                                return SelectIncomeExpense(setIncomeExpense: setIncomeExpense);
+                                return SelectIncomeExpense(setIncomeExpense: _setIncomeExpense);
                               });
                         }),
                     SizedBox(
@@ -181,7 +179,7 @@ class _AccountDetailsState extends State<AccountDetails> {
               SizedBox(
                 height: 15.0,
               ),
-              decideBudgetWidget(createNewBudget),
+              _decideBudgetWidget(_createNewBudget),
               SizedBox(
                 height: 20.0,
               )
@@ -192,7 +190,7 @@ class _AccountDetailsState extends State<AccountDetails> {
     ));
   }
 
-  Widget decideBudgetWidget(Function createNewBudget) {
+  Widget _decideBudgetWidget(Function createNewBudget) {
     if (numBudgets == 0) {
       return FlatButton.icon(
         color: MyColors.MainFade2,
@@ -242,15 +240,26 @@ class _AccountDetailsState extends State<AccountDetails> {
     }
   }
 
-  void createNewBudget() {
+//--------------------------------------------------------//
+// Opens the popup dialog for creating the new widget
+//--------------------------------------------------------//
+  void _createNewBudget() {
     showDialog(
         context: context,
         builder: (context) {
-          return CreateNewBudget(newBudgetSet: saveNewBudget, newOrEdit: "New Budget",);
+          return CreateOrEditBudget(
+            newBudgetSet: _saveNewBudget,
+            newOrEdit: "New Budget",
+            createOrSave : "Create",
+          );
         });
   }
 
-  void saveNewBudget(String budgetName, double maxLimit, DateTime unixTime, int repeatPeriod) {
+//--------------------------------------------------------//
+// Saves the newly created budget on the database
+//  TODO Do some error checking with the result
+//--------------------------------------------------------//
+  void _saveNewBudget(String budgetName, double maxLimit, DateTime unixTime, int repeatPeriod) {
     DateTime startDate = unixTime;
     if (unixTime == null) {
       startDate = DateTime.now();
@@ -270,13 +279,16 @@ class _AccountDetailsState extends State<AccountDetails> {
 
     if (repeatPeriod == null) {
       //'Everyday', '2 Days', 'Every Week', 'Every 2 Week', 'Every 4 Week', 'Monthly', 'Every 2 Months', 'Every 3 Months', 'Every 6 Months', 'Every Year'
-      repeatPeriod = 10;
+      repeatPeriod = 9;
     }
 
     dynamic result = FireStoreService(uid: widget.user.uid).createNewBudget(name, budgetLimit, pickedTime, repeatPeriod, numBudgets);
   }
 
-  void normalAccountOnClick() {
+//--------------------------------------------------------//
+// Navigates to WalletDetailsPage when Normal account is clicked
+//--------------------------------------------------------//
+  void _normalAccountOnClick() {
     Navigator.of(context).push(MaterialPageRoute(
         builder: (context) => WalletDetails(
               user: widget.user,
@@ -289,7 +301,7 @@ class _AccountDetailsState extends State<AccountDetails> {
 //--------------------------------------------------------//
 // Select income or expense from the popup dialog
 //--------------------------------------------------------//
-  void setIncomeExpense(int val) {
+  void _setIncomeExpense(int val) {
     setState(() {
       incomeOrExpense = val;
     });
@@ -297,9 +309,9 @@ class _AccountDetailsState extends State<AccountDetails> {
         context: context,
         builder: (context) {
           if (val == 2) {
-            return SelectExpenseCategory(setExpenseCategory: setExpenseCategory);
+            return SelectExpenseCategory(setExpenseCategory: _setExpenseCategory);
           } else {
-            return SelectIncomeCategory(setIncomeCategory: setIncomeCategory);
+            return SelectIncomeCategory(setIncomeCategory: _setIncomeCategory);
           }
         });
   }
@@ -307,44 +319,39 @@ class _AccountDetailsState extends State<AccountDetails> {
 //--------------------------------------------------------//
 // Select the income category from the icon popup dialog
 //--------------------------------------------------------//
-  void setIncomeCategory(String val) {
+  void _setIncomeCategory(String val) {
     setState(() {
       category = val;
     });
     showDialog(
         context: context,
         builder: (context) {
-          return EnterBudgetValue(enterBudgetValue: enterBudgetValue, incomeOrExpense: incomeOrExpense, category: category, currentBalance: normalAccountBalance);
+          return EnterBudgetValue(enterBudgetValue: _enterBudgetValue, incomeOrExpense: incomeOrExpense, category: category, currentBalance: normalAccountBalance);
         });
   }
 
 //--------------------------------------------------------//
 // Select the expense category from the icon popup dialog
 //--------------------------------------------------------//
-  void setExpenseCategory(String val) {
+  void _setExpenseCategory(String val) {
     setState(() {
       category = val;
     });
     showDialog(
         context: context,
         builder: (context) {
-          return EnterBudgetValue(enterBudgetValue: enterBudgetValue, incomeOrExpense: incomeOrExpense, category: category, currentBalance: normalAccountBalance);
+          return EnterBudgetValue(enterBudgetValue: _enterBudgetValue, incomeOrExpense: incomeOrExpense, category: category, currentBalance: normalAccountBalance);
         });
   }
 
 //--------------------------------------------------------//
 // Enter a dollar value spent
 //--------------------------------------------------------//
-  void enterBudgetValue(double val) {
+  void _enterBudgetValue(double val) {
     setState(() {
       enterValue = val;
     });
-//    Navigator.push(
-//      context,
-//      MaterialPageRoute(builder: (context) => Budgeting()),
-//    );
 
-    print(normalAccountBalance);
     dynamic result = FireStoreService(uid: widget.user.uid).setNormalAccountEntry(incomeOrExpense, category, new DateTime.now().millisecondsSinceEpoch, enterValue, normalAccountBalance);
     // need to write to the database here.
     if (result != null) {
@@ -357,11 +364,8 @@ class _AccountDetailsState extends State<AccountDetails> {
     }
   }
 
-  void editAccountDetails(String name, double amount, String type) {
-    print(name + "  " + amount.toString() + "  " + type);
-  }
 
-  void signOut() async {
+  void _signOut() async {
     await _auth.signOut();
     await _auth.signOutGoogle();
   }

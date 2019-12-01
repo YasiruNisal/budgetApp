@@ -3,7 +3,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:percent_indicator/percent_indicator.dart';
 import 'package:simplybudget/Components/loading.dart';
-import 'package:simplybudget/PopupDialogs/createNewBudget.dart';
+import 'package:simplybudget/PopupDialogs/confirmDialog.dart';
+import 'package:simplybudget/PopupDialogs/createOrEditBudget.dart';
 import 'package:simplybudget/Services/firestore.dart';
 import 'package:simplybudget/config/colors.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -11,13 +12,14 @@ import 'package:jiffy/jiffy.dart';
 
 class BudgetDetails extends StatefulWidget {
   final FirebaseUser user;
+  final String  selectedBudgetID;
   final String selectedBudget;
   final double selectedBudgetLimit;
   final double selectedBudgetSpent;
   final int selectBudgetStartDate;
   final int selectBudgetRepeat;
 
-  BudgetDetails({this.user, this.selectedBudget, this.selectedBudgetLimit, this.selectedBudgetSpent, this.selectBudgetStartDate, this.selectBudgetRepeat});
+  BudgetDetails({this.selectedBudgetID, this.user, this.selectedBudget, this.selectedBudgetLimit, this.selectedBudgetSpent, this.selectBudgetStartDate, this.selectBudgetRepeat});
 
   @override
   _BudgetDetailsState createState() => _BudgetDetailsState();
@@ -33,6 +35,12 @@ class _BudgetDetailsState extends State<BudgetDetails> with TickerProviderStateM
   int initStartTime = 0;
   int initEndTime = 0;
 
+  String selectedBudget;
+  double selectedBudgetLimit;
+  double selectedBudgetSpent;
+  int selectBudgetStartDate;
+  int selectBudgetRepeat;
+
   @override
   void initState() {
     super.initState();
@@ -40,7 +48,7 @@ class _BudgetDetailsState extends State<BudgetDetails> with TickerProviderStateM
     _tabController = TabController(length: tabStringList.length, vsync: this, initialIndex: tabStringList.length - 1);
     _tabController.addListener(_handleTabChange);
 
-    FireStoreService(uid: widget.user.uid).budgetHistoryList(widget.selectedBudget.toLowerCase(), initStartTime, initEndTime).listen((querySnapshot) {
+    FireStoreService(uid: widget.user.uid).budgetHistoryList(widget.selectedBudgetID, initStartTime, initEndTime).listen((querySnapshot) {
       setState(() {
         budgetHistoryList = querySnapshot.documents;
       });
@@ -86,7 +94,9 @@ class _BudgetDetailsState extends State<BudgetDetails> with TickerProviderStateM
                   actions: <Widget>[
                     IconButton(
                       icon: Icon(Icons.delete),
-                      onPressed: () {},
+                      onPressed: () {
+                        deleteThisBudget();
+                      },
                       color: MyColors.WHITE,
                     ),
                     IconButton(
@@ -165,7 +175,7 @@ class _BudgetDetailsState extends State<BudgetDetails> with TickerProviderStateM
                           .toList(),
                       onTap: (index) {
                         FireStoreService(uid: widget.user.uid)
-                            .budgetHistoryList(widget.selectedBudget.toLowerCase(), startEndDates[index]["start"], startEndDates[index]["end"])
+                            .budgetHistoryList(widget.selectedBudgetID, startEndDates[index]["start"], startEndDates[index]["end"])
                             .listen((querySnapshot) {
                           setState(() {
                             budgetHistoryList = querySnapshot.documents;
@@ -196,7 +206,7 @@ class _BudgetDetailsState extends State<BudgetDetails> with TickerProviderStateM
     showDialog(
         context: context,
         builder: (context) {
-          return CreateNewBudget(newBudgetSet: editBudget, newOrEdit: "New Budget", budgetName: widget.selectedBudget, budgetLimit: widget.selectedBudgetLimit, budgetStartDate: widget.selectBudgetStartDate, budgetRepeatPeriod: widget.selectBudgetRepeat,);
+          return CreateOrEditBudget(newBudgetSet: editBudget, newOrEdit: "Edit Budget", createOrSave : "Save", budgetName: widget.selectedBudget, budgetLimit: widget.selectedBudgetLimit, budgetStartDate: widget.selectBudgetStartDate, budgetRepeatPeriod: widget.selectBudgetRepeat,);
         });
   }
 
@@ -221,17 +231,32 @@ class _BudgetDetailsState extends State<BudgetDetails> with TickerProviderStateM
 
     if (repeatPeriod == null) {
       //'Everyday', '2 Days', 'Every Week', 'Every 2 Week', 'Every 4 Week', 'Monthly', 'Every 2 Months', 'Every 3 Months', 'Every 6 Months', 'Every Year'
-      repeatPeriod = 10;
+      repeatPeriod = 9;
     }
 
-    dynamic result = FireStoreService(uid: widget.user.uid).editBudget(name, budgetLimit, pickedTime, repeatPeriod);
+    dynamic result = FireStoreService(uid: widget.user.uid).editBudget(widget.selectedBudgetID, budgetName, budgetLimit, pickedTime, repeatPeriod);
+  }
+
+  void deleteThisBudget(){
+    showDialog(
+        context: context,
+        builder: (context) {
+          return ConfirmDialog(onClickYes: deleteBudget, question: "Are you sure you want to delete?",);
+        });
+  }
+
+  void deleteBudget(){
+    dynamic result = FireStoreService(uid: widget.user.uid).deleteBudget(widget.selectedBudgetID);
+    if(result != null){
+      Navigator.pop(context);
+    }
   }
 
   void _handleTabChange() {
 //    budgetHistoryList = null;
     print("Calling tabbar handler " + _tabController.index.toString());
     FireStoreService(uid: widget.user.uid)
-        .budgetHistoryList(widget.selectedBudget.toLowerCase(), startEndDates[_tabController.index]["start"], startEndDates[_tabController.index]["end"])
+        .budgetHistoryList(widget.selectedBudgetID, startEndDates[_tabController.index]["start"], startEndDates[_tabController.index]["end"])
         .listen((querySnapshot) {
       setState(() {
         budgetHistoryList = querySnapshot.documents;
@@ -404,34 +429,34 @@ class _BudgetDetailsState extends State<BudgetDetails> with TickerProviderStateM
 
   Map returnBudgetDuration(int repeatPeriod) {
     switch (repeatPeriod) {
-      case 1:
+      case 0:
         return {"period": "days", "time": 1};
         break;
-      case 2:
+      case 1:
         return {"period": "days", "time": 2};
         break;
-      case 3:
+      case 2:
         return {"period": "days", "time": 7};
         break;
-      case 4:
+      case 3:
         return {"period": "days", "time": 14};
         break;
-      case 5:
+      case 4:
         return {"period": "days", "time": 28};
         break;
-      case 6:
+      case 5:
         return {"period": "months", "time": 1};
         break;
-      case 7:
+      case 6:
         return {"period": "months", "time": 2};
         break;
-      case 8:
+      case 7:
         return {"period": "months", "time": 3};
         break;
-      case 9:
+      case 8:
         return {"period": "months", "time": 6};
         break;
-      case 10:
+      case 9:
         return {"period": "years", "time": 1};
         break;
       default:

@@ -3,10 +3,10 @@ import 'package:simplybudget/config/colors.dart';
 
 class EditAccountDetails extends StatefulWidget {
 
-  final void Function(String, double, String) enterAccountDetails;
+  final void Function(String, double, int) enterAccountDetails;
   final String accountName;
   final double accountAmount;
-  final String whichAccount;
+  final int whichAccount;
 
   EditAccountDetails({this.enterAccountDetails, this.accountName, this.accountAmount, this.whichAccount});
 
@@ -19,6 +19,14 @@ class _EditAccountDetailsState extends State<EditAccountDetails> {
 
   final enterNameController = TextEditingController();
   final enterAmountController = TextEditingController();
+
+  @override
+  initState() {
+    super.initState();
+    // Add listeners to this class
+    widget.accountName != null ? enterNameController.text = widget.accountName : enterNameController.text = "";
+    widget.accountAmount != null ? enterAmountController.text = widget.accountAmount.toString() : enterAmountController.text = "";
+  }
 
   @override
   void dispose() {
@@ -43,7 +51,7 @@ class _EditAccountDetailsState extends State<EditAccountDetails> {
       ),
       content: SingleChildScrollView(
         child: Container(
-          height: 250.0,
+          height: 210.0,
           child: Column(
             children: <Widget>[
               SizedBox(
@@ -52,7 +60,7 @@ class _EditAccountDetailsState extends State<EditAccountDetails> {
               TextField(
                 controller: enterNameController,
                 cursorColor: MyColors.MainFade2,
-                keyboardType: TextInputType.number,
+//                keyboardType: TextInputType.number,
                 decoration: InputDecoration(
                   labelText: 'Account Name',
                   hintText: widget.accountName,
@@ -70,7 +78,7 @@ class _EditAccountDetailsState extends State<EditAccountDetails> {
                 cursorColor: MyColors.MainFade2,
                 keyboardType: TextInputType.number,
                 decoration: InputDecoration(
-                  labelText: '\$ Amount',
+                  labelText: 'Net Balance \$',
                   hintText: widget.accountAmount.toString(),
                   labelStyle: new TextStyle(color: MyColors.MainFade2),
                   focusedBorder: UnderlineInputBorder(
