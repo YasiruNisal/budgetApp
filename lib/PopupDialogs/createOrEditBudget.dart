@@ -33,7 +33,7 @@ class _CreateOrEditBudgetState extends State<CreateOrEditBudget> {
 
   String pickedRepeat = "Repeat Period";
 
-  int pickedRepeatFromArray = 10;
+  int pickedRepeatFromArray = 9;
 
   int unixRepeatTime = 0;
 

@@ -32,6 +32,8 @@ class _WalletDetailsState extends State<WalletDetails> with TickerProviderStateM
   String selectAccountName = "Loading";
   double selectAccountValue = 0.0;
 
+  var fireBaseListener;
+
 
   @override
   void initState() {
@@ -46,12 +48,32 @@ class _WalletDetailsState extends State<WalletDetails> with TickerProviderStateM
       selectAccountValue = widget.selectAccountValue;
     });
 
-    FireStoreService(uid: widget.user.uid).walletNormalAccountHistoryList(initStartTime, initEndTime).listen((querySnapshot) {
+    fireBaseListener = FireStoreService(uid: widget.user.uid).walletNormalAccountHistoryList(initStartTime, initEndTime).listen((querySnapshot) {
       setState(() {
         walletHistoryList = querySnapshot.documents;
       });
     });
+
+    WidgetsBinding.instance
+        .addPostFrameCallback((_) => callAfterBuild(context));
   }
+
+  @override
+  void dispose() {
+    fireBaseListener?.cancel();
+    super.dispose();
+  }
+
+
+  void callAfterBuild(context) {
+    print("DID UPDATE WIDGETTTTTT");
+    if(selectAccountValue == 0.0){
+      editAccount();
+    }
+
+  }
+
+
 
   @override
   Widget build(BuildContext context) {
@@ -69,6 +91,8 @@ class _WalletDetailsState extends State<WalletDetails> with TickerProviderStateM
       }
       cashFlow = earnings - expense;
     }
+
+
 
     return Scaffold(
         body: NestedScrollView(
@@ -173,6 +197,8 @@ class _WalletDetailsState extends State<WalletDetails> with TickerProviderStateM
               )
               .toList()),
     ));
+
+
   }
 
   void editAccount() {
@@ -228,7 +254,7 @@ class _WalletDetailsState extends State<WalletDetails> with TickerProviderStateM
 // Callback function when a tab is changed
 //--------------------------------------------------------//
   void _handleTabChange() {
-    FireStoreService(uid: widget.user.uid).walletNormalAccountHistoryList(startEndDates[_tabController.index]["start"], startEndDates[_tabController.index]["end"]).listen((querySnapshot) {
+    fireBaseListener = FireStoreService(uid: widget.user.uid).walletNormalAccountHistoryList(startEndDates[_tabController.index]["start"], startEndDates[_tabController.index]["end"]).listen((querySnapshot) {
       setState(() {
         walletHistoryList = querySnapshot.documents;
       });

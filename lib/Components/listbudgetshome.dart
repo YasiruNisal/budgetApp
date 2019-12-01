@@ -27,14 +27,22 @@ class _ListBudgetsHomeScreenState extends State<ListBudgetsHomeScreen> {
   String category = "";
   double enterValue = 0;
 
+  var fireBaseListener;
+
   @override
   void initState() {
     super.initState();
-    FireStoreService(uid: widget.user.uid).budgetList.listen((querySnapshot) {
+    fireBaseListener = FireStoreService(uid: widget.user.uid).budgetList.listen((querySnapshot) {
       setState(() {
         budgetList = querySnapshot.documents;
       });
     });
+  }
+
+  @override
+  void dispose() {
+    fireBaseListener?.cancel();
+    super.dispose();
   }
 
   @override

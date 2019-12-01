@@ -37,9 +37,9 @@ class _BudgetDetailsState extends State<BudgetDetails> with TickerProviderStateM
 
   String selectedBudget;
   double selectedBudgetLimit;
-  double selectedBudgetSpent;
   int selectBudgetStartDate;
   int selectBudgetRepeat;
+  var fireBaseListener;
 
   @override
   void initState() {
@@ -48,7 +48,15 @@ class _BudgetDetailsState extends State<BudgetDetails> with TickerProviderStateM
     _tabController = TabController(length: tabStringList.length, vsync: this, initialIndex: tabStringList.length - 1);
     _tabController.addListener(_handleTabChange);
 
-    FireStoreService(uid: widget.user.uid).budgetHistoryList(widget.selectedBudgetID, initStartTime, initEndTime).listen((querySnapshot) {
+    setState(() {
+      tabStringList = getTabList(widget.selectBudgetStartDate, widget.selectBudgetRepeat);
+      selectedBudget = widget.selectedBudget;
+      selectedBudgetLimit = widget.selectedBudgetLimit;
+      selectBudgetStartDate = widget.selectBudgetStartDate;
+      selectBudgetRepeat = widget.selectBudgetRepeat;
+    });
+
+    fireBaseListener = FireStoreService(uid: widget.user.uid).budgetHistoryList(widget.selectedBudgetID, initStartTime, initEndTime).listen((querySnapshot) {
       setState(() {
         budgetHistoryList = querySnapshot.documents;
       });
@@ -58,6 +66,7 @@ class _BudgetDetailsState extends State<BudgetDetails> with TickerProviderStateM
   @override
   void dispose() {
     _tabController.dispose();
+    fireBaseListener?.cancel();
     super.dispose();
   }
 
@@ -69,9 +78,9 @@ class _BudgetDetailsState extends State<BudgetDetails> with TickerProviderStateM
     if (budgetHistoryList != null) {
       budgetHistoryList.forEach((item) => totalSpent += item["amount"]);
 
-      percentage = totalSpent / widget.selectedBudgetLimit;
+      percentage = totalSpent / selectedBudgetLimit;
       if (percentage > 1) {
-        percentage = (totalSpent % widget.selectedBudgetLimit) / widget.selectedBudgetLimit;
+        percentage = (totalSpent % selectedBudgetLimit) / selectedBudgetLimit;
         donutColor = MyColors.RED;
       }
     }
@@ -109,7 +118,7 @@ class _BudgetDetailsState extends State<BudgetDetails> with TickerProviderStateM
                   ],
                   flexibleSpace: FlexibleSpaceBar(
                     centerTitle: true,
-                    title: Text(widget.selectedBudget[0].toUpperCase() + widget.selectedBudget.substring(1), style: TextStyle(fontSize: 18.0, color: MyColors.WHITE)),
+                    title: Text(selectedBudget[0].toUpperCase() + selectedBudget.substring(1), style: TextStyle(fontSize: 18.0, color: MyColors.WHITE)),
                     background: Container(
                       decoration: BoxDecoration(
                         image: DecorationImage(
@@ -128,7 +137,7 @@ class _BudgetDetailsState extends State<BudgetDetails> with TickerProviderStateM
                                 width: 150,
                                 child: Padding(
                                   padding: const EdgeInsets.only(left: 5.0, right: 5.0),
-                                  child: Text("\$ " + widget.selectedBudgetLimit.toStringAsFixed(2) + " Limit", overflow: TextOverflow.ellipsis, style: TextStyle(fontSize: 20.0, color: MyColors.WHITE)),
+                                  child: Text("\$ " + selectedBudgetLimit.toStringAsFixed(2) + " Limit", overflow: TextOverflow.ellipsis, style: TextStyle(fontSize: 20.0, color: MyColors.WHITE)),
                                 ),
                               ),
                               Container(height: 25.0, color: MyColors.GREY, width: 1.0),
@@ -174,7 +183,7 @@ class _BudgetDetailsState extends State<BudgetDetails> with TickerProviderStateM
                               ))
                           .toList(),
                       onTap: (index) {
-                        FireStoreService(uid: widget.user.uid)
+                        fireBaseListener = FireStoreService(uid: widget.user.uid)
                             .budgetHistoryList(widget.selectedBudgetID, startEndDates[index]["start"], startEndDates[index]["end"])
                             .listen((querySnapshot) {
                           setState(() {
@@ -206,7 +215,7 @@ class _BudgetDetailsState extends State<BudgetDetails> with TickerProviderStateM
     showDialog(
         context: context,
         builder: (context) {
-          return CreateOrEditBudget(newBudgetSet: editBudget, newOrEdit: "Edit Budget", createOrSave : "Save", budgetName: widget.selectedBudget, budgetLimit: widget.selectedBudgetLimit, budgetStartDate: widget.selectBudgetStartDate, budgetRepeatPeriod: widget.selectBudgetRepeat,);
+          return CreateOrEditBudget(newBudgetSet: editBudget, newOrEdit: "Edit Budget", createOrSave : "Save", budgetName: selectedBudget, budgetLimit: selectedBudgetLimit, budgetStartDate: selectBudgetStartDate, budgetRepeatPeriod: selectBudgetRepeat,);
         });
   }
 
@@ -234,6 +243,16 @@ class _BudgetDetailsState extends State<BudgetDetails> with TickerProviderStateM
       repeatPeriod = 9;
     }
 
+    setState(() {
+      tabStringList = getTabList(pickedTime, repeatPeriod);
+      selectedBudget = name;
+      selectedBudgetLimit = budgetLimit;
+      selectBudgetStartDate = pickedTime;
+      selectBudgetRepeat = repeatPeriod;
+    });
+
+    _tabController = TabController(length: tabStringList.length, vsync: this, initialIndex: tabStringList.length - 1);
+
     dynamic result = FireStoreService(uid: widget.user.uid).editBudget(widget.selectedBudgetID, budgetName, budgetLimit, pickedTime, repeatPeriod);
   }
 
@@ -255,7 +274,7 @@ class _BudgetDetailsState extends State<BudgetDetails> with TickerProviderStateM
   void _handleTabChange() {
 //    budgetHistoryList = null;
     print("Calling tabbar handler " + _tabController.index.toString());
-    FireStoreService(uid: widget.user.uid)
+    fireBaseListener = FireStoreService(uid: widget.user.uid)
         .budgetHistoryList(widget.selectedBudgetID, startEndDates[_tabController.index]["start"], startEndDates[_tabController.index]["end"])
         .listen((querySnapshot) {
       setState(() {
@@ -359,7 +378,7 @@ class _BudgetDetailsState extends State<BudgetDetails> with TickerProviderStateM
     int addTime = startDate;
     int prevTime = startDate;
     Map duration = returnBudgetDuration(repeatPeriod);
-
+    int displayTime;
     while (addTime < today) {
       prevTime = addTime;
       DateTime dt = DateTime(DateTime.fromMillisecondsSinceEpoch(addTime).year, DateTime.fromMillisecondsSinceEpoch(addTime).month, DateTime.fromMillisecondsSinceEpoch(addTime).day);
@@ -373,18 +392,20 @@ class _BudgetDetailsState extends State<BudgetDetails> with TickerProviderStateM
         addTime = jiffyTime.add(years: duration["time"]).millisecondsSinceEpoch;
       }
 
+      displayTime = jiffyTime.subtract(duration: Duration(days: 1)).millisecondsSinceEpoch;
+
       tabList.add(DateTime.fromMillisecondsSinceEpoch(prevTime).day.toString() +
           "/" +
           DateTime.fromMillisecondsSinceEpoch(prevTime).month.toString() +
           " - " +
-          (DateTime.fromMillisecondsSinceEpoch(addTime).day - 1).toString() +
+          (DateTime.fromMillisecondsSinceEpoch(displayTime).day).toString() +
           "/" +
-          DateTime.fromMillisecondsSinceEpoch(addTime).month.toString());
-      startEndDates.add({"start": prevTime, "end": addTime});
+          DateTime.fromMillisecondsSinceEpoch(displayTime).month.toString());
+      startEndDates.add({"start": prevTime, "end": displayTime});
     }
 
     initStartTime = prevTime;
-    initEndTime = addTime;
+    initEndTime = displayTime;
 
     return tabList;
   }

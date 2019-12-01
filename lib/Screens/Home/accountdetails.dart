@@ -38,10 +38,12 @@ class _AccountDetailsState extends State<AccountDetails> {
   String currency = "\$";
   int numBudgets = 0;
 
+  var fireBaseListener;
+
   @override
   void initState() {
     super.initState();
-    FireStoreService(uid: widget.user.uid).accountData.listen((documentSnapshot) {
+    fireBaseListener = FireStoreService(uid: widget.user.uid).accountData.listen((documentSnapshot) {
       setState(() {
         normalAccountName = documentSnapshot.data["normalaccountname"];
         savingAccountName = documentSnapshot.data["savingaccountname"];
@@ -52,6 +54,12 @@ class _AccountDetailsState extends State<AccountDetails> {
         accountCreated = documentSnapshot.data["accountcreated"];
       });
     });
+  }
+
+  @override
+  void dispose() {
+    fireBaseListener?.cancel();
+    super.dispose();
   }
 
   @override
@@ -132,12 +140,16 @@ class _AccountDetailsState extends State<AccountDetails> {
                           setState(() {
                             whichAccount = 0;
                           });
+                          if(normalAccountBalance == 0){
+                            _normalAccountOnClick();
+                          }else{
+                            showDialog(
+                                context: context,
+                                builder: (context) {
+                                  return SelectIncomeExpense(setIncomeExpense: _setIncomeExpense);
+                                });
+                          }
 
-                          showDialog(
-                              context: context,
-                              builder: (context) {
-                                return SelectIncomeExpense(setIncomeExpense: _setIncomeExpense);
-                              });
                         }),
                     AccountDetailsCard(
                         imgPath: 'assets/images/savingaccount.png',
