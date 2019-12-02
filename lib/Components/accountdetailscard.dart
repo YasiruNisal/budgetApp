@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:simplybudget/Screens/Home/walletdetails.dart';
 import 'package:simplybudget/config/colors.dart';
 
 class AccountDetailsCard extends StatelessWidget {
@@ -54,7 +53,6 @@ class AccountDetailsCard extends StatelessWidget {
                             width: 190,
                             child: Text(currency + ' ' + formatMoney(balance),
                                 style: TextStyle(
-      //                                        fontFamily: 'Montserrat',
                                     fontSize: 25.0,
                                     )),
                           ),
@@ -64,7 +62,6 @@ class AccountDetailsCard extends StatelessWidget {
                             child: Text(
                               accountName,
                               style: TextStyle(
-      //                                        fontFamily: 'Montserrat',
                                   fontSize: 18.0,
                                   color: Colors.grey),
                               textAlign: TextAlign.left,
