@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:jiffy/jiffy.dart';
 import 'package:simplybudget/config/colors.dart';
 import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
 import 'package:intl/intl.dart';
 
 class CreateOrEditBudget extends StatefulWidget {
-  final void Function(String, double, DateTime, int) newBudgetSet;
+  final void Function(String, double, DateTime, int, int) newBudgetSet;
   final String newOrEdit;
   final String budgetName;
   final double budgetLimit;
@@ -157,8 +158,23 @@ class _CreateOrEditBudgetState extends State<CreateOrEditBudget> {
                       ),
                       onPressed: () {
                         _dismissDialog(context);
+                        Map duration = returnBudgetDuration(pickedRepeatFromArray);
+                        int resetDate = unixPickedStartDate.millisecondsSinceEpoch;
+
+                        DateTime dt = DateTime(DateTime.fromMillisecondsSinceEpoch(resetDate).year, DateTime.fromMillisecondsSinceEpoch(resetDate).month, DateTime.fromMillisecondsSinceEpoch(resetDate).day);
+                        var jiffyTime = Jiffy(dt);
+
+                        if (duration["period"] == "days") {
+                          resetDate = jiffyTime.add(days: duration["time"]).millisecondsSinceEpoch;
+                        } else if (duration["period"] == "months") {
+                          resetDate = jiffyTime.add(months: duration["time"]).millisecondsSinceEpoch;
+                        } else if (duration["period"] == "years") {
+                          resetDate = jiffyTime.add(years: duration["time"]).millisecondsSinceEpoch;
+                        }
+
+                        print("Reset Date time ******   "  + resetDate.toString());
 //                        widget.enterBudgetValue( double.tryParse(enterValController.text));
-                        widget.newBudgetSet(enterNameController.text, double.tryParse(enterValController.text), unixPickedStartDate, pickedRepeatFromArray);
+                        widget.newBudgetSet(enterNameController.text, double.tryParse(enterValController.text), unixPickedStartDate, pickedRepeatFromArray, resetDate);
                       },
                       child: Text(
                         widget.createOrSave,
@@ -177,5 +193,44 @@ class _CreateOrEditBudgetState extends State<CreateOrEditBudget> {
 
   _dismissDialog(context) {
     Navigator.pop(context);
+  }
+
+
+  Map returnBudgetDuration(int repeatPeriod) {
+    switch (repeatPeriod) {
+      case 0:
+        return {"period": "days", "time": 1};
+        break;
+      case 1:
+        return {"period": "days", "time": 2};
+        break;
+      case 2:
+        return {"period": "days", "time": 7};
+        break;
+      case 3:
+        return {"period": "days", "time": 14};
+        break;
+      case 4:
+        return {"period": "days", "time": 28};
+        break;
+      case 5:
+        return {"period": "months", "time": 1};
+        break;
+      case 6:
+        return {"period": "months", "time": 2};
+        break;
+      case 7:
+        return {"period": "months", "time": 3};
+        break;
+      case 8:
+        return {"period": "months", "time": 6};
+        break;
+      case 9:
+        return {"period": "years", "time": 1};
+        break;
+      default:
+        return {"period": "years", "time": 1};
+        break;
+    }
   }
 }

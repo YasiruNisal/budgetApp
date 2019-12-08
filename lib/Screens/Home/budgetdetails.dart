@@ -12,7 +12,7 @@ import 'package:jiffy/jiffy.dart';
 
 class BudgetDetails extends StatefulWidget {
   final FirebaseUser user;
-  final String  selectedBudgetID;
+  final String selectedBudgetID;
   final String selectedBudget;
   final double selectedBudgetLimit;
   final double selectedBudgetSpent;
@@ -184,9 +184,8 @@ class _BudgetDetailsState extends State<BudgetDetails> with TickerProviderStateM
                               ))
                           .toList(),
                       onTap: (index) {
-                        fireBaseListener = FireStoreService(uid: widget.user.uid)
-                            .budgetHistoryList(widget.selectedBudgetID, startEndDates[index]["start"], startEndDates[index]["end"])
-                            .listen((querySnapshot) {
+                        fireBaseListener =
+                            FireStoreService(uid: widget.user.uid).budgetHistoryList(widget.selectedBudgetID, startEndDates[index]["start"], startEndDates[index]["end"]).listen((querySnapshot) {
                           setState(() {
                             budgetHistoryList = querySnapshot.documents;
                           });
@@ -211,17 +210,23 @@ class _BudgetDetailsState extends State<BudgetDetails> with TickerProviderStateM
                     .toList())));
   }
 
-
   void editThisBudget() {
     showDialog(
         context: context,
         builder: (context) {
-          return CreateOrEditBudget(newBudgetSet: editBudget, newOrEdit: "Edit Budget", createOrSave : "Save", budgetName: selectedBudget, budgetLimit: selectedBudgetLimit, budgetStartDate: selectBudgetStartDate, budgetRepeatPeriod: selectBudgetRepeat,);
+          return CreateOrEditBudget(
+            newBudgetSet: editBudget,
+            newOrEdit: "Edit Budget",
+            createOrSave: "Save",
+            budgetName: selectedBudget,
+            budgetLimit: selectedBudgetLimit,
+            budgetStartDate: selectBudgetStartDate,
+            budgetRepeatPeriod: selectBudgetRepeat,
+          );
         });
   }
 
-
-  void editBudget(String budgetName, double maxLimit, DateTime unixTime, int repeatPeriod) {
+  void editBudget(String budgetName, double maxLimit, DateTime unixTime, int budgetResetDate, int repeatPeriod) {
     DateTime startDate = unixTime;
     if (unixTime == null) {
       startDate = DateTime.now();
@@ -254,27 +259,30 @@ class _BudgetDetailsState extends State<BudgetDetails> with TickerProviderStateM
 
     _tabController = TabController(length: tabStringList.length, vsync: this, initialIndex: tabStringList.length - 1);
 
-    dynamic result = FireStoreService(uid: widget.user.uid).editBudget(widget.selectedBudgetID, budgetName, budgetLimit, pickedTime, repeatPeriod);
+    dynamic result = FireStoreService(uid: widget.user.uid).editBudget(widget.selectedBudgetID, budgetName, budgetLimit, pickedTime, budgetResetDate, repeatPeriod);
   }
 
-  void deleteThisBudget(){
+  void deleteThisBudget() {
     showDialog(
         context: context,
         builder: (context) {
-          return ConfirmDialog(onClickYes: deleteBudget, question: "Are you sure you want to delete?",);
+          return ConfirmDialog(
+            onClickYes: deleteBudget,
+            question: "Are you sure you want to delete?",
+          );
         });
   }
 
-  void deleteBudget(){
+  void deleteBudget() {
     dynamic result = FireStoreService(uid: widget.user.uid).deleteBudget(widget.selectedBudgetID);
-    if(result != null){
+    if (result != null) {
       Navigator.pop(context);
     }
   }
 
   void _handleTabChange() {
 //    budgetHistoryList = null;
-    print("Calling tabbar handler " + _tabController.index.toString());
+    print("Calling tabbar handler " +  startEndDates[_tabController.index]["start"].toString() + "     end   " + startEndDates[_tabController.index]["end"].toString());
     fireBaseListener = FireStoreService(uid: widget.user.uid)
         .budgetHistoryList(widget.selectedBudgetID, startEndDates[_tabController.index]["start"], startEndDates[_tabController.index]["end"])
         .listen((querySnapshot) {
@@ -381,60 +389,32 @@ class _BudgetDetailsState extends State<BudgetDetails> with TickerProviderStateM
     Map duration = returnBudgetDuration(repeatPeriod);
     int displayTime;
 
-
-    if(addTime < today) {
+    if (addTime < today) {
       while (addTime < today) {
         prevTime = addTime;
-        DateTime dt = DateTime(DateTime
-            .fromMillisecondsSinceEpoch(addTime)
-            .year, DateTime
-            .fromMillisecondsSinceEpoch(addTime)
-            .month, DateTime
-            .fromMillisecondsSinceEpoch(addTime)
-            .day);
+        DateTime dt = DateTime(DateTime.fromMillisecondsSinceEpoch(addTime).year, DateTime.fromMillisecondsSinceEpoch(addTime).month, DateTime.fromMillisecondsSinceEpoch(addTime).day);
         var jiffyTime = Jiffy(dt);
 
         if (duration["period"] == "days") {
-          addTime = jiffyTime
-              .add(days: duration["time"])
-              .millisecondsSinceEpoch;
+          addTime = jiffyTime.add(days: duration["time"]).millisecondsSinceEpoch;
         } else if (duration["period"] == "months") {
-          addTime = jiffyTime
-              .add(months: duration["time"])
-              .millisecondsSinceEpoch;
+          addTime = jiffyTime.add(months: duration["time"]).millisecondsSinceEpoch;
         } else if (duration["period"] == "years") {
-          addTime = jiffyTime
-              .add(years: duration["time"])
-              .millisecondsSinceEpoch;
+          addTime = jiffyTime.add(years: duration["time"]).millisecondsSinceEpoch;
         }
 
+        displayTime = jiffyTime.subtract(duration: Duration(days: 1)).millisecondsSinceEpoch;
 
-        displayTime = jiffyTime
-            .subtract(duration: Duration(days: 1))
-            .millisecondsSinceEpoch;
-
-        tabList.add(DateTime
-            .fromMillisecondsSinceEpoch(prevTime)
-            .day
-            .toString() +
+        tabList.add(DateTime.fromMillisecondsSinceEpoch(prevTime).day.toString() +
             "/" +
-            DateTime
-                .fromMillisecondsSinceEpoch(prevTime)
-                .month
-                .toString() +
+            DateTime.fromMillisecondsSinceEpoch(prevTime).month.toString() +
             " - " +
-            (DateTime
-                .fromMillisecondsSinceEpoch(displayTime)
-                .day).toString() +
+            (DateTime.fromMillisecondsSinceEpoch(displayTime).day).toString() +
             "/" +
-            DateTime
-                .fromMillisecondsSinceEpoch(displayTime)
-                .month
-                .toString());
-        startEndDates.add({"start": prevTime, "end": displayTime});
+            DateTime.fromMillisecondsSinceEpoch(displayTime).month.toString());
+        startEndDates.add({"start": prevTime, "end": addTime});
       }
-    }
-    else{
+    } else {
       tabList.add("Start Date is " + DateTime.fromMillisecondsSinceEpoch(addTime).toString());
     }
 

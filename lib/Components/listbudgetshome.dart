@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:jiffy/jiffy.dart';
 import 'package:simplybudget/Components/budgetdetailscard.dart';
 import 'package:simplybudget/Components/loading.dart';
 import 'package:simplybudget/PopupDialogs/enterBudgetValue.dart';
@@ -58,11 +59,13 @@ class _ListBudgetsHomeScreenState extends State<ListBudgetsHomeScreen> {
     return Column(
         children: budgets
             .map((item) => BudgetDetailCard(
+          user : widget.user,
                   id: item.documentID,
                   budgetName: item.data["budgetname"],
                   budgetLimit: item.data["budgetlimit"].toDouble(),
                   budgetSpent: item.data["budgetspent"].toDouble(),
                   budgetStartDate: item.data["budgetstartdate"],
+                  budgetResetDate: item.data["budgetresetdate"],
                   budgetRepeat: item.data["budgetrepeat"],
                   onPlusClick: budgetPlusOnClick,
                   onCardTap: openBudgetDetailPage,
@@ -76,7 +79,7 @@ class _ListBudgetsHomeScreenState extends State<ListBudgetsHomeScreen> {
       MaterialPageRoute(
           builder: (context) => BudgetDetails(
                 user: widget.user,
-            selectedBudgetID : id,
+                selectedBudgetID: id,
                 selectedBudget: budgetName,
                 selectedBudgetLimit: budgetLimit,
                 selectedBudgetSpent: budgetSpent,
@@ -114,6 +117,8 @@ class _ListBudgetsHomeScreenState extends State<ListBudgetsHomeScreen> {
           return EnterBudgetValue(enterBudgetValue: enterBudgetValue, incomeOrExpense: 2, category: category, currentBalance: budgetLeft);
         });
   }
+
+
 
   void enterBudgetValue(double val) {
     setState(() {

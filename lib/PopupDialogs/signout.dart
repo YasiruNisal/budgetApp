@@ -35,7 +35,7 @@ class _SignOutDialogState extends State<SignOutDialog> {
       shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.all(Radius.circular(20.0))),
       title: Text(
-        'Sign Out',
+        'User',
         textAlign: TextAlign.center,
       ),
       content: SingleChildScrollView(

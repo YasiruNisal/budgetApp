@@ -98,7 +98,7 @@ class FireStoreService {
     return await batch.commit();
   }
 
-  Future createNewBudget(String budgetName, double budgetLimit, int budgetStartDate, int budgetRepeat, int numberBudgets) async
+  Future createNewBudget(String budgetName, double budgetLimit, int budgetStartDate, int budgetRepeat, int budgetResetDate, int numberBudgets) async
   {
     WriteBatch batch = reference.batch();
     DocumentReference normalAccountBalance = userCollection.document(uid);
@@ -108,6 +108,7 @@ class FireStoreService {
       "budgetname" : budgetName,
       "budgetlimit" : budgetLimit,
       "budgetstartdate" : budgetStartDate,
+      "budgetresetdate": budgetResetDate,
       "budgetrepeat" : budgetRepeat,
       "budgetspent" : 0,
     });
@@ -117,7 +118,7 @@ class FireStoreService {
     return await batch.commit();
   }
 
-  Future editBudget(String budgetID, String budgetName, double budgetLimit, int budgetStartDate, int budgetRepeat,) async
+  Future editBudget(String budgetID, String budgetName, double budgetLimit, int budgetStartDate,  int budgetRepeat,int budgetResetDate,) async
   {
 
     DocumentReference newBudget = userCollection.document(uid).collection("newbudget").document(budgetID);
@@ -126,7 +127,19 @@ class FireStoreService {
       "budgetname" : budgetName,
       "budgetlimit" : budgetLimit,
       "budgetstartdate" : budgetStartDate,
+      "budgetresetdate": budgetResetDate,
       "budgetrepeat" : budgetRepeat,
+    });
+  }
+
+  Future resetBudget(String budgetID,  int budgetResetDate, double budgetSpent,) async
+  {
+
+    DocumentReference newBudget = userCollection.document(uid).collection("newbudget").document(budgetID);
+
+    return await newBudget.updateData({
+      "budgetresetdate": budgetResetDate,
+      "budgetspent": budgetSpent,
     });
   }
 

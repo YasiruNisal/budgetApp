@@ -78,7 +78,7 @@ class _AccountDetailsState extends State<AccountDetails> {
             mainAxisAlignment: MainAxisAlignment.end,
             children: <Widget>[
               IconButton(
-                icon: Icon(Icons.person),
+                icon: Icon(Icons.settings_applications),
                 color: Colors.white,
                 onPressed: () {
                   showDialog(
@@ -273,7 +273,7 @@ class _AccountDetailsState extends State<AccountDetails> {
 // Saves the newly created budget on the database
 //  TODO Do some error checking with the result
 //--------------------------------------------------------//
-  void _saveNewBudget(String budgetName, double maxLimit, DateTime unixTime, int repeatPeriod) {
+  void _saveNewBudget(String budgetName, double maxLimit, DateTime unixTime, int repeatPeriod, int resetDate) {
     DateTime startDate = unixTime;
     if (unixTime == null) {
       startDate = DateTime.now();
@@ -296,7 +296,7 @@ class _AccountDetailsState extends State<AccountDetails> {
       repeatPeriod = 9;
     }
 
-    dynamic result = FireStoreService(uid: widget.user.uid).createNewBudget(name, budgetLimit, pickedTime, repeatPeriod, numBudgets);
+    dynamic result = FireStoreService(uid: widget.user.uid).createNewBudget(name, budgetLimit, pickedTime, repeatPeriod, resetDate, numBudgets);
   }
 
 //--------------------------------------------------------//
