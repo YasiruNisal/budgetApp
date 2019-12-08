@@ -45,6 +45,7 @@ class _BudgetDetailsState extends State<BudgetDetails> with TickerProviderStateM
   void initState() {
     super.initState();
     tabStringList = getTabList(widget.selectBudgetStartDate, widget.selectBudgetRepeat);
+
     _tabController = TabController(length: tabStringList.length, vsync: this, initialIndex: tabStringList.length - 1);
     _tabController.addListener(_handleTabChange);
 
@@ -379,29 +380,62 @@ class _BudgetDetailsState extends State<BudgetDetails> with TickerProviderStateM
     int prevTime = startDate;
     Map duration = returnBudgetDuration(repeatPeriod);
     int displayTime;
-    while (addTime < today) {
-      prevTime = addTime;
-      DateTime dt = DateTime(DateTime.fromMillisecondsSinceEpoch(addTime).year, DateTime.fromMillisecondsSinceEpoch(addTime).month, DateTime.fromMillisecondsSinceEpoch(addTime).day);
-      var jiffyTime = Jiffy(dt);
 
-      if (duration["period"] == "days") {
-        addTime = jiffyTime.add(days: duration["time"]).millisecondsSinceEpoch;
-      } else if (duration["period"] == "months") {
-        addTime = jiffyTime.add(months: duration["time"]).millisecondsSinceEpoch;
-      } else if (duration["period"] == "years") {
-        addTime = jiffyTime.add(years: duration["time"]).millisecondsSinceEpoch;
+
+    if(addTime < today) {
+      while (addTime < today) {
+        prevTime = addTime;
+        DateTime dt = DateTime(DateTime
+            .fromMillisecondsSinceEpoch(addTime)
+            .year, DateTime
+            .fromMillisecondsSinceEpoch(addTime)
+            .month, DateTime
+            .fromMillisecondsSinceEpoch(addTime)
+            .day);
+        var jiffyTime = Jiffy(dt);
+
+        if (duration["period"] == "days") {
+          addTime = jiffyTime
+              .add(days: duration["time"])
+              .millisecondsSinceEpoch;
+        } else if (duration["period"] == "months") {
+          addTime = jiffyTime
+              .add(months: duration["time"])
+              .millisecondsSinceEpoch;
+        } else if (duration["period"] == "years") {
+          addTime = jiffyTime
+              .add(years: duration["time"])
+              .millisecondsSinceEpoch;
+        }
+
+
+        displayTime = jiffyTime
+            .subtract(duration: Duration(days: 1))
+            .millisecondsSinceEpoch;
+
+        tabList.add(DateTime
+            .fromMillisecondsSinceEpoch(prevTime)
+            .day
+            .toString() +
+            "/" +
+            DateTime
+                .fromMillisecondsSinceEpoch(prevTime)
+                .month
+                .toString() +
+            " - " +
+            (DateTime
+                .fromMillisecondsSinceEpoch(displayTime)
+                .day).toString() +
+            "/" +
+            DateTime
+                .fromMillisecondsSinceEpoch(displayTime)
+                .month
+                .toString());
+        startEndDates.add({"start": prevTime, "end": displayTime});
       }
-
-      displayTime = jiffyTime.subtract(duration: Duration(days: 1)).millisecondsSinceEpoch;
-
-      tabList.add(DateTime.fromMillisecondsSinceEpoch(prevTime).day.toString() +
-          "/" +
-          DateTime.fromMillisecondsSinceEpoch(prevTime).month.toString() +
-          " - " +
-          (DateTime.fromMillisecondsSinceEpoch(displayTime).day).toString() +
-          "/" +
-          DateTime.fromMillisecondsSinceEpoch(displayTime).month.toString());
-      startEndDates.add({"start": prevTime, "end": displayTime});
+    }
+    else{
+      tabList.add("Start Date is " + DateTime.fromMillisecondsSinceEpoch(addTime).toString());
     }
 
     initStartTime = prevTime;

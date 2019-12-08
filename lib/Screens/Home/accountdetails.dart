@@ -87,6 +87,8 @@ class _AccountDetailsState extends State<AccountDetails> {
                         return SignOutDialog(
                           signOut: _signOut,
                           email: widget.user.email,
+                          setCurrency: _pickCurrency,
+                          currency : currency,
                         );
                       });
                 },
@@ -374,6 +376,12 @@ class _AccountDetailsState extends State<AccountDetails> {
         category = '';
       });
     }
+  }
+
+
+  void _pickCurrency(String currency)
+  {
+    dynamic result = FireStoreService(uid: widget.user.uid).setCurrency(currency);
   }
 
 

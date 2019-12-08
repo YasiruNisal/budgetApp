@@ -20,6 +20,14 @@ class FireStoreService {
     });
   }
 
+
+  Future setCurrency(String currency,) async
+  {
+    return await userCollection.document(uid).updateData({
+      "currency": currency,
+    });
+  }
+
   Future setNormalAccountEntry(int incomeExpense, String incomeExpenseCategory, int timestamp, double amount, double currentAccountBalance) async
   {
     WriteBatch batch = reference.batch();

@@ -2,16 +2,34 @@ import 'package:flutter/material.dart';
 import 'package:simplybudget/config/colors.dart';
 
 
-class SignOutDialog extends StatelessWidget {
+class SignOutDialog extends StatefulWidget {
 
   final Function signOut;
   final String email;
+  final Function(String) setCurrency;
+  final String currency;
 
-  SignOutDialog({this.signOut, this.email});
+  SignOutDialog({this.signOut, this.email, this.setCurrency, this.currency});
 
+  @override
+  _SignOutDialogState createState() => _SignOutDialogState();
+}
+
+class _SignOutDialogState extends State<SignOutDialog> {
+  String pickedCurrency = "Pick a Currency";
+
+  int pickedCurrencyFromArray = 6;
+
+  @override
+  void initState() {
+    pickedCurrency = widget.currency;
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
+
+
 
     return AlertDialog(
       shape: RoundedRectangleBorder(
@@ -22,10 +40,10 @@ class SignOutDialog extends StatelessWidget {
       ),
       content: SingleChildScrollView(
         child: Container(
-          height: 100.0,
+          height: 150.0,
           child: Column(
             children: <Widget>[
-              Text(email),
+              Text(widget.email),
               SizedBox(
                 height: 20.0,
               ),
@@ -40,7 +58,7 @@ class SignOutDialog extends StatelessWidget {
                     ),
                     onPressed: ()
                     {
-                      signOut();
+                      widget.signOut();
                       _dismissDialog(context);
                     },
                     icon:
@@ -55,7 +73,30 @@ class SignOutDialog extends StatelessWidget {
 //                            color: MyColors.MainFade2,
                   ),
                 ],
-              )
+              ),
+              SizedBox(
+                height: 15.0,
+              ),
+              DropdownButton<String>(
+                hint: Text(pickedCurrency),
+                items: repeatPeriods.map((String value) {
+                  return new DropdownMenuItem<String>(
+                    value: value,
+                    child: new Text(
+                      value,
+                      style: TextStyle(color: MyColors.MainFade1),
+                    ),
+                  );
+                }).toList(),
+                onChanged: (selected) {
+                  setState(() {
+                    pickedCurrency = selected;
+                  });
+
+                    widget.setCurrency(selected);
+
+                },
+              ),
             ],
           ),
         ),
@@ -63,6 +104,7 @@ class SignOutDialog extends StatelessWidget {
     );
   }
 
+  var repeatPeriods = <String>['£', '\$', '€', '₹', '¥', '₩', '₨', ];
 
   _dismissDialog(context) {
     Navigator.pop(context);
