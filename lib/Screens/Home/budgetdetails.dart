@@ -18,8 +18,9 @@ class BudgetDetails extends StatefulWidget {
   final double selectedBudgetSpent;
   final int selectBudgetStartDate;
   final int selectBudgetRepeat;
+  final String currency;
 
-  BudgetDetails({this.selectedBudgetID, this.user, this.selectedBudget, this.selectedBudgetLimit, this.selectedBudgetSpent, this.selectBudgetStartDate, this.selectBudgetRepeat});
+  BudgetDetails({this.selectedBudgetID, this.user, this.selectedBudget, this.selectedBudgetLimit, this.selectedBudgetSpent, this.selectBudgetStartDate, this.selectBudgetRepeat, this.currency});
 
   @override
   _BudgetDetailsState createState() => _BudgetDetailsState();
@@ -66,9 +67,10 @@ class _BudgetDetailsState extends State<BudgetDetails> with TickerProviderStateM
 
   @override
   void dispose() {
+
+    super.dispose();
     _tabController.dispose();
     fireBaseListener?.cancel();
-    super.dispose();
   }
 
   @override
@@ -138,7 +140,7 @@ class _BudgetDetailsState extends State<BudgetDetails> with TickerProviderStateM
                                 width: 150,
                                 child: Padding(
                                   padding: const EdgeInsets.only(left: 5.0, right: 5.0),
-                                  child: Text("\$ " + selectedBudgetLimit.toStringAsFixed(2) + " Limit", overflow: TextOverflow.ellipsis, style: TextStyle(fontSize: 20.0, color: MyColors.WHITE)),
+                                  child: Text(widget.currency + " " + selectedBudgetLimit.toStringAsFixed(2) + " Limit", overflow: TextOverflow.ellipsis, style: TextStyle(fontSize: 20.0, color: MyColors.WHITE)),
                                 ),
                               ),
                               Container(height: 25.0, color: MyColors.GREY, width: 1.0),
@@ -147,7 +149,7 @@ class _BudgetDetailsState extends State<BudgetDetails> with TickerProviderStateM
                                 width: 150,
                                 child: Padding(
                                   padding: const EdgeInsets.only(left: 5.0, right: 5.0),
-                                  child: Text("\$ " + totalSpent.toStringAsFixed(2) + " Spent", overflow: TextOverflow.ellipsis, style: TextStyle(fontSize: 20.0, color: MyColors.WHITE)),
+                                  child: Text(widget.currency + " " + totalSpent.toStringAsFixed(2) + " Spent", overflow: TextOverflow.ellipsis, style: TextStyle(fontSize: 20.0, color: MyColors.WHITE)),
                                 ),
                               ),
                             ],
@@ -439,7 +441,7 @@ class _BudgetDetailsState extends State<BudgetDetails> with TickerProviderStateM
             alignment: Alignment.topLeft,
             width: 100,
             child: Text(
-              "\$ " + budgetSpent.toStringAsFixed(2),
+              widget.currency + budgetSpent.toStringAsFixed(2),
               style: TextStyle(fontSize: 18.0, color: MyColors.TextSecondColor),
             )),
       ],

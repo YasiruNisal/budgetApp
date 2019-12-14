@@ -32,7 +32,7 @@ class AccountDetailsCard extends StatelessWidget {
                       SizedBox(width: 10.0),
                       Container(
                         decoration: new BoxDecoration(
-                          color: MyColors.ExpenseCategory1,
+                          color: MyColors.ExpenseCategory8,
                           borderRadius: new BorderRadius.all(Radius.circular(50.0)),
                         ),
                         height: 55,

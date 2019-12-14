@@ -54,6 +54,40 @@ class FireStoreService {
     return await batch.commit();
   }
 
+  Future transferToSavingAccount(double amount, double currentAccountBalance, double currentSavingBalance) async
+  {
+    WriteBatch batch = reference.batch();
+    CollectionReference normalAccount = userCollection.document(uid).collection("normalaccount");
+    CollectionReference savingAccount = userCollection.document(uid).collection("savingaccount");
+    DocumentReference normalAccountBalance = userCollection.document(uid);
+
+    double newAccountBalance = currentAccountBalance - amount;
+    double newSavingBalance = currentSavingBalance + amount;
+
+    batch.setData(normalAccount.document(),
+        {
+          "incomeexpense": 2,
+          "incomeexpensecategory":  "Transfered",
+          "timestamp": new DateTime.now().millisecondsSinceEpoch,
+          "amount":amount
+        });
+
+    batch.setData(savingAccount.document(),
+        {
+          "incomeexpensecategory":  "Transfered",
+          "timestamp": new DateTime.now().millisecondsSinceEpoch,
+          "amount":amount
+        });
+
+    batch.updateData(normalAccountBalance,
+        {
+          "normalaccountbalance" : newAccountBalance,
+          "savingaccountbalance" : newSavingBalance,
+        });
+
+    return await batch.commit();
+  }
+
   Future editAccountEntry(String incomeExpenseCategory, double newAccountBalance, String normalAccountName,  int whichAccount) async
   {
     String name = "normalaccount";

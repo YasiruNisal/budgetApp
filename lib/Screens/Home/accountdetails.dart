@@ -1,8 +1,11 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:simplybudget/Components/accountdetailscard.dart';
 import 'package:simplybudget/Components/listbudgetshome.dart';
 import 'package:simplybudget/PopupDialogs/createOrEditBudget.dart';
+import 'package:simplybudget/PopupDialogs/transferToSaving.dart';
 import 'package:simplybudget/Screens/Home/walletdetails.dart';
 import 'package:simplybudget/Services/auth.dart';
 import 'package:simplybudget/PopupDialogs/selectExpenseCategory.dart';
@@ -88,7 +91,7 @@ class _AccountDetailsState extends State<AccountDetails> {
                           signOut: _signOut,
                           email: widget.user.email,
                           setCurrency: _pickCurrency,
-                          currency : currency,
+                          currency: currency,
                         );
                       });
                 },
@@ -142,22 +145,22 @@ class _AccountDetailsState extends State<AccountDetails> {
                           setState(() {
                             whichAccount = 0;
                           });
-                          if(normalAccountBalance == 0){
+                          if (normalAccountBalance == 0) {
                             _normalAccountOnClick();
-                          }else{
+                          } else {
                             showDialog(
                                 context: context,
                                 builder: (context) {
                                   return SelectIncomeExpense(setIncomeExpense: _setIncomeExpense);
                                 });
                           }
-
                         }),
                     AccountDetailsCard(
                         imgPath: 'assets/images/savingaccount.png',
                         balance: savingAccountBalance,
                         accountName: savingAccountName,
                         currency: currency,
+                        onTap: () {},
                         onPlusClick: () {
                           setState(() {
                             whichAccount = 1;
@@ -166,7 +169,7 @@ class _AccountDetailsState extends State<AccountDetails> {
                           showDialog(
                               context: context,
                               builder: (context) {
-                                return SelectIncomeExpense(setIncomeExpense: _setIncomeExpense);
+                                return TransferToSaving(accountName: normalAccountName, transferToSaving: _transferToSaving);
                               });
                         }),
                     SizedBox(
@@ -228,6 +231,7 @@ class _AccountDetailsState extends State<AccountDetails> {
         children: <Widget>[
           ListBudgetsHomeScreen(
             user: widget.user,
+            currency : currency,
           ),
           SizedBox(
             height: 20.0,
@@ -264,7 +268,7 @@ class _AccountDetailsState extends State<AccountDetails> {
           return CreateOrEditBudget(
             newBudgetSet: _saveNewBudget,
             newOrEdit: "New Budget",
-            createOrSave : "Create",
+            createOrSave: "Create",
           );
         });
   }
@@ -309,6 +313,7 @@ class _AccountDetailsState extends State<AccountDetails> {
               selectAccountName: normalAccountName,
               selectAccountValue: normalAccountBalance,
               accountCreated: accountCreated,
+              currency: currency,
             )));
   }
 
@@ -358,6 +363,12 @@ class _AccountDetailsState extends State<AccountDetails> {
         });
   }
 
+  void _transferToSaving(double amount) {
+    print(amount);
+
+    dynamic result = FireStoreService(uid: widget.user.uid).transferToSavingAccount(amount, normalAccountBalance, savingAccountBalance);
+  }
+
 //--------------------------------------------------------//
 // Enter a dollar value spent
 //--------------------------------------------------------//
@@ -378,12 +389,9 @@ class _AccountDetailsState extends State<AccountDetails> {
     }
   }
 
-
-  void _pickCurrency(String currency)
-  {
+  void _pickCurrency(String currency) {
     dynamic result = FireStoreService(uid: widget.user.uid).setCurrency(currency);
   }
-
 
   void _signOut() async {
     await _auth.signOut();

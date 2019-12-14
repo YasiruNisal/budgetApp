@@ -67,6 +67,7 @@ class SelectExpenseCategory extends StatelessWidget {
               Expense(text: 'fines', color: MyColors.ExpenseCategory8),
               Expense(text: 'life insurance', color: MyColors.ExpenseCategory8),
               Expense(text: 'tax & interest', color: MyColors.ExpenseCategory8),
+              Expense(text: 'other', color: MyColors.ExpenseCategory8),
             ].map((Expense url) {
               return GridTile(
                   child: gridIcon('assets/expense/${url.text}.png', url.text,
@@ -94,7 +95,7 @@ class SelectExpenseCategory extends StatelessWidget {
             Container(
               decoration: new BoxDecoration(
                 color: bgColor,
-                borderRadius: BorderRadius.only(topLeft: Radius.circular(15.0),  ),
+                borderRadius: BorderRadius.all(Radius.circular(5.0),),
               ),
               height: 40,
               width: 40,

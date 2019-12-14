@@ -40,6 +40,7 @@ class SelectIncomeCategory extends StatelessWidget {
               'investments',
               'government',
               'lottery',
+              'other',
             ].map((String url) {
               return GridTile(
                   child: gridIcon('assets/income/${url}.png', url, context));

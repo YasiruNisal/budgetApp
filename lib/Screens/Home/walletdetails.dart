@@ -14,8 +14,9 @@ class WalletDetails extends StatefulWidget {
   final String selectAccountName;
   final double selectAccountValue;
   final int accountCreated;
+  final String currency;
 
-  WalletDetails({this.user, this.selectAccountName, this.selectAccountValue, this.accountCreated});
+  WalletDetails({this.user, this.selectAccountName, this.selectAccountValue, this.accountCreated, this.currency});
 
   @override
   _WalletDetailsState createState() => _WalletDetailsState();
@@ -142,7 +143,7 @@ class _WalletDetailsState extends State<WalletDetails> with TickerProviderStateM
                           height: 10.0,
                         ),
                         Text(
-                          '\$ ' + formatMoney(selectAccountValue),
+                          widget.currency + " " + formatMoney(selectAccountValue),
                           style: TextStyle(fontSize: 45.0, color: MyColors.WHITE, fontWeight: FontWeight.w200),
                         ),
                         SizedBox(
@@ -382,7 +383,7 @@ class _WalletDetailsState extends State<WalletDetails> with TickerProviderStateM
             alignment: Alignment.topLeft,
             width: 100,
             child: Text(
-              "\$ " + budgetSpent.toStringAsFixed(2),
+              widget.currency + " " + budgetSpent.toStringAsFixed(2),
               style: TextStyle(
                 fontSize: 18.0,
                 color: amountColor,

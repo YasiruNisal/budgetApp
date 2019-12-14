@@ -11,8 +11,9 @@ import 'package:simplybudget/Services/firestore.dart';
 
 class ListBudgetsHomeScreen extends StatefulWidget {
   final FirebaseUser user;
+  final String currency;
 
-  ListBudgetsHomeScreen({this.user});
+  ListBudgetsHomeScreen({this.user, this.currency});
 
   @override
   _ListBudgetsHomeScreenState createState() => _ListBudgetsHomeScreenState();
@@ -59,7 +60,7 @@ class _ListBudgetsHomeScreenState extends State<ListBudgetsHomeScreen> {
     return Column(
         children: budgets
             .map((item) => BudgetDetailCard(
-          user : widget.user,
+                  user: widget.user,
                   id: item.documentID,
                   budgetName: item.data["budgetname"],
                   budgetLimit: item.data["budgetlimit"].toDouble(),
@@ -85,6 +86,7 @@ class _ListBudgetsHomeScreenState extends State<ListBudgetsHomeScreen> {
                 selectedBudgetSpent: budgetSpent,
                 selectBudgetStartDate: budgetStartDate,
                 selectBudgetRepeat: budgetRepeat,
+                currency: widget.currency,
               )),
     );
   }
@@ -117,8 +119,6 @@ class _ListBudgetsHomeScreenState extends State<ListBudgetsHomeScreen> {
           return EnterBudgetValue(enterBudgetValue: enterBudgetValue, incomeOrExpense: 2, category: category, currentBalance: budgetLeft);
         });
   }
-
-
 
   void enterBudgetValue(double val) {
     setState(() {
