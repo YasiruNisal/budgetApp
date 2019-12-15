@@ -56,19 +56,7 @@ class SelectIncomeExpense extends StatelessWidget {
                         'Expense',
                         style: TextStyle(color: MyColors.WHITE),
                       )),
-//                  FlatButton(
-//                      onPressed: () {
-//                        DatePicker.showDatePicker(context, showTitleActions: true, minTime: DateTime(2018, 3, 5), maxTime: DateTime(2020, 6, 7), onChanged: (date) {
-//                          print('change $date');
-//                        }, onConfirm: (date) {
-//
-//                          print('confirm' + (DateTime.parse(date.toString()).millisecondsSinceEpoch).toString());
-//                        }, currentTime: DateTime.now(), locale: LocaleType.en);
-//                      },
-//                      child: Text(
-//                        'show date time picker',
-//                        style: TextStyle(color: Colors.blue),
-//                      ))
+
                 ],
               )
             ],

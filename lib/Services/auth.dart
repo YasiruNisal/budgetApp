@@ -40,7 +40,6 @@ class AuthService {
     }
     catch(error)
     {
-      print(error.toString());
       return null;
     }
 
@@ -53,7 +52,6 @@ class AuthService {
     }
     catch(error)
     {
-      print(error);
       return null;
     }
   }
@@ -67,7 +65,6 @@ class AuthService {
     }
     catch(error)
     {
-      print(error.toString());
       return null;
     }
   }

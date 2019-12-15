@@ -9,20 +9,20 @@ import 'package:simplybudget/Services/firestore.dart';
 import 'package:simplybudget/config/colors.dart';
 import 'package:jiffy/jiffy.dart';
 
-class WalletDetails extends StatefulWidget {
+class SavingsDetails extends StatefulWidget {
   final FirebaseUser user;
   final String selectAccountName;
   final double selectAccountValue;
   final int accountCreated;
   final String currency;
 
-  WalletDetails({this.user, this.selectAccountName, this.selectAccountValue, this.accountCreated, this.currency});
+  SavingsDetails({this.user, this.selectAccountName, this.selectAccountValue, this.accountCreated, this.currency});
 
   @override
-  _WalletDetailsState createState() => _WalletDetailsState();
+  _SavingsDetailsState createState() => _SavingsDetailsState();
 }
 
-class _WalletDetailsState extends State<WalletDetails> with TickerProviderStateMixin {
+class _SavingsDetailsState extends State<SavingsDetails> with TickerProviderStateMixin {
   TabController _tabController;
   List<DocumentSnapshot> walletHistoryList;
   int currentPosition = 0;
@@ -49,7 +49,7 @@ class _WalletDetailsState extends State<WalletDetails> with TickerProviderStateM
       selectAccountValue = widget.selectAccountValue;
     });
 
-    fireBaseListener = FireStoreService(uid: widget.user.uid).walletNormalAccountHistoryList(initStartTime, initEndTime).listen((querySnapshot) {
+    fireBaseListener = FireStoreService(uid: widget.user.uid).savingsAccountHistoryList(initStartTime, initEndTime).listen((querySnapshot) {
       setState(() {
         walletHistoryList = querySnapshot.documents;
       });
@@ -77,22 +77,6 @@ class _WalletDetailsState extends State<WalletDetails> with TickerProviderStateM
 
   @override
   Widget build(BuildContext context) {
-    double cashFlow = 0;
-    double expense = 0;
-    double earnings = 0;
-
-    if (walletHistoryList != null) {
-      for (var item in walletHistoryList) {
-        if (item["incomeexpense"] == 1) {
-          earnings += item["amount"];
-        } else if (item["incomeexpense"] == 2) {
-          expense += item["amount"];
-        }
-      }
-      cashFlow = earnings - expense;
-    }
-
-
 
     return Scaffold(
         body: NestedScrollView(
@@ -107,7 +91,7 @@ class _WalletDetailsState extends State<WalletDetails> with TickerProviderStateM
               color: Colors.white,
             ),
             backgroundColor: MyColors.MainFade1,
-            expandedHeight: 350.0,
+            expandedHeight: 170.0,
             floating: true,
             pinned: true,
             actions: <Widget>[
@@ -145,17 +129,7 @@ class _WalletDetailsState extends State<WalletDetails> with TickerProviderStateM
                           widget.currency + " " + formatMoney(selectAccountValue),
                           style: TextStyle(fontSize: 45.0, color: MyColors.WHITE, fontWeight: FontWeight.w200),
                         ),
-                        SizedBox(
-                          height: 10.0,
-                        ),
-                        Text(
-                          'Cashflow ',
-                          style: TextStyle(fontSize: 20.0, color: MyColors.WHITE, fontWeight: FontWeight.w200),
-                        ),
-                        SizedBox(
-                          height: 15.0,
-                        ),
-                        _getSummaryDetails(earnings, expense, cashFlow),
+
                       ],
                     ),
                   ),
@@ -208,7 +182,7 @@ class _WalletDetailsState extends State<WalletDetails> with TickerProviderStateM
           return EditAccountDetails(
             accountName: widget.selectAccountName,
             accountAmount: widget.selectAccountValue,
-            whichAccount: 0,
+            whichAccount: 1,
             enterAccountDetails: saveEditAccount,
           );
         });
@@ -225,36 +199,12 @@ class _WalletDetailsState extends State<WalletDetails> with TickerProviderStateM
 
   }
 
-//--------------------------------------------------------//
-// Shows the wallet current period summery widget in the appbar
-//--------------------------------------------------------//
-  Widget _getSummaryDetails(double earnings, double expense, double cashFlow) {
-    return Container(
-      padding: EdgeInsets.all(18.0),
-      decoration: BoxDecoration(
-        color: MyColors.WHITE,
-        borderRadius: BorderRadius.all(
-          Radius.circular(15.0),
-        ),
-      ),
-//      color: MyColors.WHITE,
-      child: Column(
-        children: <Widget>[
-          budgetDetails("Total Income", earnings, 1),
-          SizedBox(height: 5.0,),
-          budgetDetails("Total Expense", expense, 2),
-          SizedBox(height: 5.0,),
-          budgetDetails("Remainder", cashFlow, 3),
-        ],
-      ),
-    );
-  }
 
 //--------------------------------------------------------//
 // Callback function when a tab is changed
 //--------------------------------------------------------//
   void _handleTabChange() {
-    fireBaseListener = FireStoreService(uid: widget.user.uid).walletNormalAccountHistoryList(startEndDates[_tabController.index]["start"], startEndDates[_tabController.index]["end"]).listen((querySnapshot) {
+    fireBaseListener = FireStoreService(uid: widget.user.uid).savingsAccountHistoryList(startEndDates[_tabController.index]["start"], startEndDates[_tabController.index]["end"]).listen((querySnapshot) {
       setState(() {
         walletHistoryList = querySnapshot.documents;
       });

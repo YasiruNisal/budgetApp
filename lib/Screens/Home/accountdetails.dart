@@ -1,11 +1,10 @@
-import 'dart:math';
-
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:simplybudget/Components/accountdetailscard.dart';
 import 'package:simplybudget/Components/listbudgetshome.dart';
 import 'package:simplybudget/PopupDialogs/createOrEditBudget.dart';
 import 'package:simplybudget/PopupDialogs/transferToSaving.dart';
+import 'package:simplybudget/Screens/Home/savingsdetails.dart';
 import 'package:simplybudget/Screens/Home/walletdetails.dart';
 import 'package:simplybudget/Services/auth.dart';
 import 'package:simplybudget/PopupDialogs/selectExpenseCategory.dart';
@@ -67,10 +66,6 @@ class _AccountDetailsState extends State<AccountDetails> {
 
   @override
   Widget build(BuildContext context) {
-//    final accountDetails = Provider.of<DocumentSnapshot>(context);
-//    print(accountDetails.data);
-
-    print(whichAccount.toString() + " " + incomeOrExpense.toString() + " " + category + " " + enterValue.toString());
 
     return SingleChildScrollView(
         child: Column(
@@ -160,7 +155,7 @@ class _AccountDetailsState extends State<AccountDetails> {
                         balance: savingAccountBalance,
                         accountName: savingAccountName,
                         currency: currency,
-                        onTap: () {},
+                        onTap: _savingsAccountOnClick,
                         onPlusClick: () {
                           setState(() {
                             whichAccount = 1;
@@ -317,6 +312,20 @@ class _AccountDetailsState extends State<AccountDetails> {
             )));
   }
 
+  //--------------------------------------------------------//
+// Navigates to WalletDetailsPage when Normal account is clicked
+//--------------------------------------------------------//
+  void _savingsAccountOnClick() {
+    Navigator.of(context).push(MaterialPageRoute(
+        builder: (context) => SavingsDetails(
+          user: widget.user,
+          selectAccountName: savingAccountName,
+          selectAccountValue: savingAccountBalance,
+          accountCreated: accountCreated,
+          currency: currency,
+        )));
+  }
+
 //--------------------------------------------------------//
 // Select income or expense from the popup dialog
 //--------------------------------------------------------//
@@ -364,8 +373,6 @@ class _AccountDetailsState extends State<AccountDetails> {
   }
 
   void _transferToSaving(double amount) {
-    print(amount);
-
     dynamic result = FireStoreService(uid: widget.user.uid).transferToSavingAccount(amount, normalAccountBalance, savingAccountBalance);
   }
 

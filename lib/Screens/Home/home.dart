@@ -19,16 +19,6 @@ class Home extends StatefulWidget {
 class _HomeState extends State<Home> {
   @override
   Widget build(BuildContext context) {
-//    print(widget.user);
-//    return StreamProvider<DocumentSnapshot>.value(
-//      value: FireStoreService(uid :widget.user.uid).accountData,
-//      child: SafeArea(
-//        child: Scaffold(
-//          backgroundColor: Color(0xFF7A9BEE),
-//          body:AccountDetails(user: widget.user,)
-//        ),
-//      ),
-//    );
 
     return Scaffold(
 //      backgroundColor: Color(0xFF3700B3),

@@ -188,7 +188,6 @@ Widget _signInButton(AuthService auth) {
     onPressed: () async
     {
       dynamic result = await auth.signInWithGoogle();
-      print(result);
     },
     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(40)),
     highlightElevation: 0,

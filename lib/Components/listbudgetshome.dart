@@ -125,7 +125,6 @@ class _ListBudgetsHomeScreenState extends State<ListBudgetsHomeScreen> {
       enterValue = val;
     });
 
-//    print(normalAccountBalance);String budgetName, double currentSpentValue, double newEnteredValue, String expenseCategory, int timestamp
     dynamic result = FireStoreService(uid: widget.user.uid).setBudgetHistory(selectedBudgetID, selectedBudgetSpent, enterValue, category, new DateTime.now().millisecondsSinceEpoch);
     // need to write to the database here.
     if (result != null) {

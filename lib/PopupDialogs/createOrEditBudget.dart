@@ -114,9 +114,7 @@ class _CreateOrEditBudgetState extends State<CreateOrEditBudget> {
                         ),
                         onPressed: () {
                           DatePicker.showDatePicker(context, showTitleActions: true, minTime: DateTime(2019, 3, 5), maxTime: DateTime(2035, 6, 7), onChanged: (date) {
-                            print('change $date');
                           }, onConfirm: (date) {
-                            print('confirm' + (DateTime.parse(date.toString()).millisecondsSinceEpoch).toString());
                             setState(() {
                               unixPickedStartDate = DateTime(date.year, date.month, date.day); //DateTime.parse(date.toString()).millisecondsSinceEpoch;
                               pickedStartDate = DateFormat("yyyy-MM-dd hh:mm:ss").format(date);
@@ -171,8 +169,6 @@ class _CreateOrEditBudgetState extends State<CreateOrEditBudget> {
                         } else if (duration["period"] == "years") {
                           resetDate = jiffyTime.add(years: duration["time"]).millisecondsSinceEpoch;
                         }
-
-                        print("Reset Date time ******   "  + resetDate.toString());
 //                        widget.enterBudgetValue( double.tryParse(enterValController.text));
                         widget.newBudgetSet(enterNameController.text, double.tryParse(enterValController.text), unixPickedStartDate, pickedRepeatFromArray, resetDate);
                       },

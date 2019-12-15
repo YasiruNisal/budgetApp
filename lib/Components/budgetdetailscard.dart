@@ -96,11 +96,11 @@ class BudgetDetailCard extends StatelessWidget {
       var jiffyTime = Jiffy(dt);
 
       if (duration["period"] == "days") {
-        resetDate = jiffyTime.add(days: duration["time"]).millisecondsSinceEpoch;
+        resetDate = jiffyTime.add(days: duration["time"]).add(Duration(days: 1),).millisecondsSinceEpoch;
       } else if (duration["period"] == "months") {
-        resetDate = jiffyTime.add(months: duration["time"]).millisecondsSinceEpoch;
+        resetDate = jiffyTime.add(months: duration["time"]).add(Duration(days: 1),).millisecondsSinceEpoch;
       } else if (duration["period"] == "years") {
-        resetDate = jiffyTime.add(years: duration["time"]).millisecondsSinceEpoch;
+        resetDate = jiffyTime.add(years: duration["time"]).add(Duration(days: 1),).millisecondsSinceEpoch;
       }
     }
 

@@ -284,7 +284,6 @@ class _BudgetDetailsState extends State<BudgetDetails> with TickerProviderStateM
 
   void _handleTabChange() {
 //    budgetHistoryList = null;
-    print("Calling tabbar handler " +  startEndDates[_tabController.index]["start"].toString() + "     end   " + startEndDates[_tabController.index]["end"].toString());
     fireBaseListener = FireStoreService(uid: widget.user.uid)
         .budgetHistoryList(widget.selectedBudgetID, startEndDates[_tabController.index]["start"], startEndDates[_tabController.index]["end"])
         .listen((querySnapshot) {

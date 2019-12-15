@@ -107,10 +107,17 @@ class FireStoreService {
           "amount":newAccountBalance
         });
 
-    batch.updateData(normalAccountBalance, {"normalaccountbalance" : newAccountBalance, "normalaccountname" : normalAccountName});
+    if(whichAccount == 1){
+      batch.updateData(normalAccountBalance, {"savingaccountbalance" : newAccountBalance, "savingaccountname" : normalAccountName});
+    }
+    else{
+      batch.updateData(normalAccountBalance, {"normalaccountbalance" : newAccountBalance, "normalaccountname" : normalAccountName});
+    }
+
 
     return await batch.commit();
   }
+
 
   Future setBudgetHistory(String budgetID, double currentSpentValue, double newEnteredValue, String expenseCategory, int timestamp) async
   {
@@ -217,6 +224,11 @@ class FireStoreService {
 
   Stream<QuerySnapshot>  walletNormalAccountHistoryList(int start, int end) {
     return userCollection.document(uid).collection("normalaccount").where("timestamp", isGreaterThanOrEqualTo: start).where("timestamp", isLessThan: end).orderBy("timestamp", descending: true).snapshots();
+  }
+
+
+  Stream<QuerySnapshot>  savingsAccountHistoryList(int start, int end) {
+    return userCollection.document(uid).collection("savingaccount").where("timestamp", isGreaterThanOrEqualTo: start).where("timestamp", isLessThan: end).orderBy("timestamp", descending: true).snapshots();
   }
 
 
