@@ -3,6 +3,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:simplybudget/Components/accountdetailscard.dart';
 import 'package:simplybudget/Components/listbudgetshome.dart';
 import 'package:simplybudget/PopupDialogs/createOrEditBudget.dart';
+import 'package:simplybudget/PopupDialogs/selectTansferInOut.dart';
+import 'package:simplybudget/PopupDialogs/transferOutOfSaving.dart';
 import 'package:simplybudget/PopupDialogs/transferToSaving.dart';
 import 'package:simplybudget/Screens/Home/savingsdetails.dart';
 import 'package:simplybudget/Screens/Home/walletdetails.dart';
@@ -31,6 +33,7 @@ class _AccountDetailsState extends State<AccountDetails> {
 
   int whichAccount = 0;
   int incomeOrExpense = 0;
+  int transferInOut = 0;
   String category = '';
   double enterValue = 0;
 
@@ -189,7 +192,7 @@ class _AccountDetailsState extends State<AccountDetails> {
                           showDialog(
                               context: context,
                               builder: (context) {
-                                return TransferToSaving(accountName: normalAccountName, transferToSaving: _transferToSaving);
+                                return SelectTransferInOut(setTransferInOut: _setTransferInOut, savingAccountName: savingAccountName,);
                               });
                         }),
                     SizedBox(
@@ -369,6 +372,22 @@ class _AccountDetailsState extends State<AccountDetails> {
         });
   }
 
+  void _setTransferInOut(int val){
+    setState(() {
+      transferInOut = val;
+    });
+
+    showDialog(
+        context: context,
+        builder: (context) {
+          if (val == 2) { //out of
+            return TransferOutOfSaving(accountName: savingAccountName, transferOutOfSaving: _transferOutOfSaving,);
+          } else { //into
+            return TransferToSaving(accountName: savingAccountName, transferToSaving: _transferToSaving);
+          }
+        });
+  }
+
 //--------------------------------------------------------//
 // Select the income category from the icon popup dialog
 //--------------------------------------------------------//
@@ -399,6 +418,10 @@ class _AccountDetailsState extends State<AccountDetails> {
 
   void _transferToSaving(double amount) {
     dynamic result = FireStoreService(uid: widget.user.uid).transferToSavingAccount(amount, normalAccountBalance, savingAccountBalance);
+  }
+
+  void _transferOutOfSaving(double amount) {
+    dynamic result = FireStoreService(uid: widget.user.uid).transferOutOfSavingAccount(amount, normalAccountBalance, savingAccountBalance);
   }
 
 //--------------------------------------------------------//

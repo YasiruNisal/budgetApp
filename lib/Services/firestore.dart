@@ -74,6 +74,42 @@ class FireStoreService {
 
     batch.setData(savingAccount.document(),
         {
+          "inout" : 1,
+          "incomeexpensecategory":  "Transfered",
+          "timestamp": new DateTime.now().millisecondsSinceEpoch,
+          "amount":amount
+        });
+
+    batch.updateData(normalAccountBalance,
+        {
+          "normalaccountbalance" : newAccountBalance,
+          "savingaccountbalance" : newSavingBalance,
+        });
+
+    return await batch.commit();
+  }
+
+  Future transferOutOfSavingAccount(double amount, double currentAccountBalance, double currentSavingBalance) async
+  {
+    WriteBatch batch = reference.batch();
+    CollectionReference normalAccount = userCollection.document(uid).collection("normalaccount");
+    CollectionReference savingAccount = userCollection.document(uid).collection("savingaccount");
+    DocumentReference normalAccountBalance = userCollection.document(uid);
+
+    double newAccountBalance = currentAccountBalance + amount;
+    double newSavingBalance = currentSavingBalance - amount;
+
+    batch.setData(normalAccount.document(),
+        {
+          "incomeexpense": 1,
+          "incomeexpensecategory":  "Transfered",
+          "timestamp": new DateTime.now().millisecondsSinceEpoch,
+          "amount":amount
+        });
+
+    batch.setData(savingAccount.document(),
+        {
+          "inout" : 2,
           "incomeexpensecategory":  "Transfered",
           "timestamp": new DateTime.now().millisecondsSinceEpoch,
           "amount":amount

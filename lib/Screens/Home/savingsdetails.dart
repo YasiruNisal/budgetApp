@@ -343,7 +343,7 @@ class _SavingsDetailsState extends State<SavingsDetails> with TickerProviderStat
   }
 
   Widget _itemBuilder(BuildContext context, int index, List<DocumentSnapshot> historyList) {
-    return budgetDetails(historyList[index].data["incomeexpensecategory"], historyList[index].data["amount"], historyList[index].data["incomeexpense"]);
+    return budgetDetails(historyList[index].data["incomeexpensecategory"], historyList[index].data["amount"], historyList[index].data["inout"]);
   }
 
   Widget _headerBuilder(BuildContext context, int index, List<DocumentSnapshot> historyList) {

@@ -1,19 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:simplybudget/config/colors.dart';
 
-class TransferToSaving extends StatefulWidget {
+class TransferOutOfSaving extends StatefulWidget {
 
-  final void Function(double,) transferToSaving;
+  final void Function(double,) transferOutOfSaving;
   final String accountName;
 
-  TransferToSaving({this.transferToSaving, this.accountName,});
+  TransferOutOfSaving({this.transferOutOfSaving, this.accountName,});
 
 
   @override
-  _TransferToSavingState createState() => _TransferToSavingState();
+  _TransferOutOfSavingState createState() => _TransferOutOfSavingState();
 }
 
-class _TransferToSavingState extends State<TransferToSaving> {
+class _TransferOutOfSavingState extends State<TransferOutOfSaving> {
 
   final enterAmountController = TextEditingController();
 
@@ -38,7 +38,7 @@ class _TransferToSavingState extends State<TransferToSaving> {
       shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.all(Radius.circular(20.0))),
       title: Text(
-        "Transfer into " + widget.accountName[0].toUpperCase()+ widget.accountName.substring(1),
+        "Transfer out of " + widget.accountName[0].toUpperCase()+ widget.accountName.substring(1),
         textAlign: TextAlign.center,
       ),
       content: SingleChildScrollView(
@@ -77,7 +77,7 @@ class _TransferToSavingState extends State<TransferToSaving> {
                     ),
                     onPressed: () {
                       _dismissDialog(context);
-                      widget.transferToSaving( double.tryParse(enterAmountController.text),);
+                      widget.transferOutOfSaving( double.tryParse(enterAmountController.text),);
                     },
                     child: Text(
                       'Transfer',

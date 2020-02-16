@@ -70,7 +70,7 @@ class SelectExpenseCategory extends StatelessWidget {
               Expense(text: 'other', color: MyColors.ExpenseCategory8),
             ].map((Expense url) {
               return GridTile(
-                  child: gridIcon('assets/expense/${url.text}.png', url.text,
+                  child: gridIcon('assets/expense/${url.text.replaceAll(new RegExp(r"\s+\b|\b\s"), "")}.png', url.text,
                       url.color, context));
             }).toList()),
       ),
@@ -82,7 +82,7 @@ class SelectExpenseCategory extends StatelessWidget {
     return GestureDetector(
       onTap: () {
         _dismissDialog(context);
-        setExpenseCategory(text);
+        setExpenseCategory(text.replaceAll(new RegExp(r"\s+\b|\b\s"), ""));
       },
       child: Container(
         child: Column(
