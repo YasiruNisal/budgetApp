@@ -15,6 +15,8 @@ import 'package:simplybudget/PopupDialogs/enterBudgetValue.dart';
 import 'package:simplybudget/PopupDialogs/selectIncomeExpense.dart';
 import 'package:simplybudget/PopupDialogs/signout.dart';
 
+import 'package:flutter_inapp_purchase/flutter_inapp_purchase.dart';
+
 class AccountDetails extends StatefulWidget {
   final FirebaseUser user;
 
@@ -56,16 +58,39 @@ class _AccountDetailsState extends State<AccountDetails> {
         accountCreated = documentSnapshot.data["accountcreated"];
       });
     });
+    asyncInitState();
+    _getProduct();
+  }
+
+  void asyncInitState() async {
+    await FlutterInappPurchase.instance.initConnection;
   }
 
   @override
-  void dispose() {
+  void dispose() async {
     fireBaseListener?.cancel();
     super.dispose();
+    await FlutterInappPurchase.instance.endConnection;
   }
+
+
+  Future _getProduct() async {
+    print("*******************************");
+    List<IAPItem> items = await FlutterInappPurchase.instance.getSubscriptions(
+        ["ul_16022020"]);
+    print("________________________________________ ");
+    print(items);
+    for (var i = 0; i < items.length; ++i) {
+      print(items[i].title + " " + items[i].price);
+    }
+    print("________________________________________");
+  }
+
 
   @override
   Widget build(BuildContext context) {
+
+
 
     return SingleChildScrollView(
         child: Column(
