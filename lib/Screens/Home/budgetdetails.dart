@@ -19,8 +19,9 @@ class BudgetDetails extends StatefulWidget {
   final int selectBudgetStartDate;
   final int selectBudgetRepeat;
   final String currency;
+  final int numBudgets;
 
-  BudgetDetails({this.selectedBudgetID, this.user, this.selectedBudget, this.selectedBudgetLimit, this.selectedBudgetSpent, this.selectBudgetStartDate, this.selectBudgetRepeat, this.currency});
+  BudgetDetails({this.selectedBudgetID, this.user, this.selectedBudget, this.selectedBudgetLimit, this.selectedBudgetSpent, this.selectBudgetStartDate, this.selectBudgetRepeat, this.currency, this.numBudgets});
 
   @override
   _BudgetDetailsState createState() => _BudgetDetailsState();
@@ -276,7 +277,7 @@ class _BudgetDetailsState extends State<BudgetDetails> with TickerProviderStateM
   }
 
   void deleteBudget() {
-    dynamic result = FireStoreService(uid: widget.user.uid).deleteBudget(widget.selectedBudgetID);
+    dynamic result = FireStoreService(uid: widget.user.uid).deleteBudget(widget.selectedBudgetID, widget.numBudgets);
     if (result != null) {
       Navigator.pop(context);
     }

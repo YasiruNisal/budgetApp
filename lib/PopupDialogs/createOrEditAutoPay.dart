@@ -4,29 +4,29 @@ import 'package:simplybudget/config/colors.dart';
 import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
 import 'package:intl/intl.dart';
 
-class CreateOrEditBudget extends StatefulWidget {
-  final void Function(String, double, DateTime, int, int) newBudgetSet;
+class CreateOrEditAutoPay extends StatefulWidget {
+  final void Function(String, double, DateTime, int, int) newAutoPaySet;
   final String newOrEdit;
-  final String budgetName;
-  final double budgetLimit;
-  final int budgetStartDate;
-  final int budgetRepeatPeriod;
+  final String autoPayName;
+  final double autoPayAmount;
+  final int autoPayStartDate;
+  final int autoPayRepeatPeriod;
   final String createOrSave;
 
-  CreateOrEditBudget({this.newBudgetSet, this.newOrEdit, this.createOrSave, this.budgetName, this.budgetLimit, this.budgetStartDate, this.budgetRepeatPeriod});
+  CreateOrEditAutoPay({this.newAutoPaySet, this.newOrEdit, this.createOrSave, this.autoPayName, this.autoPayAmount, this.autoPayStartDate, this.autoPayRepeatPeriod});
 
   @override
-  _CreateOrEditBudgetState createState() => _CreateOrEditBudgetState();
+  _CreateOrEditAutoPayState createState() => _CreateOrEditAutoPayState();
 }
 
-class _CreateOrEditBudgetState extends State<CreateOrEditBudget> {
+class _CreateOrEditAutoPayState extends State<CreateOrEditAutoPay> {
   final enterNameController = TextEditingController();
 
   final enterValController = TextEditingController();
 
-  String budgetName = "";
+  String autoPayName = "";
 
-  double budgetMaxValue = 0;
+  double autoPayMaxValue = 0;
 
   String pickedStartDate = "Pick Start Date";
 
@@ -43,21 +43,21 @@ class _CreateOrEditBudgetState extends State<CreateOrEditBudget> {
     super.initState();
     // Add listeners to this class
 
-    if (widget.budgetStartDate != null) {
-      int year = DateTime.fromMillisecondsSinceEpoch(widget.budgetStartDate).year;
-      int month = DateTime.fromMillisecondsSinceEpoch(widget.budgetStartDate).month;
-      int day = DateTime.fromMillisecondsSinceEpoch(widget.budgetStartDate).day;
+    if (widget.autoPayStartDate != null) {
+      int year = DateTime.fromMillisecondsSinceEpoch(widget.autoPayStartDate).year;
+      int month = DateTime.fromMillisecondsSinceEpoch(widget.autoPayStartDate).month;
+      int day = DateTime.fromMillisecondsSinceEpoch(widget.autoPayStartDate).day;
       DateTime startDate = DateTime(year, month, day);
       unixPickedStartDate = startDate;
     } else {
       unixPickedStartDate = DateTime.now();
     }
 
-    widget.budgetName != null ? enterNameController.text = widget.budgetName : budgetName = "";
-    widget.budgetLimit != null ? enterValController.text = widget.budgetLimit.toString() : budgetMaxValue = 0;
-    widget.budgetStartDate != null ? pickedStartDate = DateFormat("yyyy-MM-dd hh:mm:ss").format(unixPickedStartDate) : pickedRepeat = "Repeat Period";
-    widget.budgetRepeatPeriod != null ? pickedRepeat = repeatPeriods[widget.budgetRepeatPeriod] : pickedRepeat = "Repeat Period";
-    widget.budgetRepeatPeriod != null ? pickedRepeatFromArray = widget.budgetRepeatPeriod : pickedRepeatFromArray = 9;
+    widget.autoPayName != null ? enterNameController.text = widget.autoPayName : autoPayName = "";
+    widget.autoPayAmount != null ? enterValController.text = widget.autoPayAmount.toString() : autoPayMaxValue = 0;
+    widget.autoPayStartDate != null ? pickedStartDate = DateFormat("yyyy-MM-dd hh:mm:ss").format(unixPickedStartDate) : pickedRepeat = "Repeat Period";
+    widget.autoPayRepeatPeriod != null ? pickedRepeat = repeatPeriods[widget.autoPayRepeatPeriod] : pickedRepeat = "Repeat Period";
+    widget.autoPayRepeatPeriod != null ? pickedRepeatFromArray = widget.autoPayRepeatPeriod : pickedRepeatFromArray = 9;
   }
 
   @override
@@ -83,7 +83,7 @@ class _CreateOrEditBudgetState extends State<CreateOrEditBudget> {
                       controller: enterNameController,
                       cursorColor: MyColors.MainFade2,
                       decoration: InputDecoration(
-                        labelText: 'Budget Name',
+                        labelText: 'Auto Payment Name',
                         labelStyle: new TextStyle(color: MyColors.MainFade2),
                         focusedBorder: UnderlineInputBorder(
                           borderSide: BorderSide(color: MyColors.MainFade2),
@@ -98,7 +98,7 @@ class _CreateOrEditBudgetState extends State<CreateOrEditBudget> {
                       cursorColor: MyColors.MainFade2,
                       keyboardType: TextInputType.number,
                       decoration: InputDecoration(
-                        labelText: '\$ Max Limit',
+                        labelText: '\$ Amount',
                         labelStyle: new TextStyle(color: MyColors.MainFade2),
                         focusedBorder: UnderlineInputBorder(
                           borderSide: BorderSide(color: MyColors.MainFade2),
@@ -171,7 +171,7 @@ class _CreateOrEditBudgetState extends State<CreateOrEditBudget> {
                           resetDate = jiffyTime.add(years: duration["time"]).millisecondsSinceEpoch;
                         }
 //                        widget.enterBudgetValue( double.tryParse(enterValController.text));
-                        widget.newBudgetSet(enterNameController.text, double.tryParse(enterValController.text), unixPickedStartDate, resetDate, pickedRepeatFromArray);
+                        widget.newAutoPaySet(enterNameController.text, double.tryParse(enterValController.text), unixPickedStartDate, pickedRepeatFromArray, resetDate);
                       },
                       child: Text(
                         widget.createOrSave,

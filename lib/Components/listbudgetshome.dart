@@ -12,8 +12,9 @@ import 'package:simplybudget/Services/firestore.dart';
 class ListBudgetsHomeScreen extends StatefulWidget {
   final FirebaseUser user;
   final String currency;
+  final int numBudgets;
 
-  ListBudgetsHomeScreen({this.user, this.currency});
+  ListBudgetsHomeScreen({this.user, this.currency, this.numBudgets});
 
   @override
   _ListBudgetsHomeScreenState createState() => _ListBudgetsHomeScreenState();
@@ -87,6 +88,7 @@ class _ListBudgetsHomeScreenState extends State<ListBudgetsHomeScreen> {
                 selectBudgetStartDate: budgetStartDate,
                 selectBudgetRepeat: budgetRepeat,
                 currency: widget.currency,
+                numBudgets: widget.numBudgets,
               )),
     );
   }
