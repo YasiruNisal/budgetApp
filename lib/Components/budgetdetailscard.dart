@@ -9,6 +9,7 @@ class BudgetDetailCard extends StatelessWidget {
 //  final Function onPlusClick;
   final FirebaseUser user;
   final String id;
+  final String currency;
   final double budgetLimit;
   final double budgetSpent;
   final String budgetName;
@@ -20,7 +21,7 @@ class BudgetDetailCard extends StatelessWidget {
 
 //  final String currency;
 
-  BudgetDetailCard({this.user, this.id, this.budgetName, this.budgetLimit, this.budgetSpent, this.onPlusClick, this.onCardTap, this.budgetStartDate, this.budgetResetDate, this.budgetRepeat});
+  BudgetDetailCard({this.user, this.id, this.currency, this.budgetName, this.budgetLimit, this.budgetSpent, this.onPlusClick, this.onCardTap, this.budgetStartDate, this.budgetResetDate, this.budgetRepeat});
 
   @override
   Widget build(BuildContext context) {
@@ -71,7 +72,7 @@ class BudgetDetailCard extends StatelessWidget {
                       Container(
                         alignment: Alignment.topLeft,
                         width: 190,
-                        child: Text(budgetSpent.toStringAsFixed(2) + " of " + budgetLimit.toStringAsFixed(2) + " spent", style: TextStyle(fontSize: 15.0, color: Colors.grey)),
+                        child: Text(currency + budgetSpent.toStringAsFixed(2) + " of " + currency + budgetLimit.toStringAsFixed(2) + " spent", style: TextStyle(fontSize: 15.0, color: Colors.grey)),
                       )
                     ])
                   ])),

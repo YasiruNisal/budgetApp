@@ -78,29 +78,34 @@ class AutoPayDetailCard extends StatelessWidget {
                     ),
 
                   ])),
-                  IconButton(
-                      icon: Icon(Icons.edit),
-                      color: Colors.black,
-                      onPressed: () {
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: <Widget>[
+                      IconButton(
+                          icon: Icon(Icons.edit),
+                          color: Colors.black54,
+                          onPressed: () {
 
-                        print(autoPayRepeat.toString() + "------");
-                        onEditClick(
-                          id,
-                          autoPayName,
-                          autoPayAmount,
-                          autoPayStartDate,
-                          autoPayRepeat,
-                            resetDate,
-                        );
-                      }),
-                  IconButton(
-                      icon: Icon(Icons.delete),
-                      color: Colors.black,
-                      onPressed: () {
-                        onDeleteClick(
-                          id,
-                        );
-                      })
+                            print(autoPayRepeat.toString() + "------");
+                            onEditClick(
+                              id,
+                              autoPayName,
+                              autoPayAmount,
+                              autoPayStartDate,
+                              autoPayRepeat,
+                                resetDate,
+                            );
+                          }),
+                      IconButton(
+                          icon: Icon(Icons.delete),
+                          color: Colors.black54,
+                          onPressed: () {
+                            onDeleteClick(
+                              id,
+                            );
+                          }),
+                    ],
+                  )
                 ],
               ))),
     );

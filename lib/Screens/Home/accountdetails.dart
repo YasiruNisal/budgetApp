@@ -206,14 +206,14 @@ class _AccountDetailsState extends State<AccountDetails> {
                   Text('My',
                       style: TextStyle(
 //                        fontFamily: 'Montserrat',
-                          color: MyColors.TextSecondColor,
+                          color: MyColors.MainFade1,
                           fontSize: 20.0)),
                   SizedBox(width: 10.0),
                   Text('Budgets',
                       style: TextStyle(
 //                        fontFamily: 'Montserrat',
                           fontWeight: FontWeight.bold,
-                          color: MyColors.TextSecondColor,
+                          color: MyColors.MainFade1,
                           fontSize: 20.0))
                 ],
               ),
@@ -230,14 +230,14 @@ class _AccountDetailsState extends State<AccountDetails> {
                   Text('Auto',
                       style: TextStyle(
 //                        fontFamily: 'Montserrat',
-                          color: MyColors.TextSecondColor,
+                          color: MyColors.MainFade1,
                           fontSize: 20.0)),
                   SizedBox(width: 10.0),
                   Text('Payments',
                       style: TextStyle(
 //                        fontFamily: 'Montserrat',
                           fontWeight: FontWeight.bold,
-                          color: MyColors.TextSecondColor,
+                          color: MyColors.MainFade1,
                           fontSize: 20.0))
                 ],
               ),
@@ -375,7 +375,7 @@ class _AccountDetailsState extends State<AccountDetails> {
         builder: (context) {
           return CreateOrEditAutoPay(
             newAutoPaySet: _saveNewAutoPay,
-            newOrEdit: "New Budget",
+            newOrEdit: "New Auto Payment",
             createOrSave: "Create",
           );
         });

@@ -63,6 +63,7 @@ class _ListBudgetsHomeScreenState extends State<ListBudgetsHomeScreen> {
             .map((item) => BudgetDetailCard(
                   user: widget.user,
                   id: item.documentID,
+                  currency: widget.currency,
                   budgetName: item.data["budgetname"],
                   budgetLimit: item.data["budgetlimit"].toDouble(),
                   budgetSpent: item.data["budgetspent"].toDouble(),
