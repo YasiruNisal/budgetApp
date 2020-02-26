@@ -157,27 +157,23 @@ class FireStoreService {
     });
   }
 
-  Future resetAutoPay(String autoPayID, double autoPayAmount, int autoPayResetDate, double previousBalance) async {
-    WriteBatch batch = reference.batch();
+  Future resetAutoPay(String autoPayID, double autoPayAmount, int autoPayResetDate) async {
 
-    double newAccountBalance = previousBalance + autoPayAmount;
-    DocumentReference editAutoPay = userCollection.document(uid).collection("newautopay").document(autoPayID);
-    DocumentReference normalAccountBalance = userCollection.document(uid);
-
-    batch.updateData(editAutoPay, {
+  print(autoPayID + "###############");
+  return await userCollection.document(uid).collection("newautopay").document(autoPayID).updateData({
       "autopayresetdate": autoPayResetDate,
     });
-
-    batch.updateData(normalAccountBalance, {"normalaccountbalance": newAccountBalance,});
-    return await batch.commit();
   }
 
-  Future addAutoPayHistory( String autoPayName, double autoPayAmount, int autoPayResetDate) async {
+  Future addAutoPayHistory( String autoPayName, double autoPayAmount, int autoPayResetDate, double previousBalance) async {
     WriteBatch batch = reference.batch();
+
+    double newAccountBalance = previousBalance - autoPayAmount;
 
     CollectionReference normalAccount = userCollection.document(uid).collection("normalaccount");
     batch.setData(normalAccount.document(), {"incomeexpense": 2, "incomeexpensecategory": autoPayName, "timestamp": autoPayResetDate, "amount": autoPayAmount});
-
+    DocumentReference normalAccountBalance = userCollection.document(uid);
+    batch.updateData(normalAccountBalance, {"normalaccountbalance": newAccountBalance,});
     return await batch.commit();
   }
 

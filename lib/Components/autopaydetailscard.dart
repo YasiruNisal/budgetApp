@@ -16,12 +16,23 @@ class AutoPayDetailCard extends StatelessWidget {
   final int autoPayResetDate;
   final int autoPayRepeat;
   final double normalAccountBalance;
-  final Function(String, String, double, int , int, int) onEditClick;
+  final Function(String, String, double, int, int, int) onEditClick;
   final Function(String) onDeleteClick;
 
 //  final String currency;
 
-  AutoPayDetailCard({this.user, this.id, this.normalAccountBalance, this.currency, this.autoPayName, this.autoPayAmount, this.onEditClick, this.autoPayStartDate, this.autoPayResetDate, this.autoPayRepeat, this.onDeleteClick});
+  AutoPayDetailCard(
+      {this.user,
+      this.id,
+      this.normalAccountBalance,
+      this.currency,
+      this.autoPayName,
+      this.autoPayAmount,
+      this.onEditClick,
+      this.autoPayStartDate,
+      this.autoPayResetDate,
+      this.autoPayRepeat,
+      this.onDeleteClick});
 
   @override
   Widget build(BuildContext context) {
@@ -39,12 +50,11 @@ class AutoPayDetailCard extends StatelessWidget {
     int month = DateTime.fromMillisecondsSinceEpoch(autoPayResetDate).month;
     int day = DateTime.fromMillisecondsSinceEpoch(autoPayResetDate).day;
 
-
-
     return GestureDetector(
       onTap: () {},
       child: Padding(
           padding: EdgeInsets.only(left: 15.0, right: 10.0, top: 15.0, bottom: 10.0),
+
           child: InkWell(
               onTap: () {
 //                onCardTap(id, budgetName, budgetLimit, budgetSpent, budgetStartDate, budgetRepeat);
@@ -68,15 +78,13 @@ class AutoPayDetailCard extends StatelessWidget {
                         width: 70,
                         child: Text(currency + " " + autoPayAmount.toStringAsFixed(2), style: TextStyle(fontSize: 20.0, color: Colors.black)),
                       ),
-
                     ]),
-                        SizedBox(height: 10.0),
+                    SizedBox(height: 10.0),
                     Container(
                       alignment: Alignment.topLeft,
                       width: 180,
                       child: Text("Next Due : " + day.toString() + "/" + month.toString() + "/" + year.toString(), style: TextStyle(fontSize: 15.0, color: Colors.grey)),
                     ),
-
                   ])),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.end,
@@ -85,15 +93,13 @@ class AutoPayDetailCard extends StatelessWidget {
                           icon: Icon(Icons.edit),
                           color: Colors.black54,
                           onPressed: () {
-
-                            print(autoPayRepeat.toString() + "------");
                             onEditClick(
                               id,
                               autoPayName,
                               autoPayAmount,
                               autoPayStartDate,
                               autoPayRepeat,
-                                resetDate,
+                              resetDate,
                             );
                           }),
                       IconButton(
@@ -114,16 +120,21 @@ class AutoPayDetailCard extends StatelessWidget {
   void resetAutoPay() {
     int today = DateTime.now().millisecondsSinceEpoch;
     Map duration = returnBudgetDuration(autoPayRepeat);
-    int resetDate = autoPayStartDate;
+    int resetDate = autoPayResetDate;
+
 
     while (resetDate < today) {
+
+      dynamic result = FireStoreService(uid: user.uid).addAutoPayHistory(autoPayName,autoPayAmount,resetDate, normalAccountBalance);
+
       DateTime dt = DateTime(DateTime.fromMillisecondsSinceEpoch(resetDate).year, DateTime.fromMillisecondsSinceEpoch(resetDate).month, DateTime.fromMillisecondsSinceEpoch(resetDate).day);
       var jiffyTime = Jiffy(dt);
 
       if (duration["period"] == "days") {
         resetDate = jiffyTime.add(days: duration["time"]).millisecondsSinceEpoch;
       } else if (duration["period"] == "months") {
-        resetDate = jiffyTime.add(
+        resetDate = jiffyTime
+            .add(
               months: duration["time"],
             )
             .millisecondsSinceEpoch;
@@ -135,10 +146,11 @@ class AutoPayDetailCard extends StatelessWidget {
             .millisecondsSinceEpoch;
       }
 
-      dynamic result = FireStoreService(uid: user.uid).addAutoPayHistory(autoPayName,autoPayAmount,autoPayResetDate);
+
     }
 
-    dynamic result = FireStoreService(uid: user.uid).resetAutoPay(id,autoPayAmount,autoPayResetDate,normalAccountBalance);
+      print("do we come here tooo");
+    dynamic result = FireStoreService(uid: user.uid).resetAutoPay(id, autoPayAmount, resetDate);
   }
 
   Map returnBudgetDuration(int repeatPeriod) {

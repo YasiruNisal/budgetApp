@@ -248,6 +248,82 @@ class _AccountDetailsState extends State<AccountDetails> {
               SizedBox(
                 height: 20.0,
               ),
+              Container(//SHOW THIS IF ONLY THERE IS ONE BUDGET
+                margin: const EdgeInsets.only(left: 20.0, right: 20.0),
+                decoration: BoxDecoration(
+                  color: MyColors.TransparentBack,
+                  borderRadius: BorderRadius.all(
+                    Radius.circular(10.0),
+                  ),
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Column(
+                    children: <Widget>[
+                      Row(children: <Widget>[
+                        Icon(
+                          Icons.info,
+                          color: Colors.black45,
+                          size: 24.0,
+                          semanticLabel: 'Text to announce in accessibility modes',
+                        ),
+                        SizedBox(
+                          width: 15.0,
+                        ),
+                        Text('Upgrade',
+                            style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                color: Colors.black,
+                                fontSize: 16.0)),
+                      ],),
+                      SizedBox(
+                        height: 10.0,
+                      ),
+                      Text('Subscribe to get unlimited features \n\t- Unlimited Budgets '
+                          '\n\t- Unlimited Auto Payments',
+                          style: TextStyle(
+//                        fontFamily: 'Montserrat',
+                              color: Colors.black87,
+                              fontSize: 15.0)),
+
+                      SizedBox(
+                        height: 5.0,
+                      ),
+                      Text('50% off for limited time',
+                          style: TextStyle(
+//                        fontFamily: 'Montserrat',
+                              color: MyColors.MainFade3,
+                              fontSize: 15.0)),
+                      SizedBox(
+                        height: 15.0,
+                      ),
+                      FlatButton.icon(
+                        color: MyColors.MainFade2,
+                        shape: new RoundedRectangleBorder(
+                          borderRadius: new BorderRadius.circular(18.0),
+                        ),
+                        onPressed: () {
+
+                        },
+                        icon: Icon(Icons.subscriptions, size: 18.0, color: MyColors.WHITE),
+                        label: Text(
+                          "Subscribe Now",
+                          style: TextStyle(
+                            fontSize: 15.0,
+                            color: MyColors.WHITE,
+                          ),
+                        ),
+                      ),
+
+                    ],
+
+                  ),
+                ),
+
+              ),
+              SizedBox(
+                height: 25.0,
+              ),
             ],
           ),
         ),
@@ -339,7 +415,7 @@ class _AccountDetailsState extends State<AccountDetails> {
             user: widget.user,
             currency: currency,
             numAutoPay: numAutoPay,
-              normalAccountBalance:normalAccountBalance,
+            normalAccountBalance: normalAccountBalance,
           ),
           SizedBox(
             height: 20.0,
