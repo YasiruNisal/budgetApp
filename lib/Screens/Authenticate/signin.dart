@@ -156,7 +156,7 @@ class _SignInState extends State<SignIn> {
                   //--------------------------------------------------------//
                   // Sign in with google
                   //--------------------------------------------------------//
-                  _signInButton(_auth),
+//                  _signInButton(_auth),
                   SizedBox(
                     height: 20.0,
                   ),

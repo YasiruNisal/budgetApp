@@ -36,7 +36,7 @@ class FireStoreService {
     } else if (incomeExpense == 2) {
       newAccountBalance = currentAccountBalance - amount;
     }
-
+  print("&&&&&&&&&&&&&&&&&&&&&&&&");
     batch.setData(normalAccount.document(), {"incomeexpense": incomeExpense, "incomeexpensecategory": incomeExpenseCategory, "timestamp": timestamp, "amount": amount});
 
     batch.updateData(normalAccountBalance, {"normalaccountbalance": newAccountBalance});
@@ -159,7 +159,6 @@ class FireStoreService {
 
   Future resetAutoPay(String autoPayID, double autoPayAmount, int autoPayResetDate) async {
 
-  print(autoPayID + "###############");
   return await userCollection.document(uid).collection("newautopay").document(autoPayID).updateData({
       "autopayresetdate": autoPayResetDate,
     });

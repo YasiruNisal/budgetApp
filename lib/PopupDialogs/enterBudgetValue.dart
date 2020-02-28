@@ -104,6 +104,7 @@ class _EnterBudgetValueState extends State<EnterBudgetValue> {
                       borderRadius: new BorderRadius.circular(18.0),
                     ),
                     onPressed: () {
+                      print("pressing the button +++++++++++++");
                       _dismissDialog(context);
                       widget.enterBudgetValue( double.tryParse(enterValController.text));
                     },

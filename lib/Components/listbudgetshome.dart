@@ -13,8 +13,9 @@ class ListBudgetsHomeScreen extends StatefulWidget {
   final FirebaseUser user;
   final String currency;
   final int numBudgets;
+  final double normalAccountBalance;
 
-  ListBudgetsHomeScreen({this.user, this.currency, this.numBudgets});
+  ListBudgetsHomeScreen({this.user, this.currency, this.numBudgets, this.normalAccountBalance});
 
   @override
   _ListBudgetsHomeScreenState createState() => _ListBudgetsHomeScreenState();
@@ -128,7 +129,10 @@ class _ListBudgetsHomeScreenState extends State<ListBudgetsHomeScreen> {
       enterValue = val;
     });
 
-    dynamic result = FireStoreService(uid: widget.user.uid).setBudgetHistory(selectedBudgetID, selectedBudgetSpent, enterValue, category, new DateTime.now().millisecondsSinceEpoch);
+
+    dynamic result = FireStoreService(uid: widget.user.uid).setNormalAccountEntry(2, category, new DateTime.now().millisecondsSinceEpoch, enterValue, widget.normalAccountBalance);
+
+    dynamic result2 = FireStoreService(uid: widget.user.uid).setBudgetHistory(selectedBudgetID, selectedBudgetSpent, enterValue, category, new DateTime.now().millisecondsSinceEpoch);
     // need to write to the database here.
     if (result != null) {
       setState(() {

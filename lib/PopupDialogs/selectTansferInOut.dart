@@ -19,14 +19,14 @@ class SelectTransferInOut extends StatelessWidget {
       ),
       content: SingleChildScrollView(
         child: Container(
-          height: 150.0,
+          height: 100.0,
           child: Column(
             children: <Widget>[
               SizedBox(
                 height: 20.0,
               ),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: <Widget>[
                   FlatButton(
                     color: MyColors.MainFade2,
@@ -39,10 +39,11 @@ class SelectTransferInOut extends StatelessWidget {
 //                      incomeCategory(context);
                     },
                     child: Text(
-                      'Into ' + savingAccountName,
+                      'In',
                       style: TextStyle(color: MyColors.WHITE),
                     ),
                   ),
+                  SizedBox(width: 25.0),
                   FlatButton(
                       color: MyColors.MainFade2,
                       shape: new RoundedRectangleBorder(
@@ -53,7 +54,7 @@ class SelectTransferInOut extends StatelessWidget {
                         setTransferInOut(2);
                       },
                       child: Text(
-                        'Out of ' + savingAccountName,
+                        'Out',
                         style: TextStyle(color: MyColors.WHITE),
                       )),
 
