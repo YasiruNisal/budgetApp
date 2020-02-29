@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:simplybudget/config/colors.dart';
 
 class SelectExpenseCategory extends StatelessWidget {
-  final void Function(String) setExpenseCategory;
+  final void Function(String, String) setExpenseCategory;
 
   SelectExpenseCategory({this.setExpenseCategory});
 
@@ -82,7 +82,7 @@ class SelectExpenseCategory extends StatelessWidget {
     return GestureDetector(
       onTap: () {
         _dismissDialog(context);
-        setExpenseCategory(text.replaceAll(new RegExp(r"\s+\b|\b\s"), ""));
+        setExpenseCategory(text.replaceAll(new RegExp(r"\s+\b|\b\s"), ""), text);
       },
       child: Container(
         child: Column(

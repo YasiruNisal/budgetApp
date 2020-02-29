@@ -1,7 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:jiffy/jiffy.dart';
 import 'package:simplybudget/Components/budgetdetailscard.dart';
 import 'package:simplybudget/Components/loading.dart';
 import 'package:simplybudget/PopupDialogs/enterBudgetValue.dart';
@@ -110,7 +109,7 @@ class _ListBudgetsHomeScreenState extends State<ListBudgetsHomeScreen> {
         });
   }
 
-  void setExpenseCategory(String val) {
+  void setExpenseCategory(String val, String displayName) {
     setState(() {
       category = val;
     });
@@ -120,19 +119,26 @@ class _ListBudgetsHomeScreenState extends State<ListBudgetsHomeScreen> {
         context: context,
         builder: (context) {
           //return EnterBudgetValue(enterBudgetValue: enterBudgetValue, incomeOrExpense: incomeOrExpense, category: category, currentBalance: normalAccountBalance);
-          return EnterBudgetValue(enterBudgetValue: enterBudgetValue, incomeOrExpense: 2, category: category, currentBalance: budgetLeft);
+          return EnterBudgetValue(enterBudgetValue: enterBudgetValue, incomeOrExpense: 2, category: category, currentBalance: budgetLeft, displayName: displayName,);
         });
   }
 
-  void enterBudgetValue(double val) {
+  void enterBudgetValue(double val, String displayName) {
     setState(() {
       enterValue = val;
     });
 
 
-    dynamic result = FireStoreService(uid: widget.user.uid).setNormalAccountEntry(2, category, new DateTime.now().millisecondsSinceEpoch, enterValue, widget.normalAccountBalance);
+    dynamic result = FireStoreService(uid: widget.user.uid).setNormalAccountEntry(2, displayName, new DateTime.now().millisecondsSinceEpoch, enterValue, widget.normalAccountBalance);
 
-    dynamic result2 = FireStoreService(uid: widget.user.uid).setBudgetHistory(selectedBudgetID, selectedBudgetSpent, enterValue, category, new DateTime.now().millisecondsSinceEpoch);
+    try {
+      FireStoreService(uid: widget.user.uid).setBudgetHistory(selectedBudgetID, selectedBudgetSpent, enterValue, displayName, new DateTime.now().millisecondsSinceEpoch);
+    } on Exception catch (exception) {
+      print(exception);
+    } catch (error) {
+      print(error);
+    }
+
     // need to write to the database here.
     if (result != null) {
       setState(() {

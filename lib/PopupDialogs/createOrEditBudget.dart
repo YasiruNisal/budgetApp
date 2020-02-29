@@ -171,7 +171,7 @@ class _CreateOrEditBudgetState extends State<CreateOrEditBudget> {
                           resetDate = jiffyTime.add(years: duration["time"]).millisecondsSinceEpoch;
                         }
 //                        widget.enterBudgetValue( double.tryParse(enterValController.text));
-                        widget.newBudgetSet(enterNameController.text, double.tryParse(enterValController.text), unixPickedStartDate, resetDate, pickedRepeatFromArray);
+                        widget.newBudgetSet(enterNameController.text, double.tryParse(enterValController.text), unixPickedStartDate, pickedRepeatFromArray, resetDate, );
                       },
                       child: Text(
                         widget.createOrSave,

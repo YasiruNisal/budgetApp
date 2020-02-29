@@ -3,12 +3,13 @@ import 'package:simplybudget/config/colors.dart';
 
 class EnterBudgetValue extends StatefulWidget {
 
-  final void Function(double) enterBudgetValue;
+  final void Function(double, String) enterBudgetValue;
   final int incomeOrExpense;
   final String category;
   final double currentBalance;
+  final String displayName;
 
-  EnterBudgetValue({this.enterBudgetValue, this.incomeOrExpense, this.category, this.currentBalance});
+  EnterBudgetValue({this.enterBudgetValue, this.incomeOrExpense, this.category, this.currentBalance, this.displayName});
 
   @override
   _EnterBudgetValueState createState() => _EnterBudgetValueState();
@@ -69,14 +70,14 @@ class _EnterBudgetValueState extends State<EnterBudgetValue> {
                 child: Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: Center(
-                    child: Image.asset('assets/${heading}/${widget.category}.png'),
+                    child: Image.asset('assets/'+heading+'/${widget.category}.png'),
                   ),
                 ),
               ),
               SizedBox(
                 height: 10.0,
               ),
-              Text(widget.category[0].toUpperCase() + widget.category.substring(1), textAlign: TextAlign.center, style: TextStyle(fontSize: 12),),
+              Text(widget.displayName[0].toUpperCase() + widget.displayName.substring(1), textAlign: TextAlign.center, style: TextStyle(fontSize: 12),),
               SizedBox(
                 height: 5.0,
               ),
@@ -104,9 +105,8 @@ class _EnterBudgetValueState extends State<EnterBudgetValue> {
                       borderRadius: new BorderRadius.circular(18.0),
                     ),
                     onPressed: () {
-                      print("pressing the button +++++++++++++");
                       _dismissDialog(context);
-                      widget.enterBudgetValue( double.tryParse(enterValController.text));
+                      widget.enterBudgetValue( double.tryParse(enterValController.text), widget.displayName);
                     },
                     child: Text(
                       'Save',

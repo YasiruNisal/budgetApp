@@ -3,7 +3,7 @@ import 'package:simplybudget/config/colors.dart';
 
 class SelectIncomeCategory extends StatelessWidget {
 
-  final void Function(String) setIncomeCategory;
+  final void Function(String,String) setIncomeCategory;
 
   SelectIncomeCategory({this.setIncomeCategory});
 
@@ -43,7 +43,7 @@ class SelectIncomeCategory extends StatelessWidget {
               'other',
             ].map((String url) {
               return GridTile(
-                  child: gridIcon('assets/income/${url}.png', url, context));
+                  child: gridIcon('assets/income/'+url+'.png', url, context));
             }).toList()),
       ),
     );
@@ -53,7 +53,7 @@ class SelectIncomeCategory extends StatelessWidget {
     return GestureDetector(
       onTap: () {
         _dismissDialog(context);
-        setIncomeCategory(text);
+        setIncomeCategory(text.replaceAll(new RegExp(r"\s+\b|\b\s"), ""),text);
       },
       child: Container(
         child: Column(

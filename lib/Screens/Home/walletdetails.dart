@@ -220,7 +220,13 @@ class _WalletDetailsState extends State<WalletDetails> with TickerProviderStateM
       selectAccountName = name;
     });
 
-    dynamic result = await FireStoreService(uid: widget.user.uid).editAccountEntry("Account Edited", newNetBalance, name, whichAccount);
+    try {
+      await FireStoreService(uid: widget.user.uid).editAccountEntry("Account Edited", newNetBalance, name, whichAccount);
+    } on Exception catch (exception) {
+      print(exception);
+    } catch (error) {
+      print(error);
+    }
 
 
   }
@@ -270,7 +276,6 @@ class _WalletDetailsState extends State<WalletDetails> with TickerProviderStateM
         .millisecondsSinceEpoch;
     int lastDayOfThisMonth = DateTime(DateTime.now().year, DateTime.now().month + 1, 0).millisecondsSinceEpoch;
 
-    int today = DateTime.now().millisecondsSinceEpoch;
 
     List<String> tabList = <String>[];
     int addTime = firstDayOfMonthAccount;
@@ -306,7 +311,6 @@ class _WalletDetailsState extends State<WalletDetails> with TickerProviderStateM
 //--------------------------------------------------------//
   Widget checkIfEmpty() {
     List<DocumentSnapshot> historyList = walletHistoryList;
-    int length = 0;
 
     if (historyList == null) {
       return Loading(size: 20.0);

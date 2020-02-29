@@ -3,8 +3,6 @@ import 'package:simplybudget/Components/loading.dart';
 import 'package:simplybudget/Services/auth.dart';
 import 'package:simplybudget/config/colors.dart';
 
-import 'package:simplybudget/Services/firestore.dart';
-
 class Register extends StatefulWidget {
   final Function toggleView;
 

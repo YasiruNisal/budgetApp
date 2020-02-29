@@ -229,7 +229,7 @@ class _BudgetDetailsState extends State<BudgetDetails> with TickerProviderStateM
         });
   }
 
-  void editBudget(String budgetName, double maxLimit, DateTime unixTime, int budgetResetDate, int repeatPeriod) {
+  void editBudget(String budgetName, double maxLimit, DateTime unixTime, int repeatPeriod, int budgetResetDate) {
     DateTime startDate = unixTime;
     if (unixTime == null) {
       startDate = DateTime.now();
@@ -262,7 +262,13 @@ class _BudgetDetailsState extends State<BudgetDetails> with TickerProviderStateM
 
     _tabController = TabController(length: tabStringList.length, vsync: this, initialIndex: tabStringList.length - 1);
 
-    dynamic result = FireStoreService(uid: widget.user.uid).editBudget(widget.selectedBudgetID, budgetName, budgetLimit, pickedTime, budgetResetDate, repeatPeriod);
+    try {
+      FireStoreService(uid: widget.user.uid).editBudget(widget.selectedBudgetID, budgetName, budgetLimit, pickedTime, repeatPeriod, budgetResetDate, );
+    } on Exception catch (exception) {
+      print(exception);
+    } catch (error) {
+      print(error);
+    }
   }
 
   void deleteThisBudget() {

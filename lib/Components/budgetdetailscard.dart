@@ -105,7 +105,13 @@ class BudgetDetailCard extends StatelessWidget {
       }
     }
 
-    dynamic result = FireStoreService(uid: user.uid).resetBudget(id, resetDate, 0);
+    try {
+      FireStoreService(uid: user.uid).resetBudget(id, resetDate, 0);
+    } on Exception catch (exception) {
+      print(exception);
+    } catch (error) {
+      print(error);
+    }
   }
 
   Map returnBudgetDuration(int repeatPeriod) {

@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:simplybudget/config/colors.dart';
-import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
-import 'package:intl/intl.dart';
 
 class SelectIncomeExpense extends StatelessWidget {
   final void Function(int) setIncomeExpense;

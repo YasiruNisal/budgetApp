@@ -1,9 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:jiffy/jiffy.dart';
-import 'package:percent_indicator/percent_indicator.dart';
 import 'package:simplybudget/Services/firestore.dart';
-import 'package:simplybudget/config/colors.dart';
 
 class AutoPayDetailCard extends StatelessWidget {
 //  final Function onPlusClick;
@@ -54,7 +52,6 @@ class AutoPayDetailCard extends StatelessWidget {
       onTap: () {},
       child: Padding(
           padding: EdgeInsets.only(left: 15.0, right: 10.0, top: 15.0, bottom: 10.0),
-
           child: InkWell(
               onTap: () {
 //                onCardTap(id, budgetName, budgetLimit, budgetSpent, budgetStartDate, budgetRepeat);
@@ -122,10 +119,14 @@ class AutoPayDetailCard extends StatelessWidget {
     Map duration = returnBudgetDuration(autoPayRepeat);
     int resetDate = autoPayResetDate;
 
-
     while (resetDate < today) {
-
-      dynamic result = FireStoreService(uid: user.uid).addAutoPayHistory(autoPayName,autoPayAmount,resetDate, normalAccountBalance);
+      try {
+        FireStoreService(uid: user.uid).addAutoPayHistory(autoPayName, autoPayAmount, resetDate, normalAccountBalance);
+      } on Exception catch (exception) {
+        print(exception);
+      } catch (error) {
+        print(error);
+      }
 
       DateTime dt = DateTime(DateTime.fromMillisecondsSinceEpoch(resetDate).year, DateTime.fromMillisecondsSinceEpoch(resetDate).month, DateTime.fromMillisecondsSinceEpoch(resetDate).day);
       var jiffyTime = Jiffy(dt);
@@ -145,12 +146,15 @@ class AutoPayDetailCard extends StatelessWidget {
             )
             .millisecondsSinceEpoch;
       }
-
-
     }
 
-      print("do we come here tooo");
-    dynamic result = FireStoreService(uid: user.uid).resetAutoPay(id, autoPayAmount, resetDate);
+    try {
+      FireStoreService(uid: user.uid).resetAutoPay(id, autoPayAmount, resetDate);
+    } on Exception catch (exception) {
+      print(exception);
+    } catch (error) {
+      print(error);
+    }
   }
 
   Map returnBudgetDuration(int repeatPeriod) {

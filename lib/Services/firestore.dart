@@ -36,7 +36,7 @@ class FireStoreService {
     } else if (incomeExpense == 2) {
       newAccountBalance = currentAccountBalance - amount;
     }
-  print("&&&&&&&&&&&&&&&&&&&&&&&&");
+
     batch.setData(normalAccount.document(), {"incomeexpense": incomeExpense, "incomeexpensecategory": incomeExpenseCategory, "timestamp": timestamp, "amount": amount});
 
     batch.updateData(normalAccountBalance, {"normalaccountbalance": newAccountBalance});
@@ -212,8 +212,8 @@ class FireStoreService {
     String budgetName,
     double budgetLimit,
     int budgetStartDate,
-    int budgetResetDate,
     int budgetRepeat,
+    int budgetResetDate,
   ) async {
     DocumentReference newBudget = userCollection.document(uid).collection("newbudget").document(budgetID);
 

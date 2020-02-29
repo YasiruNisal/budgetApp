@@ -1,15 +1,10 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:jiffy/jiffy.dart';
 import 'package:simplybudget/Components/autopaydetailscard.dart';
-import 'package:simplybudget/Components/budgetdetailscard.dart';
 import 'package:simplybudget/Components/loading.dart';
 import 'package:simplybudget/PopupDialogs/confirmDialog.dart';
 import 'package:simplybudget/PopupDialogs/createOrEditAutoPay.dart';
-import 'package:simplybudget/PopupDialogs/enterBudgetValue.dart';
-import 'package:simplybudget/PopupDialogs/selectExpenseCategory.dart';
-import 'package:simplybudget/Screens/Home/budgetdetails.dart';
 import 'package:simplybudget/Services/firestore.dart';
 
 class ListAutoPayHomeScreen extends StatefulWidget {
@@ -124,7 +119,14 @@ class _ListAutoPayHomeScreenState extends State<ListAutoPayHomeScreen> {
       repeatPeriod = 9;
     }
 
-    dynamic result = FireStoreService(uid: widget.user.uid).editAutoPay(selectedAutoPayID, name, autoPayAmount, pickedTime, repeatPeriod, resetDate);
+    try {
+      FireStoreService(uid: widget.user.uid).editAutoPay(selectedAutoPayID, name, autoPayAmount, pickedTime, repeatPeriod, resetDate);
+    } on Exception catch (exception) {
+      print(exception);
+    } catch (error) {
+      print(error);
+    }
+
   }
 
   void deleteThisAutoPay(String id) {
@@ -140,6 +142,12 @@ class _ListAutoPayHomeScreenState extends State<ListAutoPayHomeScreen> {
   }
 
   void deleteBudget() {
-    dynamic result = FireStoreService(uid: widget.user.uid).deleteAutoPay(selectedAutoPayID, widget.numAutoPay);
+    try {
+      FireStoreService(uid: widget.user.uid).deleteAutoPay(selectedAutoPayID, widget.numAutoPay);
+    } on Exception catch (exception) {
+      print(exception);
+    } catch (error) {
+      print(error);
+    }
   }
 }

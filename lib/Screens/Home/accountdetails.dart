@@ -2,7 +2,6 @@ import 'dart:async';
 import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/services.dart';
 import 'package:simplybudget/Components/accountdetailscard.dart';
 import 'package:simplybudget/Components/listautopayhome.dart';
 import 'package:simplybudget/Components/listbudgetshome.dart';
@@ -44,11 +43,12 @@ class _AccountDetailsState extends State<AccountDetails> {
 
   List<String> randMessageArray = [
     'Did you know ?\n\nWithout subscribing you can only keep 4 months worth of account activity history.\n\n'
-  'Consider subscribing to get unlimited activity history and more unlimited features',
+        'Consider subscribing to get unlimited activity history and more unlimited features',
     'Did you know ?\n\nWithout subscribing you can only create 5 budgets.\n\n'
         'Consider subscribing to get unlimited budgets and more unlimited features',
     'Did you know ?\n\nWithout subscribing you can only create 3 auto payments .\n\n'
-        'Consider subscribing to get unlimited auto payments and more unlimited features'];
+        'Consider subscribing to get unlimited auto payments and more unlimited features'
+  ];
 
   static const BUDGETNUM_LIMIT = 4;
   static const AUTOPAYNUM_LIMIT = 3;
@@ -57,6 +57,7 @@ class _AccountDetailsState extends State<AccountDetails> {
   int incomeOrExpense = 0;
   int transferInOut = 0;
   String category = '';
+  String displayCategoryName = '';
   double enterValue = 0;
 
   String normalAccountName = "Spending Account";
@@ -92,13 +93,11 @@ class _AccountDetailsState extends State<AccountDetails> {
         accountCreated = documentSnapshot.data["accountcreated"];
       });
     });
-    rand =  (min + _random.nextInt(max - min));
+    rand = (min + _random.nextInt(max - min));
     initPlatformState();
 //    _getProduct();
 //    _getPurchases();
-    print('RANDOM NUMBER  --------- - ' + rand.toString());
     _purchaseUpdatedSubscription = FlutterInappPurchase.purchaseUpdated.listen((productItem) {
-
       print(productItem);
       purchasedItems.add(productItem);
       _acknowledgePurchaseAndroid(productItem.purchaseToken);
@@ -108,16 +107,14 @@ class _AccountDetailsState extends State<AccountDetails> {
     });
 
     _purchaseErrorSubscription = FlutterInappPurchase.purchaseError.listen((purchaseError) {
-      print('purchase-error:   888888888888888');
+      print('purchase-error: ');
       print(purchaseError);
     });
   }
 
   Future<void> initPlatformState() async {
     // prepare
-    var result = await FlutterInappPurchase.instance.initConnection;
-    print('result: ');
-    print(result);
+    await FlutterInappPurchase.instance.initConnection;
 
     // If the widget was removed from the tree while the asynchronous platform
     // message was in flight, we want to discard the reply rather than calling
@@ -166,7 +163,6 @@ class _AccountDetailsState extends State<AccountDetails> {
 
   Future _acknowledgePurchaseAndroid(purchaseToken) async {
     String result = await FlutterInappPurchase.instance.acknowledgePurchaseAndroid(purchaseToken);
-    print("ACK ACK ACK ACK ACK ACK");
     print(result);
   }
 
@@ -608,8 +604,7 @@ class _AccountDetailsState extends State<AccountDetails> {
   // Opens the popup dialog for creating the new auto payment
   //--------------------------------------------------------//
   void _createNewAutoPay() {
-
-    if(numAutoPay > AUTOPAYNUM_LIMIT && purchasedItems != null && purchasedItems.length == 0){
+    if (numAutoPay > AUTOPAYNUM_LIMIT && purchasedItems != null && purchasedItems.length == 0) {
       //show subscribe popup
       showDialog(
           context: context,
@@ -619,8 +614,7 @@ class _AccountDetailsState extends State<AccountDetails> {
               monthlyCost: localizedPrice.toString(),
             );
           });
-    }
-    else{
+    } else {
       showDialog(
           context: context,
           builder: (context) {
@@ -631,7 +625,6 @@ class _AccountDetailsState extends State<AccountDetails> {
             );
           });
     }
-
   }
 
   //--------------------------------------------------------//
@@ -661,14 +654,20 @@ class _AccountDetailsState extends State<AccountDetails> {
       repeatPeriod = 9;
     }
 
-    dynamic result = FireStoreService(uid: widget.user.uid).createNewAutoPay(name, autoPayAmount, pickedTime, repeatPeriod, resetDate, numAutoPay);
+    try {
+      FireStoreService(uid: widget.user.uid).createNewAutoPay(name, autoPayAmount, pickedTime, repeatPeriod, resetDate, numAutoPay);
+    } on Exception catch (exception) {
+      print(exception);
+    } catch (error) {
+      print(error);
+    }
   }
 
 //--------------------------------------------------------//
 // Opens the popup dialog for creating the new widget
 //--------------------------------------------------------//
   void _createNewBudget() {
-    if(numBudgets > BUDGETNUM_LIMIT && purchasedItems != null && purchasedItems.length == 0){
+    if (numBudgets > BUDGETNUM_LIMIT && purchasedItems != null && purchasedItems.length == 0) {
       //show subscribe popup
       showDialog(
           context: context,
@@ -678,8 +677,7 @@ class _AccountDetailsState extends State<AccountDetails> {
               monthlyCost: localizedPrice.toString(),
             );
           });
-    }
-    else{
+    } else {
       showDialog(
           context: context,
           builder: (context) {
@@ -690,7 +688,6 @@ class _AccountDetailsState extends State<AccountDetails> {
             );
           });
     }
-
   }
 
 //--------------------------------------------------------//
@@ -720,7 +717,14 @@ class _AccountDetailsState extends State<AccountDetails> {
       repeatPeriod = 9;
     }
 
-    dynamic result = FireStoreService(uid: widget.user.uid).createNewBudget(name, budgetLimit, pickedTime, repeatPeriod, resetDate, numBudgets);
+    try {
+      FireStoreService(uid: widget.user.uid).createNewBudget(name, budgetLimit, pickedTime, repeatPeriod, resetDate, numBudgets);
+    } on Exception catch (exception) {
+      print(exception);
+    } catch (error) {
+      print(error);
+    }
+
   }
 
 //--------------------------------------------------------//
@@ -793,49 +797,65 @@ class _AccountDetailsState extends State<AccountDetails> {
 //--------------------------------------------------------//
 // Select the income category from the icon popup dialog
 //--------------------------------------------------------//
-  void _setIncomeCategory(String val) {
+  void _setIncomeCategory(String val, String displayName) {
     setState(() {
+      displayCategoryName = displayName;
       category = val;
     });
     showDialog(
         context: context,
         builder: (context) {
-          return EnterBudgetValue(enterBudgetValue: _enterBudgetValue, incomeOrExpense: incomeOrExpense, category: category, currentBalance: normalAccountBalance);
+          return EnterBudgetValue(enterBudgetValue: _enterBudgetValue, incomeOrExpense: incomeOrExpense, category: category, currentBalance: normalAccountBalance, displayName: displayCategoryName,);
         });
   }
 
 //--------------------------------------------------------//
 // Select the expense category from the icon popup dialog
 //--------------------------------------------------------//
-  void _setExpenseCategory(String val) {
+  void _setExpenseCategory(String val, String displayName) {
     setState(() {
+      displayCategoryName = displayName;
       category = val;
     });
 
     showDialog(
         context: context,
         builder: (context) {
-          return EnterBudgetValue(enterBudgetValue: _enterBudgetValue, incomeOrExpense: incomeOrExpense, category: category, currentBalance: normalAccountBalance);
+          return EnterBudgetValue(enterBudgetValue: _enterBudgetValue, incomeOrExpense: incomeOrExpense, category: category, currentBalance: normalAccountBalance, displayName: displayCategoryName,);
         });
   }
 
   void _transferToSaving(double amount) {
-    dynamic result = FireStoreService(uid: widget.user.uid).transferToSavingAccount(amount, normalAccountBalance, savingAccountBalance);
+    try {
+      FireStoreService(uid: widget.user.uid).transferToSavingAccount(amount, normalAccountBalance, savingAccountBalance);
+    } on Exception catch (exception) {
+      print(exception);
+    } catch (error) {
+      print(error);
+    }
+
   }
 
   void _transferOutOfSaving(double amount) {
-    dynamic result = FireStoreService(uid: widget.user.uid).transferOutOfSavingAccount(amount, normalAccountBalance, savingAccountBalance);
+    try {
+      FireStoreService(uid: widget.user.uid).transferOutOfSavingAccount(amount, normalAccountBalance, savingAccountBalance);
+    } on Exception catch (exception) {
+      print(exception);
+    } catch (error) {
+      print(error);
+    }
+
   }
 
 //--------------------------------------------------------//
 // Enter a dollar value spent
 //--------------------------------------------------------//
-  void _enterBudgetValue(double val) {
+  void _enterBudgetValue(double val, String displayName) {
     setState(() {
       enterValue = val;
     });
 
-    dynamic result = FireStoreService(uid: widget.user.uid).setNormalAccountEntry(incomeOrExpense, category, new DateTime.now().millisecondsSinceEpoch, enterValue, normalAccountBalance);
+    dynamic result = FireStoreService(uid: widget.user.uid).setNormalAccountEntry(incomeOrExpense, displayName, new DateTime.now().millisecondsSinceEpoch, enterValue, normalAccountBalance);
     // need to write to the database here.
     if (result != null) {
       setState(() {
@@ -848,7 +868,13 @@ class _AccountDetailsState extends State<AccountDetails> {
   }
 
   void _pickCurrency(String currency) {
-    dynamic result = FireStoreService(uid: widget.user.uid).setCurrency(currency);
+    try {
+      FireStoreService(uid: widget.user.uid).setCurrency(currency);
+    } on Exception catch (exception) {
+      print(exception);
+    } catch (error) {
+      print(error);
+    }
   }
 
   void _signOut() async {
