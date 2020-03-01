@@ -423,7 +423,7 @@ class _BudgetDetailsState extends State<BudgetDetails> with TickerProviderStateM
         startEndDates.add({"start": prevTime, "end": addTime});
       }
     } else {
-      tabList.add("Start Date is " + DateTime.fromMillisecondsSinceEpoch(addTime).toString());
+      tabList.add("Start Date is " + DateTime.fromMillisecondsSinceEpoch(addTime).toString() + "                      ");
     }
 
     initStartTime = prevTime;
